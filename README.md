@@ -26,6 +26,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [mm2-roblox-analytics-toolkit](skills/mm2-roblox-analytics-toolkit/) | [install](https://skills.sh/aradotso/data-skills/mm2-roblox-analytics-toolkit) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-16 |
 | [mm2-analytics-roblox-tracker](skills/mm2-analytics-roblox-tracker/) | [install](https://skills.sh/aradotso/data-skills/mm2-analytics-roblox-tracker) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-16 |
 | [roblox-mm2-analytics-toolkit](skills/roblox-mm2-analytics-toolkit/) | [install](https://skills.sh/aradotso/data-skills/roblox-mm2-analytics-toolkit) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-16 |
+| [mm2-analytics-dashboard-roblox](skills/mm2-analytics-dashboard-roblox/) | [install](https://skills.sh/aradotso/data-skills/mm2-analytics-dashboard-roblox) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-16 |
 <!-- SKILL_INDEX -->
 
 ---
