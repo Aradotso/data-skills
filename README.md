@@ -20,6 +20,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 
 | Skill | skills.sh | Source | Date |
 |-------|-----------|--------|------|
+| [datatalks-data-engineering-zoomcamp](skills/datatalks-data-engineering-zoomcamp/) | [install](https://skills.sh/aradotso/data-skills/datatalks-data-engineering-zoomcamp) | [DataTalksClub/data-engineering-zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) | 2026-05-16 |
 <!-- SKILL_INDEX -->
 
 ---
