@@ -1,132 +1,70 @@
 ---
 name: llm-public-opinion-analytics-assistant
-description: A comprehensive public opinion analytics assistant that crawls 26 trending lists from 15 platforms and uses LLMs to analyze sentiment, cluster topics, and deliver multi-channel alerts
+description: Multi-platform hot topic crawler and LLM-powered sentiment analysis system with push notifications
 triggers:
   - set up public opinion monitoring system
-  - configure trending topic crawler and analyzer
-  - analyze social media sentiment with LLM
-  - create multi-platform hot topic tracker
-  - build sentiment analysis and clustering pipeline
-  - deploy real-time trending news analytics
-  - set up automated opinion report pushing
-  - configure Chinese social media monitoring
+  - crawl hot search trends from multiple platforms
+  - analyze sentiment and cluster trending topics
+  - configure push notifications for trending news
+  - deploy multi-platform hot search crawler
+  - implement LLM-based opinion analytics
+  - monitor social media trending topics
+  - set up automated sentiment analysis pipeline
 ---
 
-# LLM Public Opinion Analytics Assistant
+# LLM-Based Public Opinion Analytics Assistant
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-A comprehensive system that combines real-time data from 26 trending lists across 15 mainstream Chinese platforms with LLM analysis capabilities. The system enables conversational hot search queries, topic clustering, sentiment analysis, and multi-channel push notifications (WeChat, Email, Telegram).
+## Overview
 
-## What This Project Does
+LLM-Based Intelligent Public Opinion Analytics Assistant is a comprehensive sentiment analysis system that combines real-time data from 15 mainstream platforms (26 trending lists total) with large language model analysis capabilities. It provides conversational hot search queries, topic clustering, sentiment analysis, and multi-channel push notifications (email, WeChat, Telegram).
 
-- **Multi-Platform Crawling**: Collects trending topics from 15 platforms including Weibo, Bilibili, Baidu, Toutiao, etc.
-- **LLM-Powered Analysis**: Uses models like Huawei PanGu for sentiment analysis, topic clustering, and summarization
-- **Conversational Interface**: Natural language queries for trending topics and analysis
-- **Content Extraction**: Extracts full content even from video news sources
-- **Multi-Channel Notifications**: Supports WeChat Work, Telegram, and Email push notifications
-- **Hotkey Control**: Quick crawler start/stop via keyboard shortcuts
+**Key Features:**
+- Multi-platform web scraping (Weibo, Bilibili, Toutiao, etc.)
+- LLM-powered sentiment and clustering analysis
+- Natural language query interface
+- Multi-channel push notifications
+- Browser-based content extraction (including video content)
+- Hotkey-controlled crawler management
 
 ## Installation
 
 ### Prerequisites
 
-**1. Browser Driver Setup**
-
-Download and configure browser driver (Chrome or Edge):
+1. **Browser Driver Setup** (required for content extraction):
 
 ```bash
-# Verify Chrome/Edge version first
-google-chrome --version  # or microsoft-edge --version
+# For Chrome
+# Download ChromeDriver matching your Chrome version from:
+# https://chromedriver.chromium.org/
 
-# Download matching ChromeDriver from https://chromedriver.chromium.org/
-# or EdgeDriver from https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+# For Edge
+# Download EdgeDriver from:
+# https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
 
-# Add to PATH (Linux/macOS)
-sudo mv chromedriver /usr/local/bin/
-sudo chmod +x /usr/local/bin/chromedriver
-
-# Verify installation
+# Place driver in system PATH or project directory
+# Verify installation:
 chromedriver --version
 ```
 
-**2. MySQL Database**
+2. **Database Setup**:
 
 ```bash
 # Install MySQL
-sudo apt-get install mysql-server  # Ubuntu/Debian
-# or
-brew install mysql  # macOS
-
-# Start MySQL service
-sudo systemctl start mysql
-
-# Create database
-mysql -u root -p
-CREATE DATABASE hotsearch CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# Create database and tables using init.py as reference
+mysql -u root -p < init.sql
 ```
 
-**3. Python Environment**
+3. **Python Environment**:
 
 ```bash
-# Clone repository
-git clone https://github.com/hmmnxkl/LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant.git
-cd LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant
-
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
-```
-
-### Database Initialization
-
-Reference the `init.py` file to create required tables:
-
-```python
-# Example database schema initialization
-import pymysql
-
-conn = pymysql.connect(
-    host='localhost',
-    user='your_user',
-    password='your_password',
-    database='hotsearch',
-    charset='utf8mb4'
-)
-
-cursor = conn.cursor()
-
-# Create trending topics table
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS trending_topics (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    platform VARCHAR(50),
-    title VARCHAR(500),
-    url VARCHAR(1000),
-    rank INT,
-    heat_score VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_platform (platform),
-    INDEX idx_created_at (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-""")
-
-# Create analysis results table
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS analysis_results (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    query TEXT,
-    result LONGTEXT,
-    sentiment VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-""")
-
-conn.commit()
-conn.close()
 ```
 
 ## Configuration
@@ -139,34 +77,31 @@ Create a `.env` file in the project root:
 # MySQL Configuration
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
-MYSQL_USER=your_username
-MYSQL_PASSWORD=your_password
-MYSQL_DATABASE=hotsearch
+MYSQL_USER=your_db_user
+MYSQL_PASSWORD=your_db_password
+MYSQL_DATABASE=hotsearch_db
 
-# LLM Configuration (OpenAI-compatible format)
-OPENAI_API_KEY=your_api_key
-OPENAI_API_BASE=https://your-llm-endpoint.com/v1
-MODEL_NAME=pangu-7b  # or other model
+# LLM API Configuration (OpenAI-compatible format)
+LLM_API_KEY=your_llm_api_key
+LLM_API_BASE=https://your-llm-endpoint.com/v1
+LLM_MODEL=your-model-name
 
-# Push Notification Configuration
-# WeChat Work Robot
-WECHAT_WEBHOOK_URL=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=your_key
-
-# WeChat Work App
-WECHAT_CORP_ID=your_corp_id
-WECHAT_CORP_SECRET=your_corp_secret
-WECHAT_AGENT_ID=your_agent_id
-
-# Telegram
-TELEGRAM_BOT_TOKEN=your_bot_token
-TELEGRAM_CHAT_ID=your_chat_id
-
+# Push Notification Configurations
 # Email (SMTP)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
-EMAIL_RECIPIENTS=recipient1@example.com,recipient2@example.com
+SMTP_PASSWORD=your_email_password
+
+# Telegram Bot
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+
+# WeChat Work (Enterprise WeChat)
+WECHAT_WEBHOOK_URL=your_wechat_webhook_url
+WECHAT_CORP_ID=your_corp_id
+WECHAT_AGENT_ID=your_agent_id
+WECHAT_SECRET=your_secret
 ```
 
 ### Crawler Settings
@@ -174,209 +109,237 @@ EMAIL_RECIPIENTS=recipient1@example.com,recipient2@example.com
 Edit `hotsearchcrawler/settings.py`:
 
 ```python
-# MySQL Connection
-MYSQL_HOST = 'localhost'
-MYSQL_PORT = 3306
-MYSQL_USER = 'your_user'
-MYSQL_PASSWORD = 'your_password'
-MYSQL_DATABASE = 'hotsearch'
+# MySQL connection for crawler
+MYSQL_CONFIG = {
+    'host': 'localhost',
+    'port': 3306,
+    'user': 'your_db_user',
+    'password': 'your_db_password',
+    'database': 'hotsearch_db',
+    'charset': 'utf8mb4'
+}
 
 # Optional: Platform-specific cookies
 COOKIES = {
-    'weibo': 'your_weibo_cookie',
-    'bilibili': 'your_bilibili_cookie'
+    'weibo': 'your_weibo_cookies_if_needed',
+    'bilibili': 'your_bilibili_cookies_if_needed'
 }
-
-# Crawler settings
-CONCURRENT_REQUESTS = 16
-DOWNLOAD_DELAY = 1
-ROBOTSTXT_OBEY = False
 ```
 
-## Usage
+## Running the System
 
-### Starting the Analysis System
-
-```python
-# app.py - Main application entry point
-from hotsearch_analysis_agent import AnalysisAgent
-from flask import Flask, render_template, request, jsonify
-
-app = Flask(__name__)
-agent = AnalysisAgent()
-
-@app.route('/query', methods=['POST'])
-def query_analysis():
-    user_query = request.json.get('query')
-    result = agent.analyze(user_query)
-    return jsonify(result)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-```
-
-Run the web interface:
+### Start the Analysis System
 
 ```bash
+# Run the main application
 python app.py
+
+# Application will start on http://localhost:5000
 ```
 
-### Running the Crawler
-
-**Manual Start:**
+### Run Crawlers
 
 ```python
-# run_spiders.py
-from hotsearchcrawler.spider_manager import SpiderManager
+# Via web interface (preferred):
+# Access frontend and use hotkey controls
 
-manager = SpiderManager()
+# Or run directly:
+python run_spiders.py
 
-# Start all spiders
-manager.start_all()
-
-# Start specific platform
-manager.start_spider('weibo')
-manager.start_spider('bilibili')
-
-# Stop all spiders
-manager.stop_all()
+# Test individual spiders:
+cd hotsearchcrawler
+scrapy crawl weibo_spider
+scrapy crawl bilibili_spider
 ```
 
-**Command Line:**
+### Test Push Notifications
 
 ```bash
-# Run specific spider
-cd hotsearchcrawler
-scrapy crawl weibo
-
-# Run all spiders
-python run_spiders.py
+python test_push_task.py
 ```
 
-**Via Web Interface:**
+## Core API Usage
 
-Use keyboard shortcuts in the web UI to start/stop crawlers.
-
-### LLM Analysis Examples
-
-**Sentiment Analysis:**
+### Data Collection
 
 ```python
-from hotsearch_analysis_agent.llm_analyzer import LLMAnalyzer
+from hotsearchcrawler.spiders import WeiboSpider, BilibiliSpider
+from scrapy.crawler import CrawlerProcess
 
-analyzer = LLMAnalyzer(
-    api_key=os.getenv('OPENAI_API_KEY'),
-    api_base=os.getenv('OPENAI_API_BASE'),
-    model=os.getenv('MODEL_NAME')
+# Run crawler programmatically
+process = CrawlerProcess()
+process.crawl(WeiboSpider)
+process.crawl(BilibiliSpider)
+process.start()
+```
+
+### LLM Analysis
+
+```python
+from hotsearch_analysis_agent.analyzer import TopicAnalyzer
+import os
+
+# Initialize analyzer
+analyzer = TopicAnalyzer(
+    api_key=os.getenv('LLM_API_KEY'),
+    api_base=os.getenv('LLM_API_BASE'),
+    model=os.getenv('LLM_MODEL')
 )
 
-# Analyze sentiment
-text = "今天的AI技术发展真是太令人兴奋了!"
-sentiment = analyzer.analyze_sentiment(text)
-print(sentiment)  # Output: {"sentiment": "positive", "score": 0.92}
-```
-
-**Topic Clustering:**
-
-```python
-# Cluster related trending topics
+# Perform sentiment analysis
 topics = [
-    "GPT-6提前曝光 200万超长上下文",
-    "DeepSeek V4采用华为算力",
-    "中国大模型周调用量超越美国"
+    {"title": "某科技公司发布新产品", "content": "..."},
+    {"title": "政策变化引发讨论", "content": "..."}
 ]
 
+sentiment_results = analyzer.analyze_sentiment(topics)
+# Returns: [{"topic": "...", "sentiment": "positive/negative/neutral", "score": 0.85}, ...]
+
+# Perform topic clustering
 clusters = analyzer.cluster_topics(topics)
-print(clusters)
-# Output: {
-#   "cluster_1": {
-#     "theme": "大模型技术进展",
-#     "topics": [...],
-#     "summary": "..."
-#   }
-# }
+# Returns: {"cluster_1": [...], "cluster_2": [...], ...}
+
+# Generate analysis report
+report = analyzer.generate_report(topics, clusters, sentiment_results)
+print(report)
 ```
 
-**Conversational Query:**
+### Database Operations
 
 ```python
-from hotsearch_analysis_agent.agent import HotSearchAgent
+import pymysql
+import os
 
-agent = HotSearchAgent()
+# Connect to database
+connection = pymysql.connect(
+    host=os.getenv('MYSQL_HOST'),
+    port=int(os.getenv('MYSQL_PORT')),
+    user=os.getenv('MYSQL_USER'),
+    password=os.getenv('MYSQL_PASSWORD'),
+    database=os.getenv('MYSQL_DATABASE'),
+    charset='utf8mb4'
+)
 
-# Natural language query
-response = agent.query("最近关于人工智能的热点有哪些?")
-print(response)
+# Query hot search data
+with connection.cursor() as cursor:
+    sql = """
+    SELECT platform, title, rank, heat_score, url, created_at 
+    FROM hot_search 
+    WHERE platform = %s AND created_at > NOW() - INTERVAL 1 HOUR
+    ORDER BY rank ASC
+    """
+    cursor.execute(sql, ('weibo',))
+    results = cursor.fetchall()
+    
+    for row in results:
+        print(f"Rank {row[2]}: {row[1]} (heat: {row[3]})")
 
-# With context awareness
-response = agent.query("分析一下这些话题的情感倾向")
-print(response)
+connection.close()
 ```
 
 ### Push Notification Setup
 
-**Test Push Configuration:**
-
 ```python
-# test_push_task.py
-from hotsearch_analysis_agent.push_manager import PushManager
+from hotsearch_analysis_agent.pusher import NotificationPusher
+import os
 
-push_mgr = PushManager()
+# Initialize pusher
+pusher = NotificationPusher()
 
-# Test WeChat Work Robot
-push_mgr.test_wechat_robot(
-    webhook_url=os.getenv('WECHAT_WEBHOOK_URL'),
-    message="测试推送消息"
-)
-
-# Test Telegram
-push_mgr.test_telegram(
-    bot_token=os.getenv('TELEGRAM_BOT_TOKEN'),
-    chat_id=os.getenv('TELEGRAM_CHAT_ID'),
-    message="Test push notification"
-)
-
-# Test Email
-push_mgr.test_email(
+# Email push
+pusher.send_email(
+    to='recipient@example.com',
+    subject='热点分析报告 - 人工智能',
+    content=report_html,
     smtp_config={
         'host': os.getenv('SMTP_HOST'),
         'port': int(os.getenv('SMTP_PORT')),
         'user': os.getenv('SMTP_USER'),
         'password': os.getenv('SMTP_PASSWORD')
-    },
-    recipients=os.getenv('EMAIL_RECIPIENTS').split(','),
-    subject="测试邮件",
-    content="测试推送内容"
-)
-```
-
-**Create Scheduled Push Task:**
-
-```python
-from hotsearch_analysis_agent.scheduler import TaskScheduler
-
-scheduler = TaskScheduler()
-
-# Schedule daily AI trend report
-scheduler.add_task(
-    name="ai_trends_daily",
-    query="人工智能与前沿科技的热点",
-    schedule="0 12 * * *",  # Daily at 12:00
-    channels=['wechat', 'email', 'telegram'],
-    analysis_type='comprehensive'  # or 'sentiment', 'clustering'
+    }
 )
 
-scheduler.start()
+# Telegram push
+pusher.send_telegram(
+    message=report_text,
+    bot_token=os.getenv('TELEGRAM_BOT_TOKEN'),
+    chat_id=os.getenv('TELEGRAM_CHAT_ID')
+)
+
+# WeChat Work push
+pusher.send_wechat_work(
+    content=report_text,
+    webhook_url=os.getenv('WECHAT_WEBHOOK_URL')
+)
 ```
 
 ## Common Patterns
 
-### Custom Spider for New Platform
+### Scheduled Analysis Pipeline
 
 ```python
-# hotsearchcrawler/spiders/custom_platform.py
+import schedule
+import time
+from hotsearch_analysis_agent.analyzer import TopicAnalyzer
+from hotsearch_analysis_agent.pusher import NotificationPusher
+import pymysql
+import os
+
+def run_analysis_pipeline():
+    """Run complete analysis and push pipeline"""
+    
+    # 1. Fetch latest hot topics from database
+    connection = pymysql.connect(
+        host=os.getenv('MYSQL_HOST'),
+        user=os.getenv('MYSQL_USER'),
+        password=os.getenv('MYSQL_PASSWORD'),
+        database=os.getenv('MYSQL_DATABASE')
+    )
+    
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT platform, title, content, url 
+            FROM hot_search 
+            WHERE created_at > NOW() - INTERVAL 2 HOUR
+            AND keywords LIKE '%人工智能%'
+        """)
+        topics = cursor.fetchall()
+    
+    connection.close()
+    
+    # 2. Perform LLM analysis
+    analyzer = TopicAnalyzer(
+        api_key=os.getenv('LLM_API_KEY'),
+        api_base=os.getenv('LLM_API_BASE')
+    )
+    
+    sentiment = analyzer.analyze_sentiment(topics)
+    clusters = analyzer.cluster_topics(topics)
+    report = analyzer.generate_report(topics, clusters, sentiment)
+    
+    # 3. Push notifications
+    pusher = NotificationPusher()
+    pusher.send_email(
+        to='team@company.com',
+        subject=f'舆情分析报告 - {time.strftime("%Y-%m-%d")}',
+        content=report
+    )
+    
+    print(f"Pipeline completed at {time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+# Schedule every 4 hours
+schedule.every(4).hours.do(run_analysis_pipeline)
+
+while True:
+    schedule.run_pending()
+    time.sleep(60)
+```
+
+### Custom Spider Integration
+
+```python
 import scrapy
-from hotsearchcrawler.items import TrendingItem
+from hotsearchcrawler.items import HotSearchItem
 
 class CustomPlatformSpider(scrapy.Spider):
     name = 'custom_platform'
@@ -384,186 +347,150 @@ class CustomPlatformSpider(scrapy.Spider):
     
     def parse(self, response):
         for item in response.css('.trending-item'):
-            trending = TrendingItem()
-            trending['platform'] = 'custom_platform'
-            trending['title'] = item.css('.title::text').get()
-            trending['url'] = item.css('a::attr(href)').get()
-            trending['rank'] = item.css('.rank::text').get()
-            trending['heat_score'] = item.css('.heat::text').get()
-            yield trending
+            yield HotSearchItem(
+                platform='custom_platform',
+                title=item.css('.title::text').get(),
+                rank=item.css('.rank::text').get(),
+                heat_score=item.css('.heat::text').get(),
+                url=item.css('a::attr(href)').get(),
+                keywords=item.css('.tags::text').getall()
+            )
 ```
 
-### Custom Analysis Pipeline
+### Natural Language Query Interface
 
 ```python
-from hotsearch_analysis_agent.base_analyzer import BaseAnalyzer
+from hotsearch_analysis_agent.query_agent import QueryAgent
 
-class CustomAnalyzer(BaseAnalyzer):
-    def analyze(self, data):
-        # Preprocess data
-        cleaned_data = self.preprocess(data)
-        
-        # Call LLM
-        prompt = f"分析以下舆情数据:\n{cleaned_data}"
-        response = self.llm_client.chat(prompt)
-        
-        # Post-process results
-        result = self.parse_response(response)
-        
-        # Store to database
-        self.save_results(result)
-        
-        return result
-    
-    def preprocess(self, data):
-        # Custom preprocessing logic
-        return data
-    
-    def parse_response(self, response):
-        # Parse LLM output
-        return {
-            'summary': response.get('summary'),
-            'sentiment': response.get('sentiment'),
-            'key_topics': response.get('topics')
-        }
-```
+# Initialize query agent
+agent = QueryAgent(
+    db_config={
+        'host': os.getenv('MYSQL_HOST'),
+        'user': os.getenv('MYSQL_USER'),
+        'password': os.getenv('MYSQL_PASSWORD'),
+        'database': os.getenv('MYSQL_DATABASE')
+    },
+    llm_config={
+        'api_key': os.getenv('LLM_API_KEY'),
+        'api_base': os.getenv('LLM_API_BASE')
+    }
+)
 
-### Real-time Monitoring Dashboard
+# Natural language queries
+response = agent.query("最近关于人工智能的热点有哪些?")
+response = agent.query("帮我分析微博上科技类话题的情感倾向")
+response = agent.query("对比今日头条和知乎的热搜榜单差异")
 
-```python
-# Real-time trending topic monitor
-from hotsearch_analysis_agent.monitor import TrendingMonitor
-
-monitor = TrendingMonitor()
-
-# Monitor specific keywords
-monitor.add_keywords(['人工智能', 'AI', '大模型'])
-
-# Set alert threshold
-monitor.set_threshold(heat_score=10000)
-
-# Callback on alert
-def on_alert(topic):
-    print(f"热点预警: {topic['title']} (热度: {topic['heat_score']})")
-    # Trigger immediate analysis and push
-    agent.analyze_and_push(topic)
-
-monitor.on_alert(on_alert)
-monitor.start()
+print(response)
 ```
 
 ## Troubleshooting
 
-**Browser Driver Issues:**
+### ChromeDriver Version Mismatch
 
-```python
-# Verify driver path
-import shutil
-driver_path = shutil.which('chromedriver')
-print(f"Driver location: {driver_path}")
+```bash
+# Error: SessionNotCreatedException: Message: session not created: 
+# This version of ChromeDriver only supports Chrome version X
 
-# If not found, set explicitly
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-
-service = Service('/path/to/chromedriver')
-driver = webdriver.Chrome(service=service)
+# Solution: Download matching ChromeDriver version
+# Check Chrome version: chrome://version/
+# Download from: https://chromedriver.chromium.org/downloads
 ```
 
-**MySQL Connection Errors:**
+### Database Connection Issues
 
 ```python
-# Test connection
-import pymysql
+# Error: pymysql.err.OperationalError: (2003, "Can't connect to MySQL server")
 
+# Check MySQL service is running:
+# Linux: sudo systemctl status mysql
+# Windows: Check Services panel
+
+# Verify credentials in .env file
+# Test connection:
+import pymysql
 try:
     conn = pymysql.connect(
         host=os.getenv('MYSQL_HOST'),
-        port=int(os.getenv('MYSQL_PORT')),
         user=os.getenv('MYSQL_USER'),
-        password=os.getenv('MYSQL_PASSWORD'),
-        database=os.getenv('MYSQL_DATABASE')
+        password=os.getenv('MYSQL_PASSWORD')
     )
-    print("Database connection successful")
+    print("Connection successful")
     conn.close()
 except Exception as e:
     print(f"Connection failed: {e}")
 ```
 
-**LLM API Timeout:**
+### LLM API Timeout
 
 ```python
-# Increase timeout and add retry logic
+# Error: Request timeout or rate limit exceeded
+
+# Solution: Configure retry logic
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
-def call_llm_with_retry(prompt):
-    response = analyzer.llm_client.chat(
-        prompt,
-        timeout=60  # Increase timeout
-    )
-    return response
+def analyze_with_retry(analyzer, topics):
+    return analyzer.analyze_sentiment(topics)
 ```
 
-**Cookie Expiration:**
+### Crawler Blocked by Platform
 
 ```python
-# Refresh cookies for authenticated platforms
-from hotsearchcrawler.cookie_manager import CookieManager
+# Error: 403 Forbidden or 429 Too Many Requests
 
-cookie_mgr = CookieManager()
+# Solution 1: Add delays in settings.py
+DOWNLOAD_DELAY = 2  # seconds between requests
+RANDOMIZE_DOWNLOAD_DELAY = True
 
-# Update cookies
-cookie_mgr.update_cookie('weibo', 'new_cookie_value')
+# Solution 2: Rotate user agents
+USER_AGENT_LIST = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64)...',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...'
+]
 
-# Auto-refresh on 401/403 errors
-def handle_auth_error(response):
-    if response.status in [401, 403]:
-        cookie_mgr.refresh_cookie(response.meta['platform'])
-        return response.request.replace(cookies=cookie_mgr.get_cookie())
+# Solution 3: Use proxy middleware
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+}
 ```
 
-**Encoding Issues with Chinese Text:**
-
-```python
-# Ensure proper UTF-8 handling
-import sys
-import io
-
-# Set default encoding
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-
-# Database connection with charset
-conn = pymysql.connect(
-    charset='utf8mb4',
-    use_unicode=True
-)
-
-# Scrapy settings
-FEED_EXPORT_ENCODING = 'utf-8'
-```
-
-**Memory Issues with Large Datasets:**
+### Memory Issues with Large Datasets
 
 ```python
 # Process data in batches
-def process_large_dataset(query_date):
-    batch_size = 1000
-    offset = 0
-    
-    while True:
-        batch = db.query(
-            f"SELECT * FROM trending_topics WHERE date = %s LIMIT %s OFFSET %s",
-            (query_date, batch_size, offset)
-        )
-        
-        if not batch:
-            break
-            
-        # Process batch
-        analyzer.analyze_batch(batch)
-        
-        offset += batch_size
+def process_large_dataset(topics, batch_size=100):
+    results = []
+    for i in range(0, len(topics), batch_size):
+        batch = topics[i:i+batch_size]
+        batch_results = analyzer.analyze_sentiment(batch)
+        results.extend(batch_results)
+        # Clear cache if needed
+        import gc
+        gc.collect()
+    return results
 ```
 
-This skill provides comprehensive guidance for deploying and using the LLM-based public opinion analytics system, with focus on practical implementation for AI coding agents assisting developers.
+## Project Structure Reference
+
+```
+project_root/
+├── app.py                          # Main application entry point
+├── init.py                         # Database initialization reference
+├── run_spiders.py                  # Crawler launcher (via frontend)
+├── runspider-test.py              # Crawler testing script
+├── test_push_task.py              # Push notification testing
+├── requirements.txt                # Python dependencies
+├── .env                           # Environment configuration
+├── hotsearch_analysis_agent/      # Analysis system
+│   ├── analyzer.py                # LLM analysis engine
+│   ├── query_agent.py             # Natural language query
+│   └── pusher.py                  # Push notification handler
+└── hotsearchcrawler/              # Crawler cluster
+    ├── settings.py                # Scrapy settings
+    ├── spiders/                   # Platform-specific spiders
+    │   ├── weibo_spider.py
+    │   ├── bilibili_spider.py
+    │   └── ...
+    └── items.py                   # Data models
+```
