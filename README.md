@@ -32,6 +32,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [mm2-roblox-analytics-tracker](skills/mm2-roblox-analytics-tracker/) | [install](https://skills.sh/aradotso/data-skills/mm2-roblox-analytics-tracker) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-17 |
 | [llm-intelligent-public-opinion-analytics](skills/llm-intelligent-public-opinion-analytics/) | [install](https://skills.sh/aradotso/data-skills/llm-intelligent-public-opinion-analytics) | [hmmnxkl/LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant](https://github.com/hmmnxkl/LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant) | 2026-05-22 |
 | [options-analytics-agent-langgraph](skills/options-analytics-agent-langgraph/) | [install](https://skills.sh/aradotso/data-skills/options-analytics-agent-langgraph) | [nuglifeleoji/Options-Analytics-Agent](https://github.com/nuglifeleoji/Options-Analytics-Agent) | 2026-05-22 |
+| [analytics-tracking-automation](skills/analytics-tracking-automation/) | [install](https://skills.sh/aradotso/data-skills/analytics-tracking-automation) | [jtrackingai/analytics-tracking-automation](https://github.com/jtrackingai/analytics-tracking-automation) | 2026-05-22 |
 <!-- SKILL_INDEX -->
 
 ---
