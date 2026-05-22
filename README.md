@@ -33,6 +33,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [llm-intelligent-public-opinion-analytics](skills/llm-intelligent-public-opinion-analytics/) | [install](https://skills.sh/aradotso/data-skills/llm-intelligent-public-opinion-analytics) | [hmmnxkl/LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant](https://github.com/hmmnxkl/LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant) | 2026-05-22 |
 | [options-analytics-agent-langgraph](skills/options-analytics-agent-langgraph/) | [install](https://skills.sh/aradotso/data-skills/options-analytics-agent-langgraph) | [nuglifeleoji/Options-Analytics-Agent](https://github.com/nuglifeleoji/Options-Analytics-Agent) | 2026-05-22 |
 | [analytics-tracking-automation](skills/analytics-tracking-automation/) | [install](https://skills.sh/aradotso/data-skills/analytics-tracking-automation) | [jtrackingai/analytics-tracking-automation](https://github.com/jtrackingai/analytics-tracking-automation) | 2026-05-22 |
+| [data-engineering-study-material](skills/data-engineering-study-material/) | [install](https://skills.sh/aradotso/data-skills/data-engineering-study-material) | [Ahmeduddin3403/data-engineering-study-material](https://github.com/Ahmeduddin3403/data-engineering-study-material) | 2026-05-22 |
 <!-- SKILL_INDEX -->
 
 ---
