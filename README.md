@@ -30,6 +30,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [murder-mystery-2-analytics-toolkit](skills/murder-mystery-2-analytics-toolkit/) | [install](https://skills.sh/aradotso/data-skills/murder-mystery-2-analytics-toolkit) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-16 |
 | [mm2-analytics-roblox-toolkit](skills/mm2-analytics-roblox-toolkit/) | [install](https://skills.sh/aradotso/data-skills/mm2-analytics-roblox-toolkit) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-17 |
 | [mm2-roblox-analytics-tracker](skills/mm2-roblox-analytics-tracker/) | [install](https://skills.sh/aradotso/data-skills/mm2-roblox-analytics-tracker) | [8015238355/mm2-analytics-dashboard-2026](https://github.com/8015238355/mm2-analytics-dashboard-2026) | 2026-05-17 |
+| [llm-intelligent-public-opinion-analytics](skills/llm-intelligent-public-opinion-analytics/) | [install](https://skills.sh/aradotso/data-skills/llm-intelligent-public-opinion-analytics) | [hmmnxkl/LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant](https://github.com/hmmnxkl/LLM-Based-Intelligent-Public-Opinion-Analytics-Assistant) | 2026-05-22 |
 <!-- SKILL_INDEX -->
 
 ---
