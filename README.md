@@ -36,6 +36,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [data-engineering-study-material](skills/data-engineering-study-material/) | [install](https://skills.sh/aradotso/data-skills/data-engineering-study-material) | [Ahmeduddin3403/data-engineering-study-material](https://github.com/Ahmeduddin3403/data-engineering-study-material) | 2026-05-22 |
 | [altimate-data-engineering-skills](skills/altimate-data-engineering-skills/) | [install](https://skills.sh/aradotso/data-skills/altimate-data-engineering-skills) | [AltimateAI/data-engineering-skills](https://github.com/AltimateAI/data-engineering-skills) | 2026-05-22 |
 | [amee-joshi-data-engineering-portfolio](skills/amee-joshi-data-engineering-portfolio/) | [install](https://skills.sh/aradotso/data-skills/amee-joshi-data-engineering-portfolio) | [AmeeJoshi-MCA/data-engineering-portfolio](https://github.com/AmeeJoshi-MCA/data-engineering-portfolio) | 2026-05-22 |
+| [employee-performance-analytics-hr](skills/employee-performance-analytics-hr/) | [install](https://skills.sh/aradotso/data-skills/employee-performance-analytics-hr) | [AmirhosseinHonardoust/Employee-Performance-Analytics](https://github.com/AmirhosseinHonardoust/Employee-Performance-Analytics) | 2026-05-22 |
 <!-- SKILL_INDEX -->
 
 ---
