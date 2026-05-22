@@ -34,6 +34,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [options-analytics-agent-langgraph](skills/options-analytics-agent-langgraph/) | [install](https://skills.sh/aradotso/data-skills/options-analytics-agent-langgraph) | [nuglifeleoji/Options-Analytics-Agent](https://github.com/nuglifeleoji/Options-Analytics-Agent) | 2026-05-22 |
 | [analytics-tracking-automation](skills/analytics-tracking-automation/) | [install](https://skills.sh/aradotso/data-skills/analytics-tracking-automation) | [jtrackingai/analytics-tracking-automation](https://github.com/jtrackingai/analytics-tracking-automation) | 2026-05-22 |
 | [data-engineering-study-material](skills/data-engineering-study-material/) | [install](https://skills.sh/aradotso/data-skills/data-engineering-study-material) | [Ahmeduddin3403/data-engineering-study-material](https://github.com/Ahmeduddin3403/data-engineering-study-material) | 2026-05-22 |
+| [altimate-data-engineering-skills](skills/altimate-data-engineering-skills/) | [install](https://skills.sh/aradotso/data-skills/altimate-data-engineering-skills) | [AltimateAI/data-engineering-skills](https://github.com/AltimateAI/data-engineering-skills) | 2026-05-22 |
 <!-- SKILL_INDEX -->
 
 ---
