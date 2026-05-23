@@ -37,6 +37,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [altimate-data-engineering-skills](skills/altimate-data-engineering-skills/) | [install](https://skills.sh/aradotso/data-skills/altimate-data-engineering-skills) | [AltimateAI/data-engineering-skills](https://github.com/AltimateAI/data-engineering-skills) | 2026-05-22 |
 | [amee-joshi-data-engineering-portfolio](skills/amee-joshi-data-engineering-portfolio/) | [install](https://skills.sh/aradotso/data-skills/amee-joshi-data-engineering-portfolio) | [AmeeJoshi-MCA/data-engineering-portfolio](https://github.com/AmeeJoshi-MCA/data-engineering-portfolio) | 2026-05-22 |
 | [employee-performance-analytics-hr](skills/employee-performance-analytics-hr/) | [install](https://skills.sh/aradotso/data-skills/employee-performance-analytics-hr) | [AmirhosseinHonardoust/Employee-Performance-Analytics](https://github.com/AmirhosseinHonardoust/Employee-Performance-Analytics) | 2026-05-22 |
+| [realtime-cinema-data-engineering-pipeline](skills/realtime-cinema-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/realtime-cinema-data-engineering-pipeline) | [BaidaneAyoub/realtime-cinema-data-engineering](https://github.com/BaidaneAyoub/realtime-cinema-data-engineering) | 2026-05-23 |
 <!-- SKILL_INDEX -->
 
 ---
