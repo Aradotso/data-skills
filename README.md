@@ -48,6 +48,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-artifacts-data-engineering-analytics](skills/harvard-artifacts-data-engineering-analytics/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-data-engineering-analytics) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-23 |
 | [harvard-art-museum-data-pipeline](skills/harvard-art-museum-data-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museum-data-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-23 |
 | [harvard-artifacts-data-engineering-app](skills/harvard-artifacts-data-engineering-app/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-data-engineering-app) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-23 |
+| [harvard-artifacts-collection-analytics-pipeline](skills/harvard-artifacts-collection-analytics-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-collection-analytics-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-24 |
 <!-- SKILL_INDEX -->
 
 ---
