@@ -57,6 +57,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [terraform-data-engineering-infrastructure](skills/terraform-data-engineering-infrastructure/) | [install](https://skills.sh/aradotso/data-skills/terraform-data-engineering-infrastructure) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
 | [iac-data-engineering-terraform](skills/iac-data-engineering-terraform/) | [install](https://skills.sh/aradotso/data-skills/iac-data-engineering-terraform) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
 | [terraform-iac-data-engineering](skills/terraform-iac-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/terraform-iac-data-engineering) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
+| [terraform-data-engineering-iac](skills/terraform-data-engineering-iac/) | [install](https://skills.sh/aradotso/data-skills/terraform-data-engineering-iac) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
 <!-- SKILL_INDEX -->
 
 ---
