@@ -1,147 +1,269 @@
 ---
 name: terraform-iac-data-engineering
-description: Infrastructure-as-Code fundamentals for data engineering using Terraform to provision AWS resources (S3, EC2, IAM)
+description: Infrastructure-as-Code fundamentals for data engineering using Terraform to provision AWS resources like S3, EC2, and IAM
 triggers:
-  - "set up infrastructure as code for data engineering"
-  - "create terraform config for data pipelines"
-  - "provision aws resources with terraform"
-  - "manage data engineering infrastructure"
-  - "deploy s3 and ec2 with terraform"
-  - "infrastructure as code best practices"
-  - "terraform for data platforms"
-  - "automate aws data infrastructure"
+  - "set up terraform for data engineering"
+  - "create AWS infrastructure with terraform"
+  - "provision S3 and EC2 with IaC"
+  - "terraform data engineering setup"
+  - "infrastructure as code for data pipelines"
+  - "deploy AWS resources using terraform"
+  - "terraform state management for data infra"
+  - "automate AWS infrastructure provisioning"
 ---
 
 # Terraform IaC for Data Engineering
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-This project teaches Infrastructure-as-Code (IaC) fundamentals for data engineers using Terraform to provision and manage AWS resources. It demonstrates how to create S3 buckets, EC2 instances, and IAM roles/policies programmatically, following best practices for reproducible data infrastructure.
+This project demonstrates Infrastructure-as-Code (IaC) fundamentals for data engineering using Terraform. It provisions AWS resources commonly needed in data engineering workflows, including S3 buckets for data storage and EC2 instances for compute workloads. The project emphasizes declarative infrastructure management, state tracking, and reproducible deployments.
 
 ## What This Project Does
 
-- Provisions AWS infrastructure (S3, EC2, IAM) using declarative Terraform configurations
-- Demonstrates state management for tracking infrastructure changes
-- Shows how to validate, format, and apply infrastructure changes
-- Provides patterns for destroying and recreating environments consistently
-- Teaches data engineers how to manage infrastructure alongside data pipelines
+- Provisions AWS S3 buckets for data lake/warehouse storage
+- Creates EC2 instances for data processing workloads
+- Manages IAM permissions for resource access
+- Maintains infrastructure state with Terraform state files
+- Enables version-controlled, repeatable infrastructure deployments
 
-## Installation & Prerequisites
+## Prerequisites
 
-### Install Required Tools
+1. **AWS Account** with root or administrative access
+2. **Terraform CLI** installed ([installation guide](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli))
+3. **AWS CLI** installed ([installation guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html))
+4. **AWS CLI configured** with credentials
 
-```bash
-# Install Terraform (macOS)
-brew tap hashicorp/tap
-brew install hashicorp/tap/terraform
-
-# Install AWS CLI (macOS)
-brew install awscli
-
-# Verify installations
-terraform --version
-aws --version
-```
-
-### AWS Account Setup
-
-1. Create an AWS account with root access
-2. Configure AWS CLI with credentials:
+### AWS CLI Configuration
 
 ```bash
+# Configure AWS CLI with your credentials
 aws configure
-# Enter:
-# - AWS Access Key ID: [from IAM user]
-# - AWS Secret Access Key: [from IAM user]
-# - Default region: us-east-1 (or your preferred region)
-# - Default output format: json
+# Enter AWS Access Key ID, Secret Access Key, region, and output format
 ```
 
-### IAM Permissions
+### IAM Permissions Setup
 
-Create an IAM user with the following permissions (development only):
-- Full S3 access
-- Full EC2 access
-- Full IAM access
+The AWS user or role running Terraform needs:
+- Full S3 access (`s3:*`)
+- Full EC2 access (`ec2:*`)
+- Full IAM access (`iam:*`)
 
-**Note:** For production, use least-privilege policies and role-based access.
+**Note**: Full access permissions are for development/learning. Production environments should use least-privilege policies.
 
-## Project Structure
+## Installation & Setup
 
-```
-terraform/
-├── main.tf           # Main infrastructure configuration
-├── variables.tf      # Variable definitions
-├── outputs.tf        # Output values
-└── terraform.tfstate # State file (auto-generated)
-```
-
-## Key Terraform Commands
-
-### Initialize Terraform
-
+1. **Clone the repository**:
 ```bash
-# Initialize the working directory
+git clone https://github.com/josephmachado/iac-for-data-engineering-terraform.git
+cd iac-for-data-engineering-terraform
+```
+
+2. **Configure your infrastructure**:
+Edit `terraform/main.tf` to customize bucket names and other resources. Bucket names must be globally unique in AWS.
+
+```hcl
+# Example main.tf configuration
+resource "aws_s3_bucket" "data_bucket" {
+  bucket = "your-unique-bucket-name-${random_id.bucket_suffix.hex}"
+  
+  tags = {
+    Name        = "Data Engineering Bucket"
+    Environment = "dev"
+  }
+}
+```
+
+3. **Initialize Terraform**:
+```bash
 terraform -chdir=terraform init
-
-# This downloads provider plugins and sets up the backend
 ```
 
-### Validate & Format
+This downloads required provider plugins (AWS) and prepares the working directory.
 
+## Core Terraform Commands
+
+### Initialize Project
 ```bash
-# Validate configuration syntax
+terraform -chdir=terraform init
+```
+Downloads providers and initializes backend. Run this first or after adding new providers.
+
+### Validate Configuration
+```bash
 terraform -chdir=terraform validate
-
-# Format configuration files
-terraform -chdir=terraform fmt
-
-# Check formatting without making changes
-terraform -chdir=terraform fmt -check
 ```
+Checks syntax and configuration validity without accessing remote services.
 
-### Plan & Apply
-
+### Format Code
 ```bash
-# Preview changes
-terraform -chdir=terraform plan
-
-# Apply changes (create/update infrastructure)
-terraform -chdir=terraform apply
-
-# Auto-approve without confirmation (use cautiously)
-terraform -chdir=terraform apply -auto-approve
+terraform -chdir=terraform fmt
 ```
+Automatically formats `.tf` files to canonical style.
 
-### Inspect State
+### Plan Changes
+```bash
+terraform -chdir=terraform plan
+```
+Shows what changes Terraform will make without applying them. Always review before applying.
 
+### Apply Changes
+```bash
+terraform -chdir=terraform apply
+```
+Creates or updates infrastructure. Prompts for confirmation unless `-auto-approve` is used.
+
+### Destroy Infrastructure
+```bash
+terraform -chdir=terraform destroy
+```
+Removes all resources managed by Terraform. Use carefully in production.
+
+### View State
 ```bash
 # List all resources in state
 terraform -chdir=terraform state list
 
-# Show detailed resource information
+# Show details of specific resource
 terraform -chdir=terraform state show aws_s3_bucket.data_bucket
 
-# View state file
+# View state as JSON
 cat terraform/terraform.tfstate | jq -r '.resources[] | [.type, .name] | join(",")'
 ```
 
-### Destroy Infrastructure
+## Configuration Patterns
 
-```bash
-# Destroy all managed infrastructure
-terraform -chdir=terraform destroy
-
-# Destroy specific resource
-terraform -chdir=terraform destroy -target=aws_instance.data_processor
-```
-
-## Configuration Examples
-
-### Basic S3 Bucket
+### Basic S3 Bucket for Data Storage
 
 ```hcl
-# terraform/main.tf
+resource "aws_s3_bucket" "data_lake" {
+  bucket = "my-data-lake-${var.environment}"
+
+  tags = {
+    Name        = "Data Lake"
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+  }
+}
+
+# Enable versioning for data protection
+resource "aws_s3_bucket_versioning" "data_lake_versioning" {
+  bucket = aws_s3_bucket.data_lake.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# Enable encryption
+resource "aws_s3_bucket_server_side_encryption_configuration" "data_lake_encryption" {
+  bucket = aws_s3_bucket.data_lake.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+```
+
+### EC2 Instance for Data Processing
+
+```hcl
+resource "aws_instance" "data_processor" {
+  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2
+  instance_type = "t3.medium"
+
+  tags = {
+    Name        = "Data Processing Instance"
+    Environment = var.environment
+  }
+
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y python3 python3-pip
+              pip3 install pandas boto3
+              EOF
+}
+
+# Security group for EC2
+resource "aws_security_group" "data_processor_sg" {
+  name        = "data-processor-sg"
+  description = "Security group for data processing instance"
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["YOUR_IP_ADDRESS/32"]  # Restrict to your IP
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+### Using Variables
+
+```hcl
+# variables.tf
+variable "environment" {
+  description = "Environment name (dev, staging, prod)"
+  type        = string
+  default     = "dev"
+}
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "bucket_prefix" {
+  description = "Prefix for S3 bucket names"
+  type        = string
+}
+
+# terraform.tfvars (create this file, don't commit secrets)
+environment   = "dev"
+region        = "us-east-1"
+bucket_prefix = "mycompany-data"
+```
+
+### Using Outputs
+
+```hcl
+# outputs.tf
+output "bucket_name" {
+  description = "Name of the created S3 bucket"
+  value       = aws_s3_bucket.data_lake.id
+}
+
+output "bucket_arn" {
+  description = "ARN of the created S3 bucket"
+  value       = aws_s3_bucket.data_lake.arn
+}
+
+output "ec2_instance_id" {
+  description = "ID of the EC2 instance"
+  value       = aws_instance.data_processor.id
+}
+
+output "ec2_public_ip" {
+  description = "Public IP of EC2 instance"
+  value       = aws_instance.data_processor.public_ip
+}
+```
+
+## Real-World Example: Complete Data Infrastructure
+
+```hcl
+# main.tf
 terraform {
   required_providers {
     aws = {
@@ -152,66 +274,39 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
-resource "aws_s3_bucket" "data_lake" {
-  bucket = "my-unique-data-lake-bucket-${random_id.suffix.hex}"
-  
-  tags = {
-    Name        = "Data Lake"
-    Environment = "Dev"
-    ManagedBy   = "Terraform"
-  }
-}
-
-resource "random_id" "suffix" {
+# Random suffix for unique bucket names
+resource "random_id" "bucket_suffix" {
   byte_length = 4
 }
 
-resource "aws_s3_bucket_versioning" "data_lake_versioning" {
-  bucket = aws_s3_bucket.data_lake.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-```
-
-### EC2 Instance for Data Processing
-
-```hcl
-# terraform/main.tf
-resource "aws_instance" "data_processor" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2
-  instance_type = "t3.medium"
+# Raw data bucket
+resource "aws_s3_bucket" "raw_data" {
+  bucket = "${var.bucket_prefix}-raw-${random_id.bucket_suffix.hex}"
 
   tags = {
-    Name        = "DataProcessor"
-    Environment = "Dev"
-    ManagedBy   = "Terraform"
+    Name        = "Raw Data Bucket"
+    Environment = var.environment
+    Layer       = "raw"
   }
-
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y python3 python3-pip
-              pip3 install pandas boto3 sqlalchemy
-              EOF
 }
 
-output "instance_public_ip" {
-  value       = aws_instance.data_processor.public_ip
-  description = "Public IP of the data processor instance"
+# Processed data bucket
+resource "aws_s3_bucket" "processed_data" {
+  bucket = "${var.bucket_prefix}-processed-${random_id.bucket_suffix.hex}"
+
+  tags = {
+    Name        = "Processed Data Bucket"
+    Environment = var.environment
+    Layer       = "processed"
+  }
 }
-```
 
-### IAM Role for EC2 to Access S3
-
-```hcl
-# terraform/main.tf
-resource "aws_iam_role" "ec2_s3_access" {
-  name = "ec2-s3-access-role"
+# IAM role for EC2 to access S3
+resource "aws_iam_role" "data_processor_role" {
+  name = "data-processor-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -227,9 +322,10 @@ resource "aws_iam_role" "ec2_s3_access" {
   })
 }
 
-resource "aws_iam_role_policy" "s3_access" {
+# IAM policy for S3 access
+resource "aws_iam_role_policy" "s3_access_policy" {
   name = "s3-access-policy"
-  role = aws_iam_role.ec2_s3_access.id
+  role = aws_iam_role.data_processor_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -242,363 +338,194 @@ resource "aws_iam_role_policy" "s3_access" {
           "s3:ListBucket"
         ]
         Resource = [
-          aws_s3_bucket.data_lake.arn,
-          "${aws_s3_bucket.data_lake.arn}/*"
+          aws_s3_bucket.raw_data.arn,
+          "${aws_s3_bucket.raw_data.arn}/*",
+          aws_s3_bucket.processed_data.arn,
+          "${aws_s3_bucket.processed_data.arn}/*"
         ]
       }
     ]
   })
 }
 
-resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "ec2-s3-profile"
-  role = aws_iam_role.ec2_s3_access.name
+# Instance profile for EC2
+resource "aws_iam_instance_profile" "data_processor_profile" {
+  name = "data-processor-profile"
+  role = aws_iam_role.data_processor_role.name
 }
 
-# Attach profile to EC2 instance
-resource "aws_instance" "data_processor_with_role" {
-  ami                  = "ami-0c55b159cbfafe1f0"
-  instance_type        = "t3.medium"
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+# EC2 instance with IAM role
+resource "aws_instance" "data_processor" {
+  ami                    = "ami-0c55b159cbfafe1f0"
+  instance_type          = "t3.medium"
+  iam_instance_profile   = aws_iam_instance_profile.data_processor_profile.name
 
   tags = {
-    Name = "DataProcessorWithS3Access"
-  }
-}
-```
-
-## Common Patterns
-
-### Using Variables
-
-```hcl
-# terraform/variables.tf
-variable "environment" {
-  description = "Environment name (dev, staging, prod)"
-  type        = string
-  default     = "dev"
-}
-
-variable "instance_type" {
-  description = "EC2 instance type"
-  type        = string
-  default     = "t3.medium"
-}
-
-variable "data_bucket_name" {
-  description = "Name of the S3 data bucket"
-  type        = string
-}
-
-# terraform/main.tf
-resource "aws_s3_bucket" "data_bucket" {
-  bucket = var.data_bucket_name
-
-  tags = {
+    Name        = "Data Processor"
     Environment = var.environment
   }
 }
-
-resource "aws_instance" "processor" {
-  ami           = data.aws_ami.amazon_linux_2.id
-  instance_type = var.instance_type
-
-  tags = {
-    Environment = var.environment
-  }
-}
-
-data "aws_ami" "amazon_linux_2" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-}
 ```
 
-Apply with variables:
+## Verifying Infrastructure
 
-```bash
-# Using command line
-terraform -chdir=terraform apply -var="data_bucket_name=my-unique-bucket"
-
-# Using tfvars file
-# terraform/terraform.tfvars
-environment       = "dev"
-instance_type     = "t3.large"
-data_bucket_name  = "my-data-lake-dev"
-
-terraform -chdir=terraform apply
-```
-
-### Outputs for Integration
-
-```hcl
-# terraform/outputs.tf
-output "s3_bucket_name" {
-  value       = aws_s3_bucket.data_lake.id
-  description = "Name of the S3 data lake bucket"
-}
-
-output "s3_bucket_arn" {
-  value       = aws_s3_bucket.data_lake.arn
-  description = "ARN of the S3 data lake bucket"
-}
-
-output "ec2_instance_id" {
-  value       = aws_instance.data_processor.id
-  description = "ID of the EC2 data processor instance"
-}
-
-output "ec2_public_ip" {
-  value       = aws_instance.data_processor.public_ip
-  description = "Public IP of the EC2 instance"
-  sensitive   = false
-}
-```
-
-Query outputs:
-
-```bash
-# View all outputs
-terraform -chdir=terraform output
-
-# Get specific output
-terraform -chdir=terraform output s3_bucket_name
-
-# Get JSON format for scripting
-terraform -chdir=terraform output -json | jq -r '.s3_bucket_name.value'
-```
-
-### Multiple Environments
-
-```hcl
-# terraform/environments/dev/main.tf
-module "data_infrastructure" {
-  source = "../../modules/data-infra"
-
-  environment       = "dev"
-  instance_type     = "t3.small"
-  data_bucket_name  = "data-lake-dev"
-}
-
-# terraform/environments/prod/main.tf
-module "data_infrastructure" {
-  source = "../../modules/data-infra"
-
-  environment       = "prod"
-  instance_type     = "t3.xlarge"
-  data_bucket_name  = "data-lake-prod"
-}
-```
-
-## Verification Commands
-
-### Verify S3 Buckets
-
+### Check S3 Buckets
 ```bash
 # List all S3 buckets
 aws s3 ls
 
-# Check bucket contents
+# List contents of specific bucket
 aws s3 ls s3://your-bucket-name/
-
-# Test upload
-echo "test data" > test.txt
-aws s3 cp test.txt s3://your-bucket-name/
 ```
 
-### Verify EC2 Instances
-
+### Check EC2 Instances
 ```bash
-# List running instances
+# List running EC2 instances
 aws ec2 describe-instances \
   --filters "Name=instance-state-name,Values=running" \
   --query 'Reservations[].Instances[].{ID:InstanceId, Name:Tags[?Key==`Name`].Value, Type:InstanceType, State:State.Name, PublicIP:PublicIpAddress, PrivateIP:PrivateIpAddress}' \
   --output table
-
-# Get instance details
-aws ec2 describe-instances --instance-ids i-1234567890abcdef0
 ```
 
-### Verify IAM Resources
-
+### Inspect Terraform State
 ```bash
-# List IAM roles
-aws iam list-roles --query 'Roles[?contains(RoleName, `ec2`)].RoleName'
+# List all managed resources
+terraform -chdir=terraform state list
 
-# Get role policies
-aws iam list-role-policies --role-name ec2-s3-access-role
+# Show resource details
+terraform -chdir=terraform state show aws_s3_bucket.data_bucket
+
+# Export state as JSON for parsing
+terraform -chdir=terraform show -json > state.json
+cat state.json | jq '.values.root_module.resources[] | {type: .type, name: .name}'
 ```
 
-## Workflow Example
+## Common Workflows
 
-Complete workflow for provisioning data infrastructure:
-
+### Initial Deployment
 ```bash
-# 1. Clone or create terraform configuration
-mkdir -p terraform
-cd terraform
+cd iac-for-data-engineering-terraform
 
-# 2. Create main.tf with your infrastructure
-cat > main.tf <<'EOF'
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
+# Initialize Terraform
+terraform -chdir=terraform init
 
-provider "aws" {
-  region = var.aws_region
-}
+# Review what will be created
+terraform -chdir=terraform plan
 
-resource "aws_s3_bucket" "data_lake" {
-  bucket = "data-lake-${var.environment}-${random_id.suffix.hex}"
-  
-  tags = {
-    Name        = "DataLake"
-    Environment = var.environment
-  }
-}
+# Apply changes
+terraform -chdir=terraform apply
+```
 
-resource "random_id" "suffix" {
-  byte_length = 4
-}
+### Making Changes
+```bash
+# 1. Edit .tf files
+# 2. Validate syntax
+terraform -chdir=terraform validate
 
-variable "aws_region" {
-  default = "us-east-1"
-}
+# 3. Format code
+terraform -chdir=terraform fmt
 
-variable "environment" {
-  default = "dev"
-}
+# 4. Review changes
+terraform -chdir=terraform plan
 
-output "bucket_name" {
-  value = aws_s3_bucket.data_lake.id
-}
-EOF
+# 5. Apply changes
+terraform -chdir=terraform apply
+```
 
-# 3. Initialize
-terraform init
+### Tear Down
+```bash
+# Remove all infrastructure
+terraform -chdir=terraform destroy
 
-# 4. Validate and format
-terraform validate
-terraform fmt
-
-# 5. Plan changes
-terraform plan -out=tfplan
-
-# 6. Review plan and apply
-terraform apply tfplan
-
-# 7. Verify infrastructure
-BUCKET_NAME=$(terraform output -raw bucket_name)
-aws s3 ls s3://$BUCKET_NAME
-
-# 8. When done, destroy
-terraform destroy
+# Auto-approve (use carefully)
+terraform -chdir=terraform destroy -auto-approve
 ```
 
 ## Troubleshooting
 
-### State Lock Issues
+### Bucket Name Already Exists
+**Error**: `BucketAlreadyExists` or `BucketAlreadyOwnedByYou`
 
-```bash
-# Force unlock if state is stuck
-terraform -chdir=terraform force-unlock LOCK_ID
-
-# Remove corrupted state backup
-rm terraform/terraform.tfstate.backup
-```
-
-### Import Existing Resources
-
-```bash
-# Import existing S3 bucket
-terraform -chdir=terraform import aws_s3_bucket.data_lake existing-bucket-name
-
-# Import EC2 instance
-terraform -chdir=terraform import aws_instance.data_processor i-1234567890abcdef0
-```
-
-### Refresh State
-
-```bash
-# Sync state with real infrastructure
-terraform -chdir=terraform refresh
-
-# Replace deprecated refresh
-terraform -chdir=terraform apply -refresh-only
-```
-
-### Debug Mode
-
-```bash
-# Enable detailed logging
-export TF_LOG=DEBUG
-terraform -chdir=terraform apply
-
-# Log to file
-export TF_LOG=TRACE
-export TF_LOG_PATH=terraform.log
-terraform -chdir=terraform apply
-```
-
-### Resource Dependencies
-
-```bash
-# Visualize dependency graph
-terraform -chdir=terraform graph | dot -Tpng > graph.png
-
-# Target specific resource
-terraform -chdir=terraform apply -target=aws_s3_bucket.data_lake
-```
-
-### Common Errors
-
-**Bucket name already exists:**
+**Solution**: S3 bucket names must be globally unique. Add a random suffix:
 ```hcl
-# Use random suffix
-resource "random_id" "bucket_suffix" {
-  byte_length = 8
+resource "random_id" "suffix" {
+  byte_length = 4
 }
 
-resource "aws_s3_bucket" "data_lake" {
-  bucket = "my-data-lake-${random_id.bucket_suffix.hex}"
+resource "aws_s3_bucket" "data_bucket" {
+  bucket = "my-bucket-${random_id.suffix.hex}"
 }
 ```
 
-**AWS credentials not found:**
-```bash
-# Check AWS configuration
-aws configure list
+### Authentication Errors
+**Error**: `Error: error configuring Terraform AWS Provider: no valid credential sources`
 
-# Set credentials via environment
-export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-export AWS_DEFAULT_REGION=us-east-1
+**Solution**: Ensure AWS CLI is configured:
+```bash
+aws configure
+# Or use environment variables
+export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+export AWS_DEFAULT_REGION="us-east-1"
 ```
 
-**Provider version conflicts:**
-```bash
-# Upgrade providers
-terraform -chdir=terraform init -upgrade
+### State Lock Issues
+**Error**: `Error acquiring the state lock`
 
-# Lock specific version
+**Solution**: If Terraform crashed, manually unlock:
+```bash
+terraform -chdir=terraform force-unlock LOCK_ID
+```
+
+### Resource Already Exists
+**Error**: Resource already exists but not in state
+
+**Solution**: Import existing resource:
+```bash
+terraform -chdir=terraform import aws_s3_bucket.data_bucket existing-bucket-name
+```
+
+### Permission Denied
+**Error**: `AccessDenied` or `UnauthorizedOperation`
+
+**Solution**: Verify IAM permissions for your AWS user/role include necessary services (S3, EC2, IAM).
+
+### State Out of Sync
+**Solution**: Refresh state to match real infrastructure:
+```bash
+terraform -chdir=terraform refresh
+```
+
+## Best Practices
+
+1. **Never commit `terraform.tfstate`** - Contains sensitive data and should be stored in remote backend (S3 + DynamoDB for locking)
+
+2. **Use variables** - Make configurations reusable across environments
+
+3. **Enable versioning** - For S3 buckets containing critical data
+
+4. **Tag everything** - Use consistent tagging for cost tracking and resource management
+
+5. **Use remote state** - For team collaboration:
+```hcl
 terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "= 5.31.0"
-    }
+  backend "s3" {
+    bucket         = "terraform-state-bucket"
+    key            = "data-infra/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
   }
 }
 ```
 
-This skill enables AI agents to help developers provision and manage AWS data infrastructure using Terraform, following IaC best practices for data engineering workflows.
+6. **Run `terraform plan`** - Always review before applying changes
+
+7. **Use `.gitignore`** - Exclude sensitive files:
+```
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+terraform.tfvars
+```
