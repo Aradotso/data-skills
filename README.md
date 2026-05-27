@@ -55,6 +55,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-art-museums-data-engineering-app](skills/harvard-art-museums-data-engineering-app/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museums-data-engineering-app) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-26 |
 | [harvard-artifacts-data-pipeline](skills/harvard-artifacts-data-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-data-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-26 |
 | [terraform-data-engineering-infrastructure](skills/terraform-data-engineering-infrastructure/) | [install](https://skills.sh/aradotso/data-skills/terraform-data-engineering-infrastructure) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
+| [iac-data-engineering-terraform](skills/iac-data-engineering-terraform/) | [install](https://skills.sh/aradotso/data-skills/iac-data-engineering-terraform) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
 <!-- SKILL_INDEX -->
 
 ---
