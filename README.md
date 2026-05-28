@@ -59,6 +59,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [terraform-iac-data-engineering](skills/terraform-iac-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/terraform-iac-data-engineering) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
 | [terraform-data-engineering-iac](skills/terraform-data-engineering-iac/) | [install](https://skills.sh/aradotso/data-skills/terraform-data-engineering-iac) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
 | [iac-terraform-data-engineering](skills/iac-terraform-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/iac-terraform-data-engineering) | [josephmachado/iac-for-data-engineering-terraform-](https://github.com/josephmachado/iac-for-data-engineering-terraform-) | 2026-05-27 |
+| [retail-etl-medallion-pipeline](skills/retail-etl-medallion-pipeline/) | [install](https://skills.sh/aradotso/data-skills/retail-etl-medallion-pipeline) | [EsraaSolimanMubarak/Retail-ETL-Pipeline](https://github.com/EsraaSolimanMubarak/Retail-ETL-Pipeline) | 2026-05-28 |
 <!-- SKILL_INDEX -->
 
 ---
