@@ -63,6 +63,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [retail-etl-pipeline-medallion](skills/retail-etl-pipeline-medallion/) | [install](https://skills.sh/aradotso/data-skills/retail-etl-pipeline-medallion) | [EsraaSolimanMubarak/Retail-ETL-Pipeline](https://github.com/EsraaSolimanMubarak/Retail-ETL-Pipeline) | 2026-05-28 |
 | [harvard-art-museums-etl-pipeline](skills/harvard-art-museums-etl-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museums-etl-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-28 |
 | [harvard-art-museums-data-engineering-pipeline](skills/harvard-art-museums-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museums-data-engineering-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-28 |
+| [harvard-artifacts-etl-pipeline](skills/harvard-artifacts-etl-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-etl-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-29 |
 <!-- SKILL_INDEX -->
 
 ---
