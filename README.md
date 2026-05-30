@@ -64,6 +64,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-art-museums-etl-pipeline](skills/harvard-art-museums-etl-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museums-etl-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-28 |
 | [harvard-art-museums-data-engineering-pipeline](skills/harvard-art-museums-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museums-data-engineering-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-28 |
 | [harvard-artifacts-etl-pipeline](skills/harvard-artifacts-etl-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-etl-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-29 |
+| [snowflake-dbt-airbnb-analytics](skills/snowflake-dbt-airbnb-analytics/) | [install](https://skills.sh/aradotso/data-skills/snowflake-dbt-airbnb-analytics) | [analyticsdurgesh/Snowflake_DBT_Project](https://github.com/analyticsdurgesh/Snowflake_DBT_Project) | 2026-05-30 |
 <!-- SKILL_INDEX -->
 
 ---
