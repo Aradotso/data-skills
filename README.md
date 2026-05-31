@@ -65,6 +65,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-art-museums-data-engineering-pipeline](skills/harvard-art-museums-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museums-data-engineering-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-28 |
 | [harvard-artifacts-etl-pipeline](skills/harvard-artifacts-etl-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-etl-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-05-29 |
 | [snowflake-dbt-airbnb-analytics](skills/snowflake-dbt-airbnb-analytics/) | [install](https://skills.sh/aradotso/data-skills/snowflake-dbt-airbnb-analytics) | [analyticsdurgesh/Snowflake_DBT_Project](https://github.com/analyticsdurgesh/Snowflake_DBT_Project) | 2026-05-30 |
+| [malware-warning-sas-analytics-pro-cracked](skills/malware-warning-sas-analytics-pro-cracked/) | [install](https://skills.sh/aradotso/data-skills/malware-warning-sas-analytics-pro-cracked) | [Grasponditch96/SAS-Analytics-Pro-cracked](https://github.com/Grasponditch96/SAS-Analytics-Pro-cracked) | 2026-05-31 |
 <!-- SKILL_INDEX -->
 
 ---
