@@ -1,73 +1,91 @@
 ---
 name: snowflake-dbt-airbnb-analytics
-description: Build end-to-end analytics pipelines with Snowflake, dbt, and Streamlit using Inside Airbnb data
+description: Build end-to-end analytics pipelines with Snowflake, dbt, and Streamlit using the Inside Airbnb dataset
 triggers:
-  - "set up snowflake dbt analytics project"
-  - "load airbnb data into snowflake"
-  - "build dbt models for airbnb"
-  - "create incremental fact tables in dbt"
-  - "run dbt tests for data quality"
-  - "build streamlit dashboard with snowflake"
-  - "configure dbt profiles for snowflake"
-  - "aggregate airbnb listing performance"
+  - load inside airbnb data into snowflake
+  - create dbt models for airbnb data
+  - build snowflake analytics with dbt
+  - set up airbnb analytics pipeline
+  - configure dbt with snowflake for airbnb
+  - create streamlit dashboard for airbnb data
+  - run dbt incremental models on snowflake
+  - test data quality in dbt airbnb project
 ---
 
-# Snowflake dbt Airbnb Analytics Skill
+# Snowflake dbt Airbnb Analytics
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-This skill enables AI agents to help developers build complete analytics engineering pipelines using Snowflake as the data warehouse, dbt for transformations, and Streamlit for dashboards. The project demonstrates staging → intermediate → mart layering, incremental models, data quality tests, and public-safe credential management.
+This project demonstrates a complete analytics engineering workflow: loading Inside Airbnb open data into Snowflake, transforming it with dbt through staging/intermediate/mart layers, validating data quality with tests, and visualizing results in a Streamlit dashboard.
 
 ## What This Project Does
 
-The Snowflake_DBT_Project loads Inside Airbnb open data (listings, calendar, reviews, neighbourhoods) into Snowflake, transforms it through dbt layers (staging, intermediate, marts), validates data quality with tests, and powers a Streamlit dashboard. It demonstrates:
+- Loads Inside Airbnb CSV/GZIP files into Snowflake internal stages
+- Creates raw, staging, intermediate, and mart dbt model layers
+- Implements incremental fact tables with Snowflake merge strategy
+- Runs generic and singular dbt tests for data quality
+- Powers a Streamlit dashboard connected to analytics marts
+- Demonstrates public-safe credential management with ignored local config files
 
-- Raw data ingestion from CSV/GZIP into Snowflake internal stages
-- dbt staging models for cleaning and type casting
-- Intermediate enrichment layers with joins and business logic
-- Dimension and fact tables (incremental merge strategy)
-- Monthly aggregation models for reporting
-- Generic and singular dbt tests
-- Streamlit dashboard connected to analytics marts
+## Dataset
+
+Inside Airbnb provides open data for cities worldwide. The project expects:
+
+- `data/raw/listings.csv.gz` — property listings
+- `data/raw/calendar.csv.gz` — availability and pricing by date
+- `data/raw/reviews.csv.gz` — guest reviews
+- `data/raw/neighbourhoods.csv` — neighbourhood boundaries
+
+Download from [Inside Airbnb](https://insideairbnb.com/get-the-data/). Recommended classroom dataset: New York City, New York, United States.
 
 ## Installation
 
-### 1. Clone and Set Up Python Environment
-
 ```bash
+# Clone the repository
 git clone https://github.com/analyticsdurgesh/Snowflake_DBT_Project.git
 cd Snowflake_DBT_Project
+
+# Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Configure Snowflake Credentials
+## Configuration
 
-Create local credential files from examples (these are gitignored):
+The project uses local-only credential files that are `.gitignore`d for public safety.
+
+### 1. Create profiles.yml
 
 ```bash
 cp profiles.yml.example profiles.yml
-cp config/local_credentials.example.json config/local_credentials.json
 ```
 
 Edit `profiles.yml`:
 
 ```yaml
 snowflake_dbt_project:
-  target: dev
   outputs:
     dev:
       type: snowflake
-      account: YOUR_ACCOUNT  # e.g., abc12345.us-east-1
+      account: YOUR_ACCOUNT
       user: YOUR_USERNAME
       password: YOUR_PASSWORD
       role: YOUR_ROLE
-      database: AIRBNB_DB
+      database: AIRBNB_DEV
       warehouse: COMPUTE_WH
       schema: ANALYTICS
       threads: 4
       client_session_keep_alive: False
+  target: dev
+```
+
+### 2. Create local_credentials.json
+
+```bash
+cp config/local_credentials.example.json config/local_credentials.json
 ```
 
 Edit `config/local_credentials.json`:
@@ -78,84 +96,45 @@ Edit `config/local_credentials.json`:
   "user": "YOUR_USERNAME",
   "password": "YOUR_PASSWORD",
   "warehouse": "COMPUTE_WH",
-  "database": "AIRBNB_DB",
+  "database": "AIRBNB_DEV",
   "schema": "ANALYTICS",
   "role": "YOUR_ROLE"
 }
 ```
 
-**Security**: Never commit real credentials. Use environment variables in production:
+**Never commit these files.** They are in `.gitignore`.
 
-```python
-import os
-credentials = {
-    "user": os.getenv("SNOWFLAKE_USER"),
-    "password": os.getenv("SNOWFLAKE_PASSWORD"),
-    # ...
-}
-```
+## Loading Raw Data
 
-### 3. Download Inside Airbnb Data
-
-Download these files from [Inside Airbnb](https://insideairbnb.com/get-the-data/) (NYC recommended):
-
-```text
-data/raw/listings.csv.gz
-data/raw/calendar.csv.gz
-data/raw/reviews.csv.gz
-data/raw/neighbourhoods.csv
-```
-
-## Key Commands
-
-### Load Raw Data to Snowflake
+The Python loader script handles the entire Snowflake setup:
 
 ```bash
 python scripts/load_inside_airbnb_to_snowflake.py
 ```
 
 This script:
-1. Reads credentials from `config/local_credentials.json`
-2. Executes `setup/snowflake_setup.sql` to create database/schemas/stage
-3. Uploads CSV files to Snowflake internal stage
-4. Creates raw tables with text columns
-5. Copies data from stage to `RAW` schema
+1. Reads `config/local_credentials.json`
+2. Executes `setup/snowflake_setup.sql` to create database, schemas, stage
+3. Uploads local CSV/GZIP files to Snowflake internal stage
+4. Creates raw tables from CSV headers
+5. Copies staged data into raw tables
 
-### dbt Workflow
+### Raw Layer Tables
 
-```bash
-# Verify dbt connection
-dbt debug --profiles-dir .
-
-# Run all models
-dbt run --profiles-dir .
-
-# Run specific model and downstream dependencies
-dbt run --select stg_airbnb__listings+ --profiles-dir .
-
-# Run tests
-dbt test --profiles-dir .
-
-# Full refresh incremental models
-dbt run --full-refresh --select fct_listing_calendar+ --profiles-dir .
-
-# Generate documentation
-dbt docs generate --profiles-dir .
-dbt docs serve --profiles-dir .
+```sql
+-- Created in RAW schema
+RAW.LISTINGS
+RAW.CALENDAR
+RAW.REVIEWS
+RAW.NEIGHBOURHOODS
 ```
 
-### Run Streamlit Dashboard
+## dbt Project Structure
 
-```bash
-streamlit run dashboard/streamlit_app.py
 ```
-
-## Project Structure
-
-```text
 models/
 ├── staging/
-│   ├── _stg_airbnb__sources.yml        # Source definitions
+│   ├── _staging_airbnb__sources.yml
 │   ├── stg_airbnb__listings.sql
 │   ├── stg_airbnb__calendar.sql
 │   ├── stg_airbnb__reviews.sql
@@ -167,51 +146,94 @@ models/
 └── marts/
     ├── dim_listings.sql
     ├── dim_hosts.sql
-    ├── fct_listing_calendar.sql        # Incremental
+    ├── fct_listing_calendar.sql
     ├── fct_reviews.sql
     ├── agg_listing_monthly_performance.sql
     └── agg_neighbourhood_monthly_performance.sql
 ```
 
-## dbt Model Examples
+## Key dbt Commands
 
-### Staging Model: Type Casting and Cleaning
+```bash
+# Test connection
+dbt debug --profiles-dir .
 
-`models/staging/stg_airbnb__listings.sql`:
+# Run all models
+dbt run --profiles-dir .
+
+# Run specific model and downstream dependencies
+dbt run --select stg_airbnb__listings+ --profiles-dir .
+
+# Run incremental models with full refresh
+dbt run --full-refresh --select fct_listing_calendar+ --profiles-dir .
+
+# Run tests
+dbt test --profiles-dir .
+
+# Test specific model
+dbt test --select stg_airbnb__listings --profiles-dir .
+
+# Generate documentation
+dbt docs generate --profiles-dir .
+dbt docs serve --profiles-dir .
+
+# Compile without running
+dbt compile --profiles-dir .
+```
+
+## Model Layer Patterns
+
+### Staging Models
+
+Clean and standardize raw data:
 
 ```sql
+-- models/staging/stg_airbnb__listings.sql
+{{
+    config(
+        materialized='view'
+    )
+}}
+
 with source as (
-    select * from {{ source('airbnb_raw', 'listings') }}
+    select * from {{ source('airbnb', 'listings') }}
 ),
 
-cleaned as (
+renamed as (
     select
-        try_cast(id as integer) as listing_id,
-        name as listing_name,
-        host_id::integer as host_id,
-        host_name,
-        neighbourhood_cleansed as neighbourhood,
-        latitude::float as latitude,
-        longitude::float as longitude,
-        room_type,
-        try_cast(replace(price, '$', '') as number(10,2)) as price,
-        minimum_nights::integer as minimum_nights,
-        number_of_reviews::integer as number_of_reviews,
-        try_to_date(last_review) as last_review_date,
-        reviews_per_month::float as reviews_per_month,
-        calculated_host_listings_count::integer as host_listings_count,
-        availability_365::integer as availability_365
+        id::bigint as listing_id,
+        name::varchar as listing_name,
+        host_id::bigint as host_id,
+        host_name::varchar as host_name,
+        neighbourhood_cleansed::varchar as neighbourhood,
+        room_type::varchar as room_type,
+        price::varchar as price_raw,
+        -- Remove $ and , then cast to number
+        replace(replace(price, '$', ''), ',', '')::decimal(10,2) as price,
+        minimum_nights::int as minimum_nights,
+        number_of_reviews::int as number_of_reviews,
+        last_review::date as last_review_date,
+        reviews_per_month::decimal(10,2) as reviews_per_month,
+        calculated_host_listings_count::int as host_listings_count,
+        availability_365::int as availability_365
     from source
 )
 
-select * from cleaned
+select * from renamed
 ```
 
-### Intermediate Model: Enrichment with Joins
+### Intermediate Models
 
-`models/intermediate/int_airbnb__listing_enriched.sql`:
+Join and enrich data:
 
 ```sql
+-- models/intermediate/int_airbnb__listing_enriched.sql
+{{
+    config(
+        materialized='view'
+    )
+}}
+
 with listings as (
     select * from {{ ref('stg_airbnb__listings') }}
 ),
@@ -222,14 +244,27 @@ neighbourhoods as (
 
 enriched as (
     select
-        l.*,
+        l.listing_id,
+        l.listing_name,
+        l.host_id,
+        l.host_name,
+        l.neighbourhood,
         n.neighbourhood_group,
+        l.room_type,
+        l.price,
+        l.minimum_nights,
+        l.number_of_reviews,
+        l.last_review_date,
+        l.reviews_per_month,
+        l.host_listings_count,
+        l.availability_365,
+        -- Derived fields
         case
             when l.number_of_reviews = 0 then 'No Reviews'
-            when l.number_of_reviews between 1 and 10 then 'Low Activity'
-            when l.number_of_reviews between 11 and 50 then 'Medium Activity'
-            else 'High Activity'
-        end as review_activity_segment
+            when l.number_of_reviews < 10 then 'Few Reviews'
+            when l.number_of_reviews < 50 then 'Some Reviews'
+            else 'Many Reviews'
+        end as review_category
     from listings l
     left join neighbourhoods n
         on l.neighbourhood = n.neighbourhood
@@ -238,49 +273,60 @@ enriched as (
 select * from enriched
 ```
 
-### Incremental Fact Table
+### Incremental Fact Models
 
-`models/marts/fct_listing_calendar.sql`:
+Use Snowflake merge for efficient updates:
 
 ```sql
+-- models/marts/fct_listing_calendar.sql
 {{
     config(
         materialized='incremental',
-        unique_key='calendar_id',
+        unique_key=['listing_id', 'calendar_date'],
         merge_update_columns=['available', 'price', 'minimum_nights', 'maximum_nights']
     )
 }}
 
-with calendar as (
+with calendar_enriched as (
     select * from {{ ref('int_airbnb__calendar_enriched') }}
-),
-
-final as (
-    select
-        {{ dbt_utils.generate_surrogate_key(['listing_id', 'date']) }} as calendar_id,
-        listing_id,
-        date,
-        available,
-        price,
-        minimum_nights,
-        maximum_nights,
-        listing_name,
-        neighbourhood,
-        room_type
-    from calendar
-    {% if is_incremental() %}
-    where date > (select max(date) from {{ this }})
-    {% endif %}
 )
 
-select * from final
+select
+    listing_id,
+    calendar_date,
+    available,
+    price,
+    minimum_nights,
+    maximum_nights,
+    adjusted_price,
+    listing_name,
+    neighbourhood,
+    neighbourhood_group,
+    room_type,
+    -- Revenue proxy: estimated revenue if unavailable
+    case
+        when available = false then adjusted_price
+        else 0
+    end as estimated_revenue
+from calendar_enriched
+
+{% if is_incremental() %}
+    where calendar_date > (select max(calendar_date) from {{ this }})
+{% endif %}
 ```
 
-### Aggregate Model: Monthly Performance
+### Aggregate Models
 
-`models/marts/agg_listing_monthly_performance.sql`:
+Pre-compute reporting metrics:
 
 ```sql
+-- models/marts/agg_listing_monthly_performance.sql
+{{
+    config(
+        materialized='table'
+    )
+}}
+
 with calendar_facts as (
     select * from {{ ref('fct_listing_calendar') }}
 ),
@@ -290,37 +336,39 @@ monthly_agg as (
         listing_id,
         listing_name,
         neighbourhood,
+        neighbourhood_group,
         room_type,
-        date_trunc('month', date) as month,
+        date_trunc('month', calendar_date)::date as month_date,
         count(*) as total_days,
         sum(case when available = false then 1 else 0 end) as unavailable_days,
-        avg(price) as avg_daily_price,
-        sum(case when available = false then price else 0 end) as estimated_revenue
+        sum(case when available = true then 1 else 0 end) as available_days,
+        avg(price) as avg_price,
+        sum(estimated_revenue) as total_estimated_revenue,
+        -- Availability rate
+        sum(case when available = true then 1 else 0 end)::decimal / count(*)::decimal as availability_rate
     from calendar_facts
-    group by 1, 2, 3, 4, 5
+    group by 1, 2, 3, 4, 5, 6
 )
 
-select
-    *,
-    round(100.0 * unavailable_days / nullif(total_days, 0), 2) as occupancy_rate_pct
-from monthly_agg
+select * from monthly_agg
 ```
 
 ## Data Quality Tests
 
-### Generic Tests in Schema YAML
+### Generic Tests
 
-`models/staging/_stg_airbnb__models.yml`:
+Defined in schema YAML files:
 
 ```yaml
+# models/staging/_staging_airbnb__models.yml
 version: 2
 
 models:
   - name: stg_airbnb__listings
-    description: Cleaned and typed listing data
+    description: Cleaned and standardized Airbnb listings
     columns:
       - name: listing_id
-        description: Primary key
+        description: Unique listing identifier
         tests:
           - unique
           - not_null
@@ -331,30 +379,46 @@ models:
           - dbt_utils.expression_is_true:
               expression: ">= 0"
       - name: room_type
-        description: Type of accommodation
+        description: Type of room
         tests:
           - accepted_values:
               values: ['Entire home/apt', 'Private room', 'Shared room', 'Hotel room']
 ```
 
-### Singular Test
+### Singular Tests
 
-`tests/no_duplicate_listing_dates.sql`:
+Custom SQL tests in `tests/`:
 
 ```sql
--- Ensure no listing has duplicate calendar entries for the same date
+-- tests/assert_no_duplicate_listing_dates.sql
+-- Ensure no listing appears twice on the same date in calendar facts
+
 select
     listing_id,
-    date,
+    calendar_date,
     count(*) as occurrences
 from {{ ref('fct_listing_calendar') }}
-group by listing_id, date
+group by listing_id, calendar_date
 having count(*) > 1
 ```
 
-## Streamlit Dashboard Pattern
+Run all tests:
 
-`dashboard/streamlit_app.py`:
+```bash
+dbt test --profiles-dir .
+```
+
+## Streamlit Dashboard
+
+Run the interactive dashboard:
+
+```bash
+streamlit run dashboard/streamlit_app.py
+```
+
+The dashboard reads credentials from `config/local_credentials.json` and connects to Snowflake marts.
+
+### Example Dashboard Code
 
 ```python
 import streamlit as st
@@ -367,261 +431,259 @@ with open('config/local_credentials.json') as f:
     creds = json.load(f)
 
 # Connect to Snowflake
-@st.cache_resource
-def get_connection():
-    return snowflake.connector.connect(
-        user=creds['user'],
-        password=creds['password'],
-        account=creds['account'],
-        warehouse=creds['warehouse'],
-        database=creds['database'],
-        schema=creds['schema'],
-        role=creds['role']
-    )
+conn = snowflake.connector.connect(
+    account=creds['account'],
+    user=creds['user'],
+    password=creds['password'],
+    warehouse=creds['warehouse'],
+    database=creds['database'],
+    schema=creds['schema'],
+    role=creds['role']
+)
 
-conn = get_connection()
+st.title('Airbnb Analytics Dashboard')
 
-st.title("Airbnb Analytics Dashboard")
+# Neighbourhood performance
+query = """
+select
+    neighbourhood_group,
+    neighbourhood,
+    sum(total_estimated_revenue) as revenue,
+    avg(availability_rate) as avg_availability,
+    count(distinct listing_id) as listing_count
+from agg_neighbourhood_monthly_performance
+group by 1, 2
+order by revenue desc
+limit 20
+"""
 
-# Query aggregated data
-@st.cache_data
-def load_neighbourhood_performance():
-    query = """
-        SELECT
-            neighbourhood,
-            month,
-            sum(estimated_revenue) as total_revenue,
-            avg(occupancy_rate_pct) as avg_occupancy
-        FROM agg_neighbourhood_monthly_performance
-        GROUP BY neighbourhood, month
-        ORDER BY total_revenue DESC
-    """
-    return pd.read_sql(query, conn)
+df = pd.read_sql(query, conn)
+st.subheader('Top Neighbourhoods by Estimated Revenue')
+st.dataframe(df)
 
-df = load_neighbourhood_performance()
-
-# Display top neighbourhoods
-st.subheader("Top Neighbourhoods by Revenue")
-top_n = st.slider("Number of neighbourhoods", 5, 20, 10)
-st.bar_chart(df.groupby('neighbourhood')['total_revenue'].sum().nlargest(top_n))
-
-# Filter by neighbourhood
-neighbourhood = st.selectbox("Select Neighbourhood", df['neighbourhood'].unique())
-filtered = df[df['neighbourhood'] == neighbourhood]
-st.line_chart(filtered.set_index('month')['avg_occupancy'])
+conn.close()
 ```
 
-## Common Patterns
+## Common Workflows
 
-### Full Pipeline Refresh (New Data Snapshot)
+### Initial Setup
 
 ```bash
-# 1. Load new raw data
+# 1. Download Inside Airbnb data to data/raw/
+# 2. Configure credentials
+cp profiles.yml.example profiles.yml
+cp config/local_credentials.example.json config/local_credentials.json
+# Edit both files with your Snowflake credentials
+
+# 3. Load raw data
 python scripts/load_inside_airbnb_to_snowflake.py
 
-# 2. Full refresh incremental models
+# 4. Run dbt pipeline
+dbt run --profiles-dir .
+dbt test --profiles-dir .
+
+# 5. Launch dashboard
+streamlit run dashboard/streamlit_app.py
+```
+
+### Refresh with New Data Snapshot
+
+```bash
+# 1. Download new Inside Airbnb snapshot
+# 2. Reload raw data
+python scripts/load_inside_airbnb_to_snowflake.py
+
+# 3. Full refresh incremental models
 dbt run --full-refresh --select fct_listing_calendar+ --profiles-dir .
 
-# 3. Run all other models
-dbt run --exclude fct_listing_calendar --profiles-dir .
+# 4. Run dependent models
+dbt run --select agg_listing_monthly_performance+ --profiles-dir .
 
-# 4. Validate
+# 5. Test data quality
 dbt test --profiles-dir .
 ```
 
-### Selective Model Execution
+### Debug a Model
 
 ```bash
-# Run only staging layer
-dbt run --select staging.* --profiles-dir .
+# Compile SQL to see what dbt generates
+dbt compile --select dim_listings --profiles-dir .
+cat target/compiled/snowflake_dbt_project/models/marts/dim_listings.sql
 
-# Run specific model and all downstream
-dbt run --select stg_airbnb__calendar+ --profiles-dir .
+# Run one model
+dbt run --select dim_listings --profiles-dir .
 
-# Run all marts
-dbt run --select marts.* --profiles-dir .
-```
+# Run model and all downstream
+dbt run --select dim_listings+ --profiles-dir .
 
-### Adding a New Source Column
-
-1. Update staging model SQL to include the column
-2. Update downstream intermediate/mart models if needed
-3. Add tests in schema YAML
-4. Run:
-
-```bash
-dbt run --select stg_airbnb__listings+ --profiles-dir .
-dbt test --select stg_airbnb__listings --profiles-dir .
+# Run model and all upstream
+dbt run --select +dim_listings --profiles-dir .
 ```
 
 ## Troubleshooting
 
-### "Object does not exist" Error
-
-**Problem**: dbt can't find source tables.
-
-**Solution**: Ensure raw data is loaded and source definitions match:
+### Connection Issues
 
 ```bash
-python scripts/load_inside_airbnb_to_snowflake.py
-dbt debug --profiles-dir .  # Verify connection
+# Test dbt connection
+dbt debug --profiles-dir .
 ```
 
-Check `models/staging/_stg_airbnb__sources.yml`:
+If connection fails:
+- Verify `profiles.yml` values match your Snowflake account
+- Check warehouse is running in Snowflake UI
+- Confirm user has necessary privileges
+- Test credentials in `config/local_credentials.json`
 
-```yaml
-sources:
-  - name: airbnb_raw
-    database: AIRBNB_DB
-    schema: RAW
-    tables:
-      - name: listings
-      - name: calendar
-      # ...
+### Python Loader Errors
+
+```python
+# Common error: FileNotFoundError
+# Ensure data files exist:
+ls -lh data/raw/
+# Expected: listings.csv.gz, calendar.csv.gz, reviews.csv.gz, neighbourhoods.csv
+
+# Common error: snowflake.connector.errors.ProgrammingError
+# Check credentials in config/local_credentials.json
+# Verify warehouse and role exist
 ```
 
 ### Incremental Model Not Updating
 
-**Problem**: `fct_listing_calendar` not picking up new dates.
+```bash
+# Force full refresh of incremental model
+dbt run --full-refresh --select fct_listing_calendar --profiles-dir .
 
-**Solution**: Use `--full-refresh` or check incremental logic:
-
-```sql
-{% if is_incremental() %}
-where date > (select max(date) from {{ this }})
-{% endif %}
+# Check for unique_key violations
+dbt test --select fct_listing_calendar --profiles-dir .
 ```
 
-Force full refresh:
+### Test Failures
 
 ```bash
-dbt run --full-refresh --select fct_listing_calendar --profiles-dir .
+# Run specific test to see failing rows
+dbt test --select stg_airbnb__listings --profiles-dir .
+
+# Check compiled test SQL
+cat target/compiled/snowflake_dbt_project/models/staging/_staging_airbnb__models.yml/unique_stg_airbnb__listings_listing_id.sql
+
+# Run compiled test directly in Snowflake to debug
 ```
 
-### Streamlit Can't Connect to Snowflake
-
-**Problem**: Dashboard shows connection error.
-
-**Solution**: Verify `config/local_credentials.json` exists and has correct values. Test connection:
+### Streamlit Connection Issues
 
 ```python
-import snowflake.connector
+# Verify credentials file exists and has correct values
 import json
-
 with open('config/local_credentials.json') as f:
-    creds = json.load(f)
+    print(json.load(f))
 
-conn = snowflake.connector.connect(**creds)
-print("Connected:", conn.is_closed() == False)
+# Test Snowflake connection manually
+import snowflake.connector
+conn = snowflake.connector.connect(
+    account='YOUR_ACCOUNT',
+    user='YOUR_USER',
+    password='YOUR_PASSWORD',
+    warehouse='COMPUTE_WH',
+    database='AIRBNB_DEV',
+    schema='ANALYTICS',
+    role='YOUR_ROLE'
+)
+print(conn.cursor().execute("SELECT CURRENT_USER()").fetchone())
 ```
 
-### dbt Test Failures
-
-**Problem**: `accepted_values` test fails for `room_type`.
-
-**Solution**: Check for unexpected values in raw data:
-
-```sql
-select distinct room_type
-from {{ source('airbnb_raw', 'listings') }}
-```
-
-Update accepted values in schema YAML or clean in staging model.
-
-### Price Parsing Errors
-
-**Problem**: Prices with `$` or `,` symbols fail to cast.
-
-**Solution**: Use `replace()` and `try_cast()`:
-
-```sql
-try_cast(
-    replace(replace(price, '$', ''), ',', '') 
-    as number(10,2)
-) as price
-```
-
-## Advanced Techniques
-
-### Custom dbt Macro for Surrogate Keys
-
-If using `dbt_utils.generate_surrogate_key`, ensure dbt-utils is installed:
-
-```yaml
-# packages.yml
-packages:
-  - package: dbt-labs/dbt_utils
-    version: 1.1.1
-```
-
-Install:
-
-```bash
-dbt deps --profiles-dir .
-```
-
-### Environment-Specific Targets
-
-`profiles.yml`:
-
-```yaml
-snowflake_dbt_project:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      schema: DEV_ANALYTICS
-      # ...
-    prod:
-      type: snowflake
-      schema: PROD_ANALYTICS
-      # ...
-```
-
-Run against production:
-
-```bash
-dbt run --target prod --profiles-dir .
-```
+## Macros and Custom Logic
 
 ### Revenue Proxy Logic
 
-Inside Airbnb lacks transaction data. This project uses calendar unavailability as a proxy:
+Inside Airbnb doesn't provide booking transactions. This project uses calendar availability as a proxy:
 
 ```sql
-sum(case when available = false then price else 0 end) as estimated_revenue
+-- If a listing is unavailable, assume it's booked and count the price as revenue
+case
+    when available = false then adjusted_price
+    else 0
+end as estimated_revenue
 ```
 
-Unavailable nights are assumed booked. Acknowledge limitations in documentation.
+### dbt Macros
 
-## Business Questions Answered
+Example custom macro:
 
-1. **Top neighbourhoods by revenue**: Query `agg_neighbourhood_monthly_performance`
-2. **Host with most listings**: Query `dim_hosts` ordered by `host_listings_count`
-3. **Average price by room type**: Aggregate `dim_listings` on `room_type`
-4. **Occupancy trends over time**: Analyze `agg_listing_monthly_performance.occupancy_rate_pct`
-5. **Listings with no reviews**: Filter `dim_listings` where `number_of_reviews = 0`
+```sql
+-- macros/cents_to_dollars.sql
+{% macro cents_to_dollars(column_name) %}
+    ({{ column_name }} / 100.0)::decimal(10,2)
+{% endmacro %}
 
-## Security Best Practices
-
-- **Never commit** `profiles.yml` or `config/local_credentials.json`
-- Use `.gitignore` for sensitive files (already configured)
-- In production, use Snowflake key-pair authentication or OAuth
-- Store secrets in environment variables or secret managers:
-
-```python
-import os
-password = os.getenv("SNOWFLAKE_PASSWORD")
+-- Usage in model:
+select {{ cents_to_dollars('price_cents') }} as price_dollars
 ```
 
-- Rotate credentials regularly
-- Use Snowflake roles with least privilege
+## Best Practices
 
-## Resources
+1. **Never commit credentials** — Use `.gitignore` for `profiles.yml`, `config/local_credentials.json`
+2. **Use incremental models** for large fact tables to reduce compute
+3. **Test data quality** after every dbt run
+4. **Document models** in schema YAML files
+5. **Modularize transformations** — staging → intermediate → marts
+6. **Use refs, not direct table names** — `{{ ref('stg_airbnb__listings') }}`
+7. **Tag models** for selective runs:
 
-- [dbt Documentation](https://docs.getdbt.com/)
-- [Snowflake Python Connector](https://docs.snowflake.com/en/user-guide/python-connector.html)
-- [Inside Airbnb Data](https://insideairbnb.com/get-the-data/)
-- [Streamlit Docs](https://docs.streamlit.io/)
+```yaml
+# dbt_project.yml
+models:
+  snowflake_dbt_project:
+    marts:
+      +tags: ["marts", "analytics"]
+```
 
-This skill covers the complete lifecycle of the Snowflake dbt Airbnb Analytics project: setup, data loading, transformation, testing, and visualization.
+```bash
+# Run only marts
+dbt run --select tag:marts --profiles-dir .
+```
+
+## Example Business Analytics Queries
+
+### Top Revenue Neighbourhoods
+
+```sql
+select
+    neighbourhood_group,
+    neighbourhood,
+    sum(total_estimated_revenue) as total_revenue,
+    avg(availability_rate) as avg_availability
+from {{ ref('agg_neighbourhood_monthly_performance') }}
+group by 1, 2
+order by total_revenue desc
+limit 10;
+```
+
+### Host Performance
+
+```sql
+select
+    host_id,
+    host_name,
+    count(distinct listing_id) as listing_count,
+    avg(price) as avg_price,
+    avg(number_of_reviews) as avg_reviews
+from {{ ref('dim_listings') }}
+group by 1, 2
+having count(distinct listing_id) > 5
+order by listing_count desc;
+```
+
+### Availability Trends by Month
+
+```sql
+select
+    month_date,
+    avg(availability_rate) as avg_availability,
+    sum(total_estimated_revenue) as total_revenue
+from {{ ref('agg_listing_monthly_performance') }}
+group by 1
+order by 1;
+```
+
+This skill enables AI agents to help developers build, debug, and extend Snowflake + dbt analytics pipelines using the Inside Airbnb dataset as a portfolio-ready example.
