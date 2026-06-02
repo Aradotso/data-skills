@@ -68,6 +68,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [malware-warning-sas-analytics-pro-cracked](skills/malware-warning-sas-analytics-pro-cracked/) | [install](https://skills.sh/aradotso/data-skills/malware-warning-sas-analytics-pro-cracked) | [Grasponditch96/SAS-Analytics-Pro-cracked](https://github.com/Grasponditch96/SAS-Analytics-Pro-cracked) | 2026-05-31 |
 | [data-engineering-patterns-fabric-databricks](skills/data-engineering-patterns-fabric-databricks/) | [install](https://skills.sh/aradotso/data-skills/data-engineering-patterns-fabric-databricks) | [ssanjaychandra123/data-engineering-patterns](https://github.com/ssanjaychandra123/data-engineering-patterns) | 2026-06-01 |
 | [game-analytics-platform-computer-vision](skills/game-analytics-platform-computer-vision/) | [install](https://skills.sh/aradotso/data-skills/game-analytics-platform-computer-vision) | [Singharshit22/game-analytics-platform](https://github.com/Singharshit22/game-analytics-platform) | 2026-06-01 |
+| [infrastructure-cicd-data-engineering](skills/infrastructure-cicd-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/infrastructure-cicd-data-engineering) | [josephmachado/infrastructure-cicd-data-engineering](https://github.com/josephmachado/infrastructure-cicd-data-engineering) | 2026-06-02 |
 <!-- SKILL_INDEX -->
 
 ---
