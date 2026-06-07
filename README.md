@@ -70,6 +70,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [game-analytics-platform-computer-vision](skills/game-analytics-platform-computer-vision/) | [install](https://skills.sh/aradotso/data-skills/game-analytics-platform-computer-vision) | [Singharshit22/game-analytics-platform](https://github.com/Singharshit22/game-analytics-platform) | 2026-06-01 |
 | [infrastructure-cicd-data-engineering](skills/infrastructure-cicd-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/infrastructure-cicd-data-engineering) | [josephmachado/infrastructure-cicd-data-engineering](https://github.com/josephmachado/infrastructure-cicd-data-engineering) | 2026-06-02 |
 | [harvard-artifacts-collection-analytics-app](skills/harvard-artifacts-collection-analytics-app/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-collection-analytics-app) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-06 |
+| [harvard-art-museum-data-engineering](skills/harvard-art-museum-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museum-data-engineering) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-07 |
 <!-- SKILL_INDEX -->
 
 ---
