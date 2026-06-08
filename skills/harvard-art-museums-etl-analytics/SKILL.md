@@ -1,33 +1,26 @@
 ---
 name: harvard-art-museums-etl-analytics
-description: Build ETL pipelines and analytics dashboards using the Harvard Art Museums API with Streamlit, SQL, and Plotly
+description: Build end-to-end ETL pipelines and analytics dashboards for the Harvard Art Museums API using Python, SQL, and Streamlit
 triggers:
   - how do I build an ETL pipeline for Harvard Art Museums data
-  - create a data analytics dashboard with Harvard artifacts
-  - extract and transform Harvard Art Museums API data
-  - build a Streamlit app for art museum analytics
-  - set up SQL database for Harvard artifacts collection
-  - query and visualize Harvard Art Museums data
-  - implement ETL pipeline with Pandas and MySQL
-  - analyze Harvard art collection with Python
+  - create analytics dashboard for museum artifact data
+  - connect to Harvard Art Museums API and store in SQL
+  - build data engineering pipeline with Streamlit visualization
+  - extract and transform Harvard museum artifacts data
+  - set up SQL analytics for art collections API
+  - visualize Harvard Art Museums data with Plotly
+  - implement batch ETL for museum artifacts
 ---
 
 # Harvard Art Museums ETL Analytics Skill
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-This skill enables AI agents to help developers build end-to-end data engineering and analytics applications using the Harvard Art Museums API. The project demonstrates ETL pipeline construction, SQL database design, and interactive visualization with Streamlit.
+## Overview
 
-## What This Project Does
+The Harvard Artifacts Collection Data Engineering Analytics App is an end-to-end data pipeline that demonstrates real-world ETL patterns for museum artifact data. It extracts data from the Harvard Art Museums API, transforms nested JSON into normalized SQL tables, loads data efficiently with batch inserts, and provides interactive analytics dashboards using Streamlit and Plotly.
 
-The Harvard-Artifacts-Collection-Data-Engineering-Analytics-App provides:
-- Dynamic artifact data collection from Harvard Art Museums API
-- ETL (Extract, Transform, Load) operations on nested JSON data
-- Relational database storage (MySQL/TiDB Cloud)
-- Analytical SQL query execution
-- Interactive Streamlit dashboards with Plotly visualizations
-
-The architecture follows: **API → ETL → SQL → Analytics → Visualization**
+**Architecture:** API → ETL → SQL → Analytics → Visualization
 
 ## Installation
 
@@ -39,254 +32,265 @@ cd Harvard-Artifacts-Collection-Data-Engineering-Analytics-App
 # Install dependencies
 pip install -r requirements.txt
 
-# Install core packages if requirements.txt is not available
-pip install streamlit pandas requests mysql-connector-python plotly sqlalchemy
+# Run the Streamlit app
+streamlit run app.py
+```
+
+### Required Dependencies
+
+```python
+# requirements.txt
+streamlit
+pandas
+requests
+mysql-connector-python
+plotly
+python-dotenv
 ```
 
 ## Configuration
 
 ### API Key Setup
 
-Get your Harvard Art Museums API key from https://docs.harvardartmuseums.org/
+The Harvard Art Museums API requires an API key. Store it as an environment variable:
+
+```bash
+# .env file
+HARVARD_API_KEY=your_api_key_here
+MYSQL_HOST=your_database_host
+MYSQL_USER=your_database_user
+MYSQL_PASSWORD=your_database_password
+MYSQL_DATABASE=harvard_artifacts
+```
 
 ```python
-# Store API key in environment variable
 import os
-os.environ['HARVARD_API_KEY'] = 'your-api-key-here'
+from dotenv import load_dotenv
 
-# Or use Streamlit secrets
-# Create .streamlit/secrets.toml
-"""
-[api]
-harvard_key = "your-api-key-here"
+load_dotenv()
 
-[database]
-host = "your-db-host"
-user = "your-db-user"
-password = "your-db-password"
-database = "harvard_artifacts"
-"""
-```
-
-### Database Configuration
-
-```python
-import mysql.connector
-from sqlalchemy import create_engine
-
-# Using mysql-connector-python
-db_config = {
-    'host': os.getenv('DB_HOST'),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_NAME')
+API_KEY = os.getenv('HARVARD_API_KEY')
+DB_CONFIG = {
+    'host': os.getenv('MYSQL_HOST'),
+    'user': os.getenv('MYSQL_USER'),
+    'password': os.getenv('MYSQL_PASSWORD'),
+    'database': os.getenv('MYSQL_DATABASE')
 }
-
-connection = mysql.connector.connect(**db_config)
-
-# Using SQLAlchemy
-engine = create_engine(
-    f"mysql+mysqlconnector://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
-)
 ```
 
-## Key Components
+### Database Schema
 
-### 1. API Data Extraction
+The application uses three normalized tables:
+
+```sql
+CREATE TABLE artifactmetadata (
+    objectid INT PRIMARY KEY,
+    title VARCHAR(500),
+    culture VARCHAR(200),
+    period VARCHAR(200),
+    century VARCHAR(100),
+    classification VARCHAR(200),
+    medium VARCHAR(500),
+    dimensions VARCHAR(500),
+    department VARCHAR(200),
+    division VARCHAR(200),
+    dated VARCHAR(200),
+    creditline TEXT,
+    accessionyear INT
+);
+
+CREATE TABLE artifactmedia (
+    mediaid INT PRIMARY KEY,
+    objectid INT,
+    baseimageurl VARCHAR(500),
+    format VARCHAR(100),
+    height INT,
+    width INT,
+    FOREIGN KEY (objectid) REFERENCES artifactmetadata(objectid)
+);
+
+CREATE TABLE artifactcolors (
+    colorid INT AUTO_INCREMENT PRIMARY KEY,
+    objectid INT,
+    color VARCHAR(50),
+    spectrum VARCHAR(50),
+    hue VARCHAR(50),
+    percent FLOAT,
+    FOREIGN KEY (objectid) REFERENCES artifactmetadata(objectid)
+);
+```
+
+## Core ETL Components
+
+### 1. Extract: API Data Collection
 
 ```python
 import requests
-import pandas as pd
+import time
 
-def extract_artifacts(api_key, num_records=100):
-    """Extract artifact data from Harvard Art Museums API with pagination."""
+def fetch_artifacts(api_key, num_pages=10, page_size=100):
+    """
+    Extract artifact data from Harvard Art Museums API with pagination
+    """
     base_url = "https://api.harvardartmuseums.org/object"
     artifacts = []
-    page = 1
-    per_page = 100
     
-    while len(artifacts) < num_records:
+    for page in range(1, num_pages + 1):
         params = {
             'apikey': api_key,
-            'page': page,
-            'size': min(per_page, num_records - len(artifacts))
+            'size': page_size,
+            'page': page
         }
         
-        response = requests.get(base_url, params=params)
-        
-        if response.status_code == 200:
+        try:
+            response = requests.get(base_url, params=params)
+            response.raise_for_status()
             data = response.json()
+            
             artifacts.extend(data.get('records', []))
             
-            if len(data.get('records', [])) < per_page:
-                break
-            page += 1
-        else:
-            print(f"Error: {response.status_code}")
-            break
+            # Rate limiting
+            time.sleep(0.5)
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching page {page}: {e}")
+            continue
     
-    return artifacts[:num_records]
-
-# Usage
-api_key = os.getenv('HARVARD_API_KEY')
-artifacts = extract_artifacts(api_key, num_records=500)
+    return artifacts
 ```
 
-### 2. Data Transformation
+### 2. Transform: Data Normalization
 
 ```python
-def transform_artifacts(artifacts):
-    """Transform nested JSON into relational dataframes."""
+import pandas as pd
+
+def transform_artifacts(artifacts_json):
+    """
+    Transform nested JSON into normalized dataframes
+    """
+    metadata_records = []
+    media_records = []
+    color_records = []
     
-    # Artifact Metadata
-    metadata = []
-    for artifact in artifacts:
-        metadata.append({
+    for artifact in artifacts_json:
+        # Extract metadata
+        metadata = {
             'objectid': artifact.get('objectid'),
             'title': artifact.get('title'),
             'culture': artifact.get('culture'),
             'period': artifact.get('period'),
             'century': artifact.get('century'),
             'classification': artifact.get('classification'),
+            'medium': artifact.get('medium'),
+            'dimensions': artifact.get('dimensions'),
             'department': artifact.get('department'),
+            'division': artifact.get('division'),
             'dated': artifact.get('dated'),
-            'url': artifact.get('url')
-        })
-    
-    df_metadata = pd.DataFrame(metadata)
-    
-    # Artifact Media
-    media = []
-    for artifact in artifacts:
-        objectid = artifact.get('objectid')
-        for img in artifact.get('images', []):
-            media.append({
-                'objectid': objectid,
-                'imageid': img.get('imageid'),
-                'baseimageurl': img.get('baseimageurl'),
-                'format': img.get('format'),
-                'width': img.get('width'),
-                'height': img.get('height')
-            })
-    
-    df_media = pd.DataFrame(media)
-    
-    # Artifact Colors
-    colors = []
-    for artifact in artifacts:
-        objectid = artifact.get('objectid')
-        for color in artifact.get('colors', []):
-            colors.append({
-                'objectid': objectid,
+            'creditline': artifact.get('creditline'),
+            'accessionyear': artifact.get('accessionyear')
+        }
+        metadata_records.append(metadata)
+        
+        # Extract media information
+        images = artifact.get('images', [])
+        for image in images:
+            media = {
+                'mediaid': image.get('imageid'),
+                'objectid': artifact.get('objectid'),
+                'baseimageurl': image.get('baseimageurl'),
+                'format': image.get('format'),
+                'height': image.get('height'),
+                'width': image.get('width')
+            }
+            media_records.append(media)
+        
+        # Extract color information
+        colors = artifact.get('colors', [])
+        for color in colors:
+            color_data = {
+                'objectid': artifact.get('objectid'),
                 'color': color.get('color'),
                 'spectrum': color.get('spectrum'),
-                'percentage': color.get('percent')
-            })
+                'hue': color.get('hue'),
+                'percent': color.get('percent')
+            }
+            color_records.append(color_data)
     
-    df_colors = pd.DataFrame(colors)
+    df_metadata = pd.DataFrame(metadata_records)
+    df_media = pd.DataFrame(media_records)
+    df_colors = pd.DataFrame(color_records)
     
     return df_metadata, df_media, df_colors
 ```
 
-### 3. Database Schema Creation
+### 3. Load: Batch SQL Inserts
 
 ```python
-def create_database_schema(connection):
-    """Create tables for artifact data."""
-    cursor = connection.cursor()
-    
-    # Artifact Metadata Table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS artifactmetadata (
-            objectid INT PRIMARY KEY,
-            title VARCHAR(500),
-            culture VARCHAR(255),
-            period VARCHAR(255),
-            century VARCHAR(100),
-            classification VARCHAR(255),
-            department VARCHAR(255),
-            dated VARCHAR(255),
-            url VARCHAR(500)
-        )
-    """)
-    
-    # Artifact Media Table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS artifactmedia (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            objectid INT,
-            imageid INT,
-            baseimageurl VARCHAR(500),
-            format VARCHAR(50),
-            width INT,
-            height INT,
-            FOREIGN KEY (objectid) REFERENCES artifactmetadata(objectid)
-        )
-    """)
-    
-    # Artifact Colors Table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS artifactcolors (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            objectid INT,
-            color VARCHAR(50),
-            spectrum VARCHAR(50),
-            percentage FLOAT,
-            FOREIGN KEY (objectid) REFERENCES artifactmetadata(objectid)
-        )
-    """)
-    
-    connection.commit()
-    cursor.close()
+import mysql.connector
+from mysql.connector import Error
+
+def load_to_database(df_metadata, df_media, df_colors, db_config):
+    """
+    Load dataframes into MySQL database with batch inserts
+    """
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        
+        # Insert metadata (batch)
+        metadata_query = """
+            INSERT INTO artifactmetadata 
+            (objectid, title, culture, period, century, classification, 
+             medium, dimensions, department, division, dated, creditline, accessionyear)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE title=VALUES(title)
+        """
+        metadata_values = [tuple(row) for row in df_metadata.values]
+        cursor.executemany(metadata_query, metadata_values)
+        
+        # Insert media (batch)
+        media_query = """
+            INSERT INTO artifactmedia 
+            (mediaid, objectid, baseimageurl, format, height, width)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE baseimageurl=VALUES(baseimageurl)
+        """
+        media_values = [tuple(row) for row in df_media.values]
+        cursor.executemany(media_query, media_values)
+        
+        # Insert colors (batch)
+        colors_query = """
+            INSERT INTO artifactcolors 
+            (objectid, color, spectrum, hue, percent)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        colors_values = [tuple(row) for row in df_colors.values]
+        cursor.executemany(colors_query, colors_values)
+        
+        connection.commit()
+        print(f"Successfully loaded {len(metadata_values)} artifacts")
+        
+    except Error as e:
+        print(f"Database error: {e}")
+        connection.rollback()
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
 ```
 
-### 4. Data Loading
+## Analytics Queries
+
+### Sample Analytical Queries
 
 ```python
-def load_data_to_sql(df_metadata, df_media, df_colors, connection):
-    """Load dataframes into SQL database with batch inserts."""
-    
-    # Load metadata
-    df_metadata.to_sql(
-        'artifactmetadata',
-        con=connection,
-        if_exists='append',
-        index=False,
-        method='multi',
-        chunksize=1000
-    )
-    
-    # Load media
-    df_media.to_sql(
-        'artifactmedia',
-        con=connection,
-        if_exists='append',
-        index=False,
-        method='multi',
-        chunksize=1000
-    )
-    
-    # Load colors
-    df_colors.to_sql(
-        'artifactcolors',
-        con=connection,
-        if_exists='append',
-        index=False,
-        method='multi',
-        chunksize=1000
-    )
-```
-
-### 5. Analytical SQL Queries
-
-```python
-analytical_queries = {
+ANALYTICAL_QUERIES = {
     "Artifacts by Culture": """
-        SELECT culture, COUNT(*) as count
+        SELECT culture, COUNT(*) as artifact_count
         FROM artifactmetadata
         WHERE culture IS NOT NULL
         GROUP BY culture
-        ORDER BY count DESC
+        ORDER BY artifact_count DESC
         LIMIT 10
     """,
     
@@ -301,196 +305,256 @@ analytical_queries = {
     "Media Availability": """
         SELECT 
             CASE WHEN m.objectid IS NOT NULL THEN 'Has Media' ELSE 'No Media' END as media_status,
-            COUNT(DISTINCT a.objectid) as count
+            COUNT(a.objectid) as count
         FROM artifactmetadata a
         LEFT JOIN artifactmedia m ON a.objectid = m.objectid
         GROUP BY media_status
     """,
     
     "Top Colors Used": """
-        SELECT color, COUNT(*) as usage_count, AVG(percentage) as avg_percentage
+        SELECT color, COUNT(*) as usage_count, AVG(percent) as avg_percent
         FROM artifactcolors
+        WHERE color IS NOT NULL
         GROUP BY color
         ORDER BY usage_count DESC
         LIMIT 10
     """,
     
-    "Department Distribution": """
-        SELECT department, COUNT(*) as artifact_count
+    "Artifacts by Department": """
+        SELECT department, COUNT(*) as count
         FROM artifactmetadata
         WHERE department IS NOT NULL
         GROUP BY department
-        ORDER BY artifact_count DESC
-    """,
-    
-    "Classification Analysis": """
-        SELECT classification, COUNT(*) as count
-        FROM artifactmetadata
-        WHERE classification IS NOT NULL
-        GROUP BY classification
         ORDER BY count DESC
-        LIMIT 15
     """
 }
 
-def execute_query(connection, query):
-    """Execute analytical query and return results as DataFrame."""
-    return pd.read_sql(query, connection)
+def run_analytics_query(query, db_config):
+    """
+    Execute analytical query and return results as DataFrame
+    """
+    try:
+        connection = mysql.connector.connect(**db_config)
+        df = pd.read_sql(query, connection)
+        return df
+    except Error as e:
+        print(f"Query error: {e}")
+        return None
+    finally:
+        if connection.is_connected():
+            connection.close()
 ```
 
-### 6. Streamlit Dashboard
+## Streamlit Dashboard
+
+### Main Application Structure
 
 ```python
 import streamlit as st
 import plotly.express as px
 
 def main():
-    st.title("Harvard Art Museums Analytics Dashboard")
+    st.set_page_config(page_title="Harvard Art Analytics", layout="wide")
     
-    # Sidebar for configuration
-    st.sidebar.header("Configuration")
-    api_key = st.sidebar.text_input("API Key", type="password", value=os.getenv('HARVARD_API_KEY', ''))
-    num_records = st.sidebar.slider("Number of Records", 100, 1000, 500)
+    st.title("🏛️ Harvard Art Museums Analytics Dashboard")
     
-    # ETL Section
-    if st.sidebar.button("Run ETL Pipeline"):
-        with st.spinner("Extracting data from API..."):
-            artifacts = extract_artifacts(api_key, num_records)
-            st.success(f"Extracted {len(artifacts)} artifacts")
+    # Sidebar for API configuration
+    with st.sidebar:
+        st.header("Configuration")
+        api_key = st.text_input("Harvard API Key", type="password", 
+                                value=os.getenv('HARVARD_API_KEY', ''))
         
-        with st.spinner("Transforming data..."):
-            df_metadata, df_media, df_colors = transform_artifacts(artifacts)
-            st.success("Data transformed successfully")
+        st.header("ETL Pipeline")
+        num_pages = st.slider("Pages to fetch", 1, 50, 10)
         
-        with st.spinner("Loading to database..."):
-            connection = mysql.connector.connect(**db_config)
-            create_database_schema(connection)
-            load_data_to_sql(df_metadata, df_media, df_colors, connection)
-            st.success("Data loaded to database")
+        if st.button("Run ETL Pipeline"):
+            with st.spinner("Extracting data..."):
+                artifacts = fetch_artifacts(api_key, num_pages)
+                st.success(f"Extracted {len(artifacts)} artifacts")
+            
+            with st.spinner("Transforming data..."):
+                df_meta, df_media, df_colors = transform_artifacts(artifacts)
+                st.success("Data transformed")
+            
+            with st.spinner("Loading to database..."):
+                load_to_database(df_meta, df_media, df_colors, DB_CONFIG)
+                st.success("Data loaded to SQL")
     
-    # Analytics Section
-    st.header("Analytics Dashboard")
+    # Analytics section
+    st.header("📊 SQL Analytics")
     
-    query_name = st.selectbox("Select Analysis", list(analytical_queries.keys()))
+    query_name = st.selectbox("Select Analysis", list(ANALYTICAL_QUERIES.keys()))
     
     if st.button("Run Query"):
-        connection = mysql.connector.connect(**db_config)
-        df_result = execute_query(connection, analytical_queries[query_name])
+        query = ANALYTICAL_QUERIES[query_name]
         
-        st.subheader("Results")
-        st.dataframe(df_result)
+        with st.spinner("Running query..."):
+            df_result = run_analytics_query(query, DB_CONFIG)
         
-        # Auto-generate visualization
-        if len(df_result.columns) >= 2:
-            fig = px.bar(
-                df_result,
-                x=df_result.columns[0],
-                y=df_result.columns[1],
-                title=query_name
-            )
-            st.plotly_chart(fig, use_container_width=True)
+        if df_result is not None and not df_result.empty:
+            st.subheader("Query Results")
+            st.dataframe(df_result)
+            
+            # Auto-generate visualization
+            if len(df_result.columns) >= 2:
+                fig = px.bar(df_result, 
+                            x=df_result.columns[0], 
+                            y=df_result.columns[1],
+                            title=query_name)
+                st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":
     main()
 ```
 
-## Running the Application
-
-```bash
-# Run the Streamlit app
-streamlit run app.py
-
-# Access at http://localhost:8501
-```
-
 ## Common Patterns
 
-### Rate Limiting API Calls
+### Rate Limiting for API Calls
 
 ```python
 import time
+from functools import wraps
 
-def extract_with_rate_limit(api_key, num_records, delay=0.1):
-    """Extract data with rate limiting."""
-    artifacts = []
-    for page in range(1, (num_records // 100) + 2):
-        response = requests.get(
-            "https://api.harvardartmuseums.org/object",
-            params={'apikey': api_key, 'page': page, 'size': 100}
-        )
-        if response.status_code == 200:
-            artifacts.extend(response.json().get('records', []))
-        time.sleep(delay)  # Rate limiting
-    return artifacts[:num_records]
+def rate_limit(calls_per_second=2):
+    """Decorator to rate limit API calls"""
+    min_interval = 1.0 / calls_per_second
+    last_called = [0.0]
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = time.time() - last_called[0]
+            left_to_wait = min_interval - elapsed
+            if left_to_wait > 0:
+                time.sleep(left_to_wait)
+            result = func(*args, **kwargs)
+            last_called[0] = time.time()
+            return result
+        return wrapper
+    return decorator
+
+@rate_limit(calls_per_second=2)
+def fetch_single_artifact(artifact_id, api_key):
+    url = f"https://api.harvardartmuseums.org/object/{artifact_id}"
+    response = requests.get(url, params={'apikey': api_key})
+    return response.json()
 ```
 
-### Error Handling in ETL
+### Error Handling for ETL
 
 ```python
-def safe_transform(artifacts):
-    """Transform with error handling."""
-    metadata = []
-    for artifact in artifacts:
-        try:
-            metadata.append({
-                'objectid': artifact.get('objectid'),
-                'title': artifact.get('title', 'Unknown'),
-                'culture': artifact.get('culture'),
-                'century': artifact.get('century')
-            })
-        except Exception as e:
-            st.warning(f"Skipping artifact {artifact.get('objectid')}: {e}")
-            continue
-    return pd.DataFrame(metadata)
-```
-
-### Incremental Data Loading
-
-```python
-def incremental_load(new_artifacts, connection):
-    """Load only new artifacts not in database."""
-    cursor = connection.cursor()
-    cursor.execute("SELECT objectid FROM artifactmetadata")
-    existing_ids = set(row[0] for row in cursor.fetchall())
-    
-    new_data = [a for a in new_artifacts if a.get('objectid') not in existing_ids]
-    
-    if new_data:
-        df_metadata, df_media, df_colors = transform_artifacts(new_data)
-        load_data_to_sql(df_metadata, df_media, df_colors, connection)
-        return len(new_data)
-    return 0
+def safe_etl_pipeline(api_key, num_pages, db_config):
+    """ETL pipeline with comprehensive error handling"""
+    try:
+        # Extract
+        artifacts = fetch_artifacts(api_key, num_pages)
+        if not artifacts:
+            raise ValueError("No artifacts extracted")
+        
+        # Transform
+        df_meta, df_media, df_colors = transform_artifacts(artifacts)
+        
+        # Validate
+        if df_meta.empty:
+            raise ValueError("Metadata transformation failed")
+        
+        # Load
+        load_to_database(df_meta, df_media, df_colors, db_config)
+        
+        return {
+            'status': 'success',
+            'artifacts': len(artifacts),
+            'metadata_rows': len(df_meta),
+            'media_rows': len(df_media),
+            'color_rows': len(df_colors)
+        }
+        
+    except requests.exceptions.RequestException as e:
+        return {'status': 'error', 'stage': 'extract', 'message': str(e)}
+    except ValueError as e:
+        return {'status': 'error', 'stage': 'transform', 'message': str(e)}
+    except Error as e:
+        return {'status': 'error', 'stage': 'load', 'message': str(e)}
 ```
 
 ## Troubleshooting
 
-**API Key Issues:**
+### API Key Issues
+
 ```python
-# Verify API key works
-response = requests.get(
-    "https://api.harvardartmuseums.org/object",
-    params={'apikey': os.getenv('HARVARD_API_KEY'), 'size': 1}
-)
-print(f"Status: {response.status_code}")
+def validate_api_key(api_key):
+    """Test API key validity"""
+    test_url = "https://api.harvardartmuseums.org/object"
+    try:
+        response = requests.get(test_url, params={'apikey': api_key, 'size': 1})
+        if response.status_code == 401:
+            return False, "Invalid API key"
+        elif response.status_code == 200:
+            return True, "API key valid"
+        else:
+            return False, f"Unexpected status: {response.status_code}"
+    except Exception as e:
+        return False, str(e)
 ```
 
-**Database Connection Errors:**
+### Database Connection Issues
+
 ```python
-# Test connection
-try:
-    connection = mysql.connector.connect(**db_config)
-    print("Database connected successfully")
-    connection.close()
-except mysql.connector.Error as err:
-    print(f"Error: {err}")
+def test_database_connection(db_config):
+    """Test database connectivity"""
+    try:
+        connection = mysql.connector.connect(**db_config)
+        if connection.is_connected():
+            cursor = connection.cursor()
+            cursor.execute("SELECT 1")
+            result = cursor.fetchone()
+            cursor.close()
+            connection.close()
+            return True, "Database connection successful"
+        return False, "Could not establish connection"
+    except Error as e:
+        return False, f"Database error: {e}"
 ```
 
-**Memory Issues with Large Datasets:**
+### Memory Management for Large Datasets
+
 ```python
-# Use chunked processing
-def chunked_extract(api_key, total_records, chunk_size=100):
-    for offset in range(0, total_records, chunk_size):
-        artifacts = extract_artifacts(api_key, chunk_size)
-        df_metadata, df_media, df_colors = transform_artifacts(artifacts)
-        load_data_to_sql(df_metadata, df_media, df_colors, connection)
+def chunked_load(df, chunk_size, table_name, db_config):
+    """Load large dataframes in chunks to avoid memory issues"""
+    total_chunks = len(df) // chunk_size + (1 if len(df) % chunk_size != 0 else 0)
+    
+    for i in range(0, len(df), chunk_size):
+        chunk = df.iloc[i:i+chunk_size]
+        chunk_num = i // chunk_size + 1
+        
+        try:
+            connection = mysql.connector.connect(**db_config)
+            chunk.to_sql(table_name, connection, if_exists='append', index=False)
+            print(f"Loaded chunk {chunk_num}/{total_chunks}")
+        except Exception as e:
+            print(f"Error loading chunk {chunk_num}: {e}")
+        finally:
+            if connection.is_connected():
+                connection.close()
 ```
+
+### Handling Missing Data
+
+```python
+def clean_artifact_data(df):
+    """Clean and handle missing values in artifact data"""
+    # Fill numeric nulls with 0
+    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    df[numeric_cols] = df[numeric_cols].fillna(0)
+    
+    # Fill string nulls with 'Unknown'
+    string_cols = df.select_dtypes(include=['object']).columns
+    df[string_cols] = df[string_cols].fillna('Unknown')
+    
+    # Remove duplicates based on objectid
+    df = df.drop_duplicates(subset=['objectid'], keep='first')
+    
+    return df
+```
+
+This skill provides AI agents with the knowledge to build complete ETL pipelines for museum data, implement SQL analytics, and create interactive dashboards using the Harvard Art Museums API architecture.
