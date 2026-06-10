@@ -71,6 +71,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [infrastructure-cicd-data-engineering](skills/infrastructure-cicd-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/infrastructure-cicd-data-engineering) | [josephmachado/infrastructure-cicd-data-engineering](https://github.com/josephmachado/infrastructure-cicd-data-engineering) | 2026-06-02 |
 | [harvard-artifacts-collection-analytics-app](skills/harvard-artifacts-collection-analytics-app/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-collection-analytics-app) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-06 |
 | [harvard-art-museum-data-engineering](skills/harvard-art-museum-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museum-data-engineering) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-07 |
+| [data-analytics-skills-claude](skills/data-analytics-skills-claude/) | [install](https://skills.sh/aradotso/data-skills/data-analytics-skills-claude) | [nimrodfisher/data-analytics-skills](https://github.com/nimrodfisher/data-analytics-skills) | 2026-06-10 |
 <!-- SKILL_INDEX -->
 
 ---
