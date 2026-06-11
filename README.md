@@ -72,6 +72,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-artifacts-collection-analytics-app](skills/harvard-artifacts-collection-analytics-app/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-collection-analytics-app) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-06 |
 | [harvard-art-museum-data-engineering](skills/harvard-art-museum-data-engineering/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museum-data-engineering) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-07 |
 | [data-analytics-skills-claude](skills/data-analytics-skills-claude/) | [install](https://skills.sh/aradotso/data-skills/data-analytics-skills-claude) | [nimrodfisher/data-analytics-skills](https://github.com/nimrodfisher/data-analytics-skills) | 2026-06-10 |
+| [car-sales-data-engineering-analytics](skills/car-sales-data-engineering-analytics/) | [install](https://skills.sh/aradotso/data-skills/car-sales-data-engineering-analytics) | [Abdumalik-ProDev/Car-Sales-Data-Engineering](https://github.com/Abdumalik-ProDev/Car-Sales-Data-Engineering) | 2026-06-11 |
 <!-- SKILL_INDEX -->
 
 ---
