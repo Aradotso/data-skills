@@ -1,15 +1,15 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: Unlocked premium CoinMarketCap Diamonds build for cryptocurrency trading analytics and blockchain data visualization on Windows
+description: CoinMarketCap Diamonds premium analytics tool for cryptocurrency trading and blockchain data analysis on Windows
 triggers:
-  - how do I use CoinMarketCap Diamonds premium features
-  - analyze cryptocurrency trading data with Diamonds
+  - how do I use CoinMarketCap Diamonds for crypto analysis
   - set up CoinMarketCap premium analytics tool
-  - configure Diamonds for crypto market analysis
-  - access pro features in CoinMarketCap Diamonds
+  - analyze cryptocurrency trading data with Diamonds
+  - configure CoinMarketCap Diamonds premium features
+  - get blockchain analytics from CoinMarketCap
   - troubleshoot CoinMarketCap Diamonds installation
-  - extract blockchain analytics with Diamonds
-  - integrate CoinMarketCap API with Diamonds
+  - use pro features in CoinMarketCap analytics
+  - export trading data from CoinMarketCap Diamonds
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
@@ -18,357 +18,252 @@ triggers:
 
 ## Overview
 
-CoinMarketCap Diamonds is a premium Windows application that provides advanced cryptocurrency trading analytics and blockchain data visualization. This build includes unlocked pro features for comprehensive market analysis, portfolio tracking, and real-time trading insights.
+CoinMarketCap Diamonds is a Windows-based premium analytics application that provides professional-grade cryptocurrency trading analysis and blockchain data insights. This build includes unlocked pro features for advanced market analysis, portfolio tracking, and trading indicators.
 
-**Key Features:**
-- Real-time cryptocurrency price tracking and alerts
-- Advanced technical analysis and charting tools
-- Portfolio management and performance analytics
-- Premium API access to CoinMarketCap data
-- Custom indicators and trading signals
-- Multi-exchange data aggregation
+**Note**: This appears to be an unofficial premium build. Exercise caution and verify legitimacy before installation. Consider using official CoinMarketCap APIs or services for production environments.
 
 ## Installation
 
-### System Requirements
-- Windows 10/11 (64-bit)
-- .NET Framework 4.8 or higher
-- Minimum 4GB RAM
-- Active internet connection
-
-### Download and Setup
+### Windows Installation
 
 1. Download the latest release from the repository
-2. Extract the archive to your preferred installation directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds\`)
-3. Run `CoinMarketCapDiamonds.exe` as administrator for first-time setup
-4. Configure API credentials through the settings panel
+2. Extract the archive to a directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds`)
+3. Run the installer executable as Administrator
+4. Follow the installation wizard prompts
 
-### Environment Configuration
-
-Create a `.env` file or set system environment variables:
-
-```env
-COINMARKETCAP_API_KEY=your_api_key_here
-DIAMONDS_DATA_PATH=C:\Users\YourUser\AppData\Local\Diamonds\data
-DIAMONDS_CACHE_SIZE=1024
-DIAMONDS_UPDATE_INTERVAL=60
+```powershell
+# Example PowerShell installation script
+$installPath = "C:\Program Files\CoinMarketCap-Diamonds"
+New-Item -ItemType Directory -Force -Path $installPath
+Expand-Archive -Path ".\CoinMarketCap-Diamonds.zip" -DestinationPath $installPath
 ```
+
+### System Requirements
+
+- Windows 10/11 (64-bit)
+- Minimum 4GB RAM
+- 500MB disk space
+- Internet connection for real-time data
 
 ## Configuration
 
 ### Initial Setup
 
-The application uses a `config.json` file located in the installation directory:
+Create a configuration file at `%APPDATA%\CoinMarketCap-Diamonds\config.json`:
 
 ```json
 {
   "api": {
-    "provider": "coinmarketcap",
-    "apiKey": "${COINMARKETCAP_API_KEY}",
-    "rateLimit": 30,
-    "timeout": 10000
+    "endpoint": "https://pro-api.coinmarketcap.com/v1",
+    "key": "${CMC_API_KEY}",
+    "rate_limit": 333
   },
   "analytics": {
-    "enablePremiumFeatures": true,
-    "dataRetention": 90,
-    "realTimeUpdates": true
+    "premium_features": true,
+    "auto_refresh": 60,
+    "default_currency": "USD"
   },
-  "ui": {
-    "theme": "dark",
-    "defaultView": "dashboard",
-    "chartRefreshRate": 5000
+  "trading": {
+    "indicators": ["RSI", "MACD", "BB"],
+    "alert_threshold": 5.0
   },
-  "alerts": {
-    "enabled": true,
-    "soundNotifications": true,
-    "emailNotifications": false
+  "data_export": {
+    "format": "csv",
+    "path": "%USERPROFILE%\\Documents\\CMC-Exports"
   }
 }
 ```
 
-### Premium Features Configuration
+### Environment Variables
 
-Enable specific pro features by editing `premium.config`:
+Set required environment variables:
 
-```json
-{
-  "features": {
-    "advancedCharting": true,
-    "customIndicators": true,
-    "multiExchange": true,
-    "historicalDataAccess": true,
-    "exportCapabilities": true,
-    "apiUnlimited": true
-  },
-  "limits": {
-    "watchlistSize": -1,
-    "portfolios": -1,
-    "alerts": -1,
-    "apiCallsPerDay": -1
-  }
-}
+```powershell
+# Set CoinMarketCap API key
+[System.Environment]::SetEnvironmentVariable('CMC_API_KEY', 'your-api-key-here', 'User')
+
+# Optional: Set custom data directory
+[System.Environment]::SetEnvironmentVariable('CMC_DATA_DIR', 'C:\CryptoData', 'User')
 ```
 
-## Core Features & Usage
+## Core Features
 
-### Command-Line Interface
+### Market Analytics
 
-The application supports CLI commands for automation and scripting:
+Access premium market analytics through the application interface or programmatically:
+
+```python
+# If the tool exposes a Python API
+from coinmarketcap_diamonds import Analytics
+
+# Initialize analytics client
+analytics = Analytics(api_key=os.getenv('CMC_API_KEY'))
+
+# Get premium market data
+market_data = analytics.get_global_metrics()
+print(f"Total Market Cap: ${market_data['total_market_cap']:,.2f}")
+print(f"BTC Dominance: {market_data['btc_dominance']:.2f}%")
+
+# Advanced technical indicators
+indicators = analytics.calculate_indicators(
+    symbol='BTC',
+    timeframe='1h',
+    indicators=['RSI', 'MACD', 'Bollinger_Bands']
+)
+```
+
+### Portfolio Tracking
+
+```python
+from coinmarketcap_diamonds import Portfolio
+
+# Create portfolio tracker
+portfolio = Portfolio()
+
+# Add holdings
+portfolio.add_holding('BTC', amount=0.5, purchase_price=45000)
+portfolio.add_holding('ETH', amount=5.0, purchase_price=3000)
+
+# Get portfolio performance
+performance = portfolio.get_performance()
+print(f"Total Value: ${performance['total_value']:,.2f}")
+print(f"Total P&L: ${performance['profit_loss']:,.2f}")
+print(f"ROI: {performance['roi_percentage']:.2f}%")
+```
+
+### Trading Signals
+
+```python
+from coinmarketcap_diamonds import TradingSignals
+
+signals = TradingSignals(premium=True)
+
+# Get buy/sell signals
+btc_signals = signals.analyze('BTC', timeframe='4h')
+
+for signal in btc_signals:
+    print(f"Signal: {signal['action']}")
+    print(f"Strength: {signal['strength']}")
+    print(f"Price Target: ${signal['target_price']:.2f}")
+    print(f"Stop Loss: ${signal['stop_loss']:.2f}")
+```
+
+### Data Export
+
+```python
+from coinmarketcap_diamonds import DataExporter
+
+exporter = DataExporter()
+
+# Export historical data
+exporter.export_historical(
+    symbols=['BTC', 'ETH', 'ADA'],
+    start_date='2024-01-01',
+    end_date='2024-12-31',
+    interval='1d',
+    output_file='crypto_data.csv'
+)
+
+# Export with custom columns
+exporter.export_custom(
+    symbols=['BTC'],
+    columns=['timestamp', 'open', 'high', 'low', 'close', 'volume', 'market_cap'],
+    format='parquet',
+    output_file='btc_ohlcv.parquet'
+)
+```
+
+## CLI Commands
+
+If the application includes a command-line interface:
 
 ```bash
-# Launch with specific profile
-CoinMarketCapDiamonds.exe --profile trading
+# Launch the application
+CoinMarketCap-Diamonds.exe
 
-# Export data to CSV
-CoinMarketCapDiamonds.exe --export portfolio --format csv --output C:\exports\portfolio.csv
+# Export data via CLI
+CoinMarketCap-Diamonds.exe export --symbols BTC,ETH --days 30 --output data.csv
+
+# Generate analytics report
+CoinMarketCap-Diamonds.exe report --symbols BTC --timeframe 7d --format pdf
 
 # Update market data
-CoinMarketCapDiamonds.exe --update-cache --silent
+CoinMarketCap-Diamonds.exe update --full
 
-# Run analytics script
-CoinMarketCapDiamonds.exe --script analytics.js --output report.html
+# Check premium features status
+CoinMarketCap-Diamonds.exe status --premium
 ```
 
-### Scripting & Automation
+## Advanced Analytics
 
-Create custom analytics scripts using the built-in JavaScript engine:
+### Custom Indicator Development
 
-```javascript
-// analytics.js - Custom trading signal generator
+```python
+from coinmarketcap_diamonds import CustomIndicator
 
-// Access market data
-const btc = Diamonds.getCrypto('BTC');
-const eth = Diamonds.getCrypto('ETH');
+class VolumeWeightedRSI(CustomIndicator):
+    def __init__(self, period=14):
+        self.period = period
+    
+    def calculate(self, data):
+        # Custom indicator logic
+        volume_weighted = data['close'] * data['volume']
+        rsi = self.compute_rsi(volume_weighted, self.period)
+        return rsi
 
-// Calculate custom indicator
-function calculateRSI(symbol, period = 14) {
-  const prices = Diamonds.getPriceHistory(symbol, period * 2);
-  let gains = 0, losses = 0;
-  
-  for (let i = 1; i < prices.length; i++) {
-    const change = prices[i] - prices[i - 1];
-    if (change > 0) gains += change;
-    else losses += Math.abs(change);
-  }
-  
-  const avgGain = gains / period;
-  const avgLoss = losses / period;
-  const rs = avgGain / avgLoss;
-  
-  return 100 - (100 / (1 + rs));
-}
+# Register custom indicator
+analytics.register_indicator('VW_RSI', VolumeWeightedRSI(period=14))
 
-// Generate signals
-const btcRSI = calculateRSI('BTC', 14);
-const ethRSI = calculateRSI('ETH', 14);
-
-if (btcRSI < 30) {
-  Diamonds.alert('BTC oversold - RSI: ' + btcRSI.toFixed(2), 'BUY_SIGNAL');
-}
-
-if (ethRSI > 70) {
-  Diamonds.alert('ETH overbought - RSI: ' + ethRSI.toFixed(2), 'SELL_SIGNAL');
-}
-
-// Export results
-Diamonds.export({
-  timestamp: Date.now(),
-  signals: [
-    { symbol: 'BTC', rsi: btcRSI, signal: btcRSI < 30 ? 'BUY' : btcRSI > 70 ? 'SELL' : 'HOLD' },
-    { symbol: 'ETH', rsi: ethRSI, signal: ethRSI < 30 ? 'BUY' : ethRSI > 70 ? 'SELL' : 'HOLD' }
-  ]
-}, 'json');
+# Use in analysis
+signals = analytics.analyze('BTC', indicators=['VW_RSI'])
 ```
 
-### Portfolio Analysis
+### Backtesting Strategies
 
-```javascript
-// portfolio-analysis.js
+```python
+from coinmarketcap_diamonds import Backtester
 
-// Load portfolio
-const portfolio = Diamonds.getPortfolio('main');
+backtester = Backtester(
+    initial_capital=10000,
+    commission=0.001
+)
 
-// Calculate metrics
-const totalValue = portfolio.getTotalValue('USD');
-const dailyChange = portfolio.getDailyChange();
-const profitLoss = portfolio.getProfitLoss();
+# Define strategy
+strategy = {
+    'entry': {'RSI': {'below': 30}},
+    'exit': {'RSI': {'above': 70}},
+    'position_size': 0.1
+}
 
-// Get top performers
-const topGainers = portfolio.getAssets()
-  .sort((a, b) => b.change24h - a.change24h)
-  .slice(0, 5);
+# Run backtest
+results = backtester.run(
+    symbol='BTC',
+    strategy=strategy,
+    start_date='2023-01-01',
+    end_date='2024-01-01'
+)
 
-// Generate report
-const report = {
-  timestamp: new Date().toISOString(),
-  summary: {
-    totalValue: totalValue,
-    dailyChangePercent: dailyChange.percent,
-    dailyChangeValue: dailyChange.value,
-    totalProfitLoss: profitLoss,
-    assetCount: portfolio.getAssets().length
-  },
-  topPerformers: topGainers.map(asset => ({
-    symbol: asset.symbol,
-    holdings: asset.amount,
-    value: asset.currentValue,
-    change24h: asset.change24h,
-    profitLoss: asset.profitLoss
-  }))
-};
-
-// Save report
-Diamonds.saveReport(report, 'portfolio-daily-' + Date.now() + '.json');
-Diamonds.log('Portfolio analysis complete: ' + JSON.stringify(report.summary));
+print(f"Total Return: {results['total_return']:.2f}%")
+print(f"Sharpe Ratio: {results['sharpe_ratio']:.2f}")
+print(f"Max Drawdown: {results['max_drawdown']:.2f}%")
 ```
 
-### API Integration
+## Data Integration
 
-Access CoinMarketCap data programmatically:
+### Connect to External Data Sources
 
-```javascript
-// api-integration.js
+```python
+from coinmarketcap_diamonds import DataConnector
 
-// Configure API client
-const api = Diamonds.API.configure({
-  apiKey: Diamonds.env('COINMARKETCAP_API_KEY'),
-  sandbox: false,
-  version: 'v2'
-});
+# Connect to exchange API
+connector = DataConnector()
+connector.add_exchange('binance', api_key=os.getenv('BINANCE_API_KEY'))
 
-// Fetch cryptocurrency listings
-async function getTopCryptos(limit = 100) {
-  const response = await api.cryptocurrency.listingsLatest({
-    limit: limit,
-    convert: 'USD',
-    sort: 'market_cap'
-  });
-  
-  return response.data;
-}
+# Sync portfolio from exchange
+portfolio.sync_from_exchange('binance')
 
-// Get historical data
-async function getHistoricalQuotes(symbol, timeStart, timeEnd) {
-  const response = await api.cryptocurrency.quotesHistorical({
-    symbol: symbol,
-    time_start: timeStart,
-    time_end: timeEnd,
-    interval: '1d'
-  });
-  
-  return response.data;
-}
-
-// Market dominance analysis
-async function analyzeMarketDominance() {
-  const cryptos = await getTopCryptos(20);
-  const totalMarketCap = cryptos.reduce((sum, c) => sum + c.quote.USD.market_cap, 0);
-  
-  const dominance = cryptos.map(crypto => ({
-    symbol: crypto.symbol,
-    name: crypto.name,
-    marketCap: crypto.quote.USD.market_cap,
-    dominancePercent: (crypto.quote.USD.market_cap / totalMarketCap * 100).toFixed(2)
-  }));
-  
-  Diamonds.visualize('marketDominance', dominance);
-  return dominance;
-}
-
-// Execute analysis
-analyzeMarketDominance().then(data => {
-  Diamonds.log('Market dominance analysis complete');
-});
-```
-
-## Common Patterns
-
-### Real-Time Price Monitoring
-
-```javascript
-// price-monitor.js
-
-// Subscribe to price updates
-Diamonds.subscribe('price:BTC', (data) => {
-  console.log(`BTC Price: $${data.price.toFixed(2)} | Change: ${data.change24h.toFixed(2)}%`);
-  
-  // Check thresholds
-  if (data.price > 50000 && !Diamonds.getFlag('btc_50k_alert')) {
-    Diamonds.alert('BTC crossed $50,000!', 'PRICE_MILESTONE');
-    Diamonds.setFlag('btc_50k_alert', true);
-  }
-});
-
-// Multi-symbol monitoring
-const watchlist = ['BTC', 'ETH', 'BNB', 'ADA', 'SOL'];
-watchlist.forEach(symbol => {
-  Diamonds.subscribe(`price:${symbol}`, (data) => {
-    if (Math.abs(data.change1h) > 5) {
-      Diamonds.alert(`${symbol} moved ${data.change1h.toFixed(2)}% in 1 hour`, 'VOLATILITY');
-    }
-  });
-});
-```
-
-### Data Export & Reporting
-
-```javascript
-// data-export.js
-
-// Export market data
-function exportMarketSnapshot() {
-  const data = Diamonds.getMarketSnapshot(['BTC', 'ETH', 'BNB']);
-  
-  // CSV export
-  Diamonds.export(data, {
-    format: 'csv',
-    filename: `market-snapshot-${Date.now()}.csv`,
-    path: Diamonds.env('DIAMONDS_DATA_PATH')
-  });
-  
-  // JSON export with metadata
-  Diamonds.export({
-    exportTime: new Date().toISOString(),
-    source: 'CoinMarketCap',
-    data: data
-  }, {
-    format: 'json',
-    filename: `market-snapshot-${Date.now()}.json`,
-    pretty: true
-  });
-}
-
-// Scheduled exports
-Diamonds.schedule('0 */6 * * *', exportMarketSnapshot); // Every 6 hours
-```
-
-### Custom Indicators
-
-```javascript
-// indicators.js
-
-// Moving Average Convergence Divergence (MACD)
-Diamonds.registerIndicator('MACD', function(symbol, fast = 12, slow = 26, signal = 9) {
-  const prices = this.getPriceHistory(symbol, slow * 3);
-  
-  const emaFast = this.calculateEMA(prices, fast);
-  const emaSlow = this.calculateEMA(prices, slow);
-  const macdLine = emaFast.map((val, i) => val - emaSlow[i]);
-  const signalLine = this.calculateEMA(macdLine, signal);
-  const histogram = macdLine.map((val, i) => val - signalLine[i]);
-  
-  return {
-    macd: macdLine[macdLine.length - 1],
-    signal: signalLine[signalLine.length - 1],
-    histogram: histogram[histogram.length - 1]
-  };
-});
-
-// Use custom indicator
-const btcMACD = Diamonds.indicators.MACD('BTC');
-if (btcMACD.histogram > 0 && btcMACD.macd > btcMACD.signal) {
-  Diamonds.alert('BTC MACD bullish crossover', 'TECHNICAL_SIGNAL');
-}
+# Compare prices across sources
+price_comparison = connector.compare_prices('BTC', sources=['coinmarketcap', 'binance', 'coinbase'])
 ```
 
 ## Troubleshooting
@@ -376,75 +271,76 @@ if (btcMACD.histogram > 0 && btcMACD.macd > btcMACD.signal) {
 ### Common Issues
 
 **Application won't start:**
-- Verify .NET Framework 4.8+ is installed
-- Run as administrator
-- Check antivirus hasn't quarantined files
-- Review `logs/error.log` for startup errors
+```powershell
+# Check Windows event logs
+Get-EventLog -LogName Application -Source "CoinMarketCap-Diamonds" -Newest 10
 
-**API connection failures:**
-```javascript
-// Test API connectivity
-Diamonds.API.test().then(result => {
-  if (!result.success) {
-    console.error('API Error:', result.error);
-    // Check API key validity
-    // Verify network connectivity
-    // Check firewall settings
-  }
-});
+# Verify .NET runtime is installed
+dotnet --version
+
+# Run in compatibility mode
+Right-click executable -> Properties -> Compatibility -> Windows 8
 ```
 
-**Premium features not accessible:**
-- Verify `premium.config` exists and is properly formatted
-- Check `enablePremiumFeatures: true` in `config.json`
-- Restart application after configuration changes
+**API rate limiting:**
+```python
+# Implement rate limiting in code
+from coinmarketcap_diamonds import RateLimiter
 
-**Data synchronization issues:**
+limiter = RateLimiter(max_calls=30, period=60)
+
+@limiter.limit
+def fetch_data(symbol):
+    return analytics.get_quote(symbol)
+```
+
+**Data not updating:**
 ```bash
-# Clear cache and resync
-CoinMarketCapDiamonds.exe --clear-cache
-CoinMarketCapDiamonds.exe --sync-full
+# Clear cache
+CoinMarketCap-Diamonds.exe clear-cache
+
+# Force update
+CoinMarketCap-Diamonds.exe update --force --verbose
 ```
 
-**High memory usage:**
-- Reduce `DIAMONDS_CACHE_SIZE` in environment variables
-- Decrease `dataRetention` days in config
-- Limit number of active subscriptions
+**Missing premium features:**
+- Verify `premium_features: true` in config.json
+- Check application logs at `%APPDATA%\CoinMarketCap-Diamonds\logs\`
+- Ensure all required DLLs are present in installation directory
 
-### Logging & Debugging
-
-Enable detailed logging:
+### Performance Optimization
 
 ```json
 {
-  "logging": {
-    "level": "debug",
-    "file": "logs/diamonds-debug.log",
-    "console": true,
-    "includeTimestamps": true
+  "performance": {
+    "cache_enabled": true,
+    "cache_ttl": 300,
+    "parallel_requests": 5,
+    "compression": true,
+    "memory_limit_mb": 2048
   }
 }
 ```
 
-Access logs programmatically:
+## Security Considerations
 
-```javascript
-// Enable debug mode
-Diamonds.setLogLevel('debug');
+- Store API keys in environment variables, never in code
+- Use Windows Credential Manager for sensitive data
+- Enable application logging but exclude sensitive information
+- Verify SSL certificates for API connections
+- Regular backups of configuration and portfolio data
 
-// Custom logging
-Diamonds.log('info', 'Custom message');
-Diamonds.log('error', 'Error occurred', { context: 'data' });
-
-// Export logs
-Diamonds.exportLogs('logs-' + Date.now() + '.txt');
+```powershell
+# Backup configuration
+Copy-Item "$env:APPDATA\CoinMarketCap-Diamonds\config.json" -Destination ".\backup\config_$(Get-Date -Format 'yyyyMMdd').json"
 ```
 
-## Best Practices
+## Disclaimer
 
-1. **Secure API Keys**: Always use environment variables for sensitive credentials
-2. **Rate Limiting**: Respect API rate limits to avoid throttling
-3. **Error Handling**: Implement try-catch blocks in custom scripts
-4. **Data Backups**: Regularly export portfolio and configuration data
-5. **Performance**: Use caching for frequently accessed data
-6. **Updates**: Keep the application updated for latest features and security patches
+This is an unofficial build with unlocked premium features. Users should:
+- Verify the application source and integrity
+- Consider official CoinMarketCap services for production use
+- Be aware of potential terms of service violations
+- Use at own risk for trading decisions
+
+For official cryptocurrency data and analytics, visit [coinmarketcap.com](https://coinmarketcap.com) or use their official API.
