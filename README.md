@@ -77,6 +77,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-art-museums-data-engineering-analytics](skills/harvard-art-museums-data-engineering-analytics/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museums-data-engineering-analytics) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-15 |
 | [harvard-artifacts-data-engineering-streamlit](skills/harvard-artifacts-data-engineering-streamlit/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-data-engineering-streamlit) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-16 |
 | [coinmarketcap-diamonds-analytics](skills/coinmarketcap-diamonds-analytics/) | [install](https://skills.sh/aradotso/data-skills/coinmarketcap-diamonds-analytics) | [Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked](https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked) | 2026-06-16 |
+| [coinmarketcap-diamonds-premium-analytics](skills/coinmarketcap-diamonds-premium-analytics/) | [install](https://skills.sh/aradotso/data-skills/coinmarketcap-diamonds-premium-analytics) | [Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked](https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked) | 2026-06-16 |
 <!-- SKILL_INDEX -->
 
 ---
