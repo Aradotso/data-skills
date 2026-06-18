@@ -1,16 +1,15 @@
-```markdown
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: Premium crypto analytics and trading tools for CoinMarketCap data analysis on Windows
+description: Use CoinMarketCap Diamonds Premium Analytics for cryptocurrency trading data and blockchain analysis on Windows
 triggers:
-  - how do I use CoinMarketCap Diamonds premium analytics
+  - how do I use CoinMarketCap Diamonds Premium
   - analyze cryptocurrency market data with premium tools
-  - set up coinmarketcap diamonds trading analytics
-  - use crypto analytics pro features
-  - configure coinmarketcap premium analytics
-  - work with blockchain trading data analytics
-  - access coinmarketcap pro trading features
-  - troubleshoot coinmarketcap diamonds installation
+  - set up CoinMarketCap analytics software
+  - access pro trading features for crypto analysis
+  - use blockchain analytics tools on Windows
+  - get premium cryptocurrency market insights
+  - configure CoinMarketCap Diamonds for trading
+  - troubleshoot CoinMarketCap premium analytics
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
@@ -19,414 +18,562 @@ triggers:
 
 ## Overview
 
-CoinMarketCap Diamonds is a premium analytics and trading platform for Windows that provides advanced cryptocurrency market analysis tools. The application offers professional-grade features for analyzing blockchain data, tracking market trends, and executing trading strategies with CoinMarketCap data integration.
+CoinMarketCap Diamonds is a Windows-based premium analytics and trading platform that provides professional-grade cryptocurrency market analysis tools. This build includes unlocked pro features for advanced trading analytics, blockchain data visualization, and market intelligence.
 
-**Note:** This appears to be an unofficial build claiming "unlocked premium features." Exercise caution and verify legitimacy before installation. Official CoinMarketCap services should be accessed through official channels.
+**⚠️ Important Notice**: This project appears to offer "unlocked" premium features. Ensure you have proper licensing rights before using this software. Consider using official CoinMarketCap APIs and services for legitimate commercial use.
 
 ## Installation
 
-### Windows Installation
+### Prerequisites
 
-1. **System Requirements**
-   - Windows 10/11 (64-bit)
-   - 4GB RAM minimum (8GB recommended)
-   - 500MB free disk space
-   - Internet connection for real-time data
+- Windows 10 or later (64-bit recommended)
+- .NET Framework 4.7.2 or higher
+- Minimum 4GB RAM
+- Internet connection for live data feeds
 
-2. **Download and Setup**
-   ```powershell
-   # Download from the repository releases
-   # Extract the archive to your preferred location
-   # Example installation directory:
-   C:\Program Files\CoinMarketCap-Diamonds\
+### Setup Steps
+
+1. **Download the build**:
+   ```bash
+   # Clone the repository
+   git clone https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked.git
+   cd CoinMarketCap-Diamonds-Premium-Analytics-Unlocked
    ```
 
-3. **Initial Configuration**
-   - Launch the executable
-   - Configure API credentials via environment variables
-   - Set up data refresh intervals
-   - Configure trading preferences
+2. **Extract and install**:
+   - Locate the installer executable (typically `CMCDiamonds_Setup.exe`)
+   - Run as administrator
+   - Follow installation wizard
+
+3. **Initial configuration**:
+   - Launch the application
+   - Configure data source endpoints
+   - Set up API connections if using official feeds
 
 ## Configuration
 
-### Environment Variables
+### API Integration
 
-Set up required environment variables for API access:
+Set up environment variables for API access:
 
-```powershell
-# CoinMarketCap API Configuration
-$env:CMC_API_KEY = "your-api-key-here"
+```bash
+# Windows Command Prompt
+setx CMC_API_KEY "your_api_key_here"
+setx CMC_API_ENDPOINT "https://pro-api.coinmarketcap.com"
+setx CMC_REFRESH_INTERVAL "60"
+
+# Windows PowerShell
+$env:CMC_API_KEY = $env:COINMARKETCAP_API_KEY
 $env:CMC_API_ENDPOINT = "https://pro-api.coinmarketcap.com"
-
-# Data Settings
-$env:CMC_REFRESH_INTERVAL = "60"  # seconds
-$env:CMC_CACHE_DIR = "C:\Users\YourUser\AppData\Local\CMC-Diamonds\cache"
-
-# Trading Configuration
-$env:CMC_TRADING_MODE = "demo"  # or "live"
-$env:CMC_RISK_LEVEL = "medium"
+$env:CMC_REFRESH_INTERVAL = "60"
 ```
 
 ### Configuration File
 
-Create a configuration file at `%APPDATA%\CMC-Diamonds\config.json`:
+Create or modify `config.json` in the installation directory:
 
 ```json
 {
-  "api": {
-    "endpoint": "https://pro-api.coinmarketcap.com",
-    "version": "v1",
-    "timeout": 30000
+  "dataSource": {
+    "apiEndpoint": "${CMC_API_ENDPOINT}",
+    "apiKey": "${CMC_API_KEY}",
+    "refreshInterval": 60,
+    "enableWebSocket": true
   },
   "analytics": {
-    "defaultCurrency": "USD",
-    "timeframes": ["1h", "24h", "7d", "30d"],
-    "indicators": ["RSI", "MACD", "EMA", "Volume"],
-    "refreshInterval": 60
+    "enablePremiumFeatures": true,
+    "technicalIndicators": ["RSI", "MACD", "BB", "EMA"],
+    "chartTimeframes": ["1m", "5m", "15m", "1h", "4h", "1d"],
+    "maxConcurrentSymbols": 50
   },
   "trading": {
-    "mode": "demo",
+    "enableSignals": true,
     "riskManagement": {
-      "maxPositionSize": 0.05,
-      "stopLoss": 0.02,
-      "takeProfit": 0.05
+      "maxPortfolioRisk": 0.02,
+      "stopLossPercentage": 0.05
     }
   },
   "ui": {
     "theme": "dark",
-    "charts": "advanced",
-    "notifications": true
+    "defaultView": "portfolio",
+    "enableNotifications": true
   }
 }
 ```
 
 ## Key Features & Usage
 
-### Market Data Analysis
+### Premium Analytics Tools
 
-**Fetching Real-time Market Data:**
-
-The application typically provides APIs or interfaces for market data:
+#### 1. Market Data Retrieval
 
 ```python
-# Example Python integration (if API available)
-import os
+# Example Python integration for data export
+import json
 import requests
+import os
 
 CMC_API_KEY = os.getenv('CMC_API_KEY')
 CMC_ENDPOINT = os.getenv('CMC_API_ENDPOINT', 'https://pro-api.coinmarketcap.com')
 
-def get_market_data(symbols, convert='USD'):
-    """Fetch market data for specified symbols"""
+def get_crypto_listings(limit=100, convert='USD'):
+    """Fetch cryptocurrency listings with premium data"""
+    url = f"{CMC_ENDPOINT}/v1/cryptocurrency/listings/latest"
+    
     headers = {
         'X-CMC_PRO_API_KEY': CMC_API_KEY,
         'Accept': 'application/json'
     }
     
     params = {
-        'symbol': ','.join(symbols),
-        'convert': convert
+        'start': '1',
+        'limit': str(limit),
+        'convert': convert,
+        'sort': 'market_cap',
+        'sort_dir': 'desc'
     }
     
-    response = requests.get(
-        f'{CMC_ENDPOINT}/v1/cryptocurrency/quotes/latest',
-        headers=headers,
-        params=params
-    )
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()
     
     return response.json()
 
-# Usage
-data = get_market_data(['BTC', 'ETH', 'BNB'])
-for symbol, info in data['data'].items():
-    quote = info['quote']['USD']
-    print(f"{symbol}: ${quote['price']:.2f} ({quote['percent_change_24h']:.2f}%)")
-```
-
-### Analytics & Indicators
-
-**Technical Analysis Integration:**
-
-```python
-def calculate_indicators(symbol, timeframe='1h'):
-    """Calculate technical indicators for a symbol"""
+def analyze_market_trends(data):
+    """Analyze market trends from premium data"""
+    coins = data['data']
     
-    # Fetch historical data
-    historical_data = get_historical_data(symbol, timeframe)
-    
-    indicators = {
-        'rsi': calculate_rsi(historical_data, period=14),
-        'macd': calculate_macd(historical_data),
-        'ema_20': calculate_ema(historical_data, period=20),
-        'volume_trend': analyze_volume_trend(historical_data)
+    analysis = {
+        'total_market_cap': sum(c['quote']['USD']['market_cap'] for c in coins),
+        'gainers': [],
+        'losers': [],
+        'high_volume': []
     }
     
-    return indicators
-
-def get_trading_signals(symbol):
-    """Generate trading signals based on indicators"""
-    indicators = calculate_indicators(symbol)
+    for coin in coins:
+        quote = coin['quote']['USD']
+        percent_change = quote.get('percent_change_24h', 0)
+        
+        if percent_change > 10:
+            analysis['gainers'].append({
+                'symbol': coin['symbol'],
+                'change': percent_change
+            })
+        elif percent_change < -10:
+            analysis['losers'].append({
+                'symbol': coin['symbol'],
+                'change': percent_change
+            })
+        
+        if quote.get('volume_24h', 0) > 1000000000:  # $1B+ volume
+            analysis['high_volume'].append({
+                'symbol': coin['symbol'],
+                'volume': quote['volume_24h']
+            })
     
+    return analysis
+
+# Usage
+if __name__ == '__main__':
+    market_data = get_crypto_listings(limit=200)
+    trends = analyze_market_trends(market_data)
+    
+    print(f"Total Market Cap: ${trends['total_market_cap']:,.0f}")
+    print(f"Top Gainers: {len(trends['gainers'])}")
+    print(f"Top Losers: {len(trends['losers'])}")
+```
+
+#### 2. Technical Analysis Integration
+
+```python
+# Advanced technical analysis with premium indicators
+import pandas as pd
+import numpy as np
+
+def calculate_premium_indicators(price_data):
+    """Calculate premium technical indicators"""
+    df = pd.DataFrame(price_data)
+    
+    # RSI Calculation
+    delta = df['close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    rs = gain / loss
+    df['rsi'] = 100 - (100 / (1 + rs))
+    
+    # MACD
+    exp1 = df['close'].ewm(span=12, adjust=False).mean()
+    exp2 = df['close'].ewm(span=26, adjust=False).mean()
+    df['macd'] = exp1 - exp2
+    df['signal'] = df['macd'].ewm(span=9, adjust=False).mean()
+    df['macd_histogram'] = df['macd'] - df['signal']
+    
+    # Bollinger Bands
+    df['sma_20'] = df['close'].rolling(window=20).mean()
+    df['bb_std'] = df['close'].rolling(window=20).std()
+    df['bb_upper'] = df['sma_20'] + (df['bb_std'] * 2)
+    df['bb_lower'] = df['sma_20'] - (df['bb_std'] * 2)
+    
+    # Volume Profile
+    df['volume_ma'] = df['volume'].rolling(window=20).mean()
+    df['volume_ratio'] = df['volume'] / df['volume_ma']
+    
+    return df
+
+def generate_trading_signals(df):
+    """Generate premium trading signals"""
     signals = []
     
-    if indicators['rsi'] < 30:
-        signals.append({'type': 'BUY', 'strength': 'STRONG', 'reason': 'RSI oversold'})
-    elif indicators['rsi'] > 70:
-        signals.append({'type': 'SELL', 'strength': 'STRONG', 'reason': 'RSI overbought'})
+    latest = df.iloc[-1]
     
-    if indicators['macd']['signal'] == 'bullish_cross':
-        signals.append({'type': 'BUY', 'strength': 'MEDIUM', 'reason': 'MACD bullish crossover'})
+    # RSI Signals
+    if latest['rsi'] < 30:
+        signals.append({'type': 'BUY', 'indicator': 'RSI', 'strength': 'STRONG'})
+    elif latest['rsi'] > 70:
+        signals.append({'type': 'SELL', 'indicator': 'RSI', 'strength': 'STRONG'})
+    
+    # MACD Signals
+    if latest['macd'] > latest['signal'] and df.iloc[-2]['macd'] <= df.iloc[-2]['signal']:
+        signals.append({'type': 'BUY', 'indicator': 'MACD', 'strength': 'MODERATE'})
+    elif latest['macd'] < latest['signal'] and df.iloc[-2]['macd'] >= df.iloc[-2]['signal']:
+        signals.append({'type': 'SELL', 'indicator': 'MACD', 'strength': 'MODERATE'})
+    
+    # Bollinger Bands
+    if latest['close'] < latest['bb_lower']:
+        signals.append({'type': 'BUY', 'indicator': 'BB', 'strength': 'MODERATE'})
+    elif latest['close'] > latest['bb_upper']:
+        signals.append({'type': 'SELL', 'indicator': 'BB', 'strength': 'MODERATE'})
     
     return signals
 ```
 
-### Portfolio Tracking
-
-**Portfolio Management:**
+#### 3. Portfolio Analytics
 
 ```python
-class PortfolioManager:
-    def __init__(self, config_path):
-        self.config = self.load_config(config_path)
-        self.holdings = {}
+# Portfolio tracking and analysis
+class PremiumPortfolioAnalyzer:
+    def __init__(self, holdings):
+        self.holdings = holdings
+        self.api_key = os.getenv('CMC_API_KEY')
     
-    def add_position(self, symbol, amount, entry_price):
-        """Add a position to portfolio"""
-        self.holdings[symbol] = {
-            'amount': amount,
-            'entry_price': entry_price,
-            'entry_date': datetime.now().isoformat()
+    def fetch_current_prices(self):
+        """Get current prices for portfolio holdings"""
+        symbols = ','.join(self.holdings.keys())
+        url = f"{CMC_ENDPOINT}/v1/cryptocurrency/quotes/latest"
+        
+        headers = {'X-CMC_PRO_API_KEY': self.api_key}
+        params = {'symbol': symbols, 'convert': 'USD'}
+        
+        response = requests.get(url, headers=headers, params=params)
+        return response.json()['data']
+    
+    def calculate_portfolio_metrics(self):
+        """Calculate comprehensive portfolio metrics"""
+        prices = self.fetch_current_prices()
+        
+        total_value = 0
+        positions = []
+        
+        for symbol, quantity in self.holdings.items():
+            price_data = prices[symbol]['quote']['USD']
+            current_price = price_data['price']
+            position_value = quantity * current_price
+            
+            total_value += position_value
+            
+            positions.append({
+                'symbol': symbol,
+                'quantity': quantity,
+                'current_price': current_price,
+                'position_value': position_value,
+                'percent_change_24h': price_data['percent_change_24h'],
+                'volume_24h': price_data['volume_24h']
+            })
+        
+        # Calculate allocation percentages
+        for position in positions:
+            position['allocation'] = (position['position_value'] / total_value) * 100
+        
+        return {
+            'total_value': total_value,
+            'positions': positions,
+            'diversification_score': self._calculate_diversification(positions)
         }
     
-    def get_portfolio_value(self):
-        """Calculate current portfolio value"""
-        total_value = 0
-        current_prices = get_market_data(list(self.holdings.keys()))
-        
-        for symbol, holding in self.holdings.items():
-            current_price = current_prices['data'][symbol]['quote']['USD']['price']
-            position_value = holding['amount'] * current_price
-            total_value += position_value
-        
-        return total_value
-    
-    def get_pnl(self):
-        """Calculate profit/loss for each position"""
-        pnl_report = {}
-        current_prices = get_market_data(list(self.holdings.keys()))
-        
-        for symbol, holding in self.holdings.items():
-            current_price = current_prices['data'][symbol]['quote']['USD']['price']
-            entry_value = holding['amount'] * holding['entry_price']
-            current_value = holding['amount'] * current_price
-            
-            pnl_report[symbol] = {
-                'entry_value': entry_value,
-                'current_value': current_value,
-                'pnl': current_value - entry_value,
-                'pnl_percent': ((current_value - entry_value) / entry_value) * 100
-            }
-        
-        return pnl_report
-```
-
-### Data Export & Reporting
-
-**Exporting Analytics Data:**
-
-```python
-import csv
-import json
-from datetime import datetime
-
-def export_market_analysis(symbols, format='csv', output_dir='./exports'):
-    """Export market analysis to file"""
-    
-    data = get_market_data(symbols)
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    
-    if format == 'csv':
-        filename = f'{output_dir}/market_analysis_{timestamp}.csv'
-        with open(filename, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['Symbol', 'Price', 'Change 24h', 'Volume', 'Market Cap'])
-            
-            for symbol, info in data['data'].items():
-                quote = info['quote']['USD']
-                writer.writerow([
-                    symbol,
-                    quote['price'],
-                    quote['percent_change_24h'],
-                    quote['volume_24h'],
-                    quote['market_cap']
-                ])
-    
-    elif format == 'json':
-        filename = f'{output_dir}/market_analysis_{timestamp}.json'
-        with open(filename, 'w') as jsonfile:
-            json.dump(data, jsonfile, indent=2)
-    
-    return filename
+    def _calculate_diversification(self, positions):
+        """Calculate portfolio diversification score (0-100)"""
+        allocations = [p['allocation'] for p in positions]
+        # Herfindahl index
+        hhi = sum([(a/100)**2 for a in allocations])
+        # Normalize to 0-100 scale (lower HHI = better diversification)
+        return max(0, 100 - (hhi * 100))
 
 # Usage
-export_market_analysis(['BTC', 'ETH', 'ADA', 'SOL'], format='csv')
+portfolio = {
+    'BTC': 0.5,
+    'ETH': 5.0,
+    'BNB': 20.0,
+    'ADA': 1000.0
+}
+
+analyzer = PremiumPortfolioAnalyzer(portfolio)
+metrics = analyzer.calculate_portfolio_metrics()
+
+print(f"Portfolio Value: ${metrics['total_value']:,.2f}")
+print(f"Diversification Score: {metrics['diversification_score']:.1f}/100")
 ```
 
 ## Common Patterns
 
-### Automated Trading Strategy
+### Real-time Market Monitoring
 
 ```python
-class TradingBot:
-    def __init__(self, config):
-        self.config = config
-        self.portfolio = PortfolioManager(config['portfolio_config'])
-        self.active = False
+# WebSocket connection for real-time data
+import websocket
+import json
+import threading
+
+class MarketMonitor:
+    def __init__(self, symbols):
+        self.symbols = symbols
+        self.ws = None
+        self.running = False
+    
+    def on_message(self, ws, message):
+        """Handle incoming market data"""
+        data = json.loads(message)
+        
+        if data.get('type') == 'price_update':
+            self.process_price_update(data)
+        elif data.get('type') == 'volume_alert':
+            self.process_volume_alert(data)
+    
+    def process_price_update(self, data):
+        """Process real-time price updates"""
+        symbol = data['symbol']
+        price = data['price']
+        change = data['percent_change']
+        
+        print(f"{symbol}: ${price:,.2f} ({change:+.2f}%)")
+        
+        # Trigger alerts if needed
+        if abs(change) > 5:
+            self.send_alert(f"Significant move in {symbol}: {change:+.2f}%")
+    
+    def process_volume_alert(self, data):
+        """Process volume spike alerts"""
+        symbol = data['symbol']
+        volume_ratio = data['volume_ratio']
+        
+        if volume_ratio > 3:
+            print(f"⚠️ High volume alert for {symbol}: {volume_ratio:.1f}x average")
+    
+    def send_alert(self, message):
+        """Send notification (implement based on preference)"""
+        print(f"🔔 ALERT: {message}")
     
     def start(self):
-        """Start automated trading"""
-        self.active = True
-        while self.active:
-            self.execute_strategy()
-            time.sleep(self.config['check_interval'])
-    
-    def execute_strategy(self):
-        """Execute trading strategy"""
-        watchlist = self.config['watchlist']
+        """Start monitoring"""
+        self.running = True
+        ws_url = "wss://stream.coinmarketcap.com/prices"
+        self.ws = websocket.WebSocketApp(
+            ws_url,
+            on_message=self.on_message
+        )
         
-        for symbol in watchlist:
-            signals = get_trading_signals(symbol)
-            
-            for signal in signals:
-                if signal['type'] == 'BUY' and signal['strength'] == 'STRONG':
-                    self.execute_buy(symbol, signal)
-                elif signal['type'] == 'SELL' and signal['strength'] == 'STRONG':
-                    self.execute_sell(symbol, signal)
-    
-    def execute_buy(self, symbol, signal):
-        """Execute buy order"""
-        # Risk management
-        max_position = self.config['max_position_size']
-        # Implementation depends on exchange integration
-        print(f"BUY signal for {symbol}: {signal['reason']}")
-    
-    def execute_sell(self, symbol, signal):
-        """Execute sell order"""
-        if symbol in self.portfolio.holdings:
-            print(f"SELL signal for {symbol}: {signal['reason']}")
-```
-
-### Real-time Price Alerts
-
-```python
-class PriceAlertSystem:
-    def __init__(self):
-        self.alerts = []
-    
-    def add_alert(self, symbol, condition, threshold, action):
-        """Add price alert"""
-        self.alerts.append({
-            'symbol': symbol,
-            'condition': condition,  # 'above' or 'below'
-            'threshold': threshold,
-            'action': action
+        # Subscribe to symbols
+        subscribe_msg = json.dumps({
+            'action': 'subscribe',
+            'symbols': self.symbols
         })
-    
-    def check_alerts(self):
-        """Check if any alerts triggered"""
-        symbols = [alert['symbol'] for alert in self.alerts]
-        current_data = get_market_data(symbols)
         
-        triggered = []
-        for alert in self.alerts:
-            current_price = current_data['data'][alert['symbol']]['quote']['USD']['price']
-            
-            if alert['condition'] == 'above' and current_price > alert['threshold']:
-                triggered.append(alert)
-            elif alert['condition'] == 'below' and current_price < alert['threshold']:
-                triggered.append(alert)
-        
-        return triggered
+        threading.Thread(target=self.ws.run_forever).start()
 
 # Usage
-alert_system = PriceAlertSystem()
-alert_system.add_alert('BTC', 'above', 50000, 'notify')
-alert_system.add_alert('ETH', 'below', 2000, 'execute_trade')
+monitor = MarketMonitor(['BTC', 'ETH', 'BNB'])
+monitor.start()
+```
+
+### Automated Trading Signals
+
+```python
+# Signal aggregation and decision making
+class SignalAggregator:
+    def __init__(self, symbol):
+        self.symbol = symbol
+        self.signals = []
+    
+    def add_signal(self, indicator, signal_type, strength, confidence):
+        """Add a trading signal"""
+        self.signals.append({
+            'indicator': indicator,
+            'type': signal_type,
+            'strength': strength,
+            'confidence': confidence,
+            'timestamp': pd.Timestamp.now()
+        })
+    
+    def get_consensus(self):
+        """Calculate consensus from all signals"""
+        if not self.signals:
+            return None
+        
+        buy_score = 0
+        sell_score = 0
+        
+        strength_weights = {'STRONG': 3, 'MODERATE': 2, 'WEAK': 1}
+        
+        for signal in self.signals:
+            weight = strength_weights[signal['strength']] * signal['confidence']
+            
+            if signal['type'] == 'BUY':
+                buy_score += weight
+            elif signal['type'] == 'SELL':
+                sell_score += weight
+        
+        total = buy_score + sell_score
+        
+        if total == 0:
+            return {'action': 'HOLD', 'confidence': 0}
+        
+        if buy_score > sell_score:
+            return {
+                'action': 'BUY',
+                'confidence': buy_score / total,
+                'score_difference': buy_score - sell_score
+            }
+        elif sell_score > buy_score:
+            return {
+                'action': 'SELL',
+                'confidence': sell_score / total,
+                'score_difference': sell_score - buy_score
+            }
+        else:
+            return {'action': 'HOLD', 'confidence': 0.5}
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-**API Connection Failures:**
+#### 1. API Connection Errors
 
 ```python
-def test_api_connection():
-    """Test API connectivity and credentials"""
-    try:
-        response = requests.get(
-            f'{CMC_ENDPOINT}/v1/key/info',
-            headers={'X-CMC_PRO_API_KEY': CMC_API_KEY}
-        )
-        
-        if response.status_code == 200:
-            print("API connection successful")
-            print(f"Plan: {response.json()['data']['plan']['credit_limit_daily']} credits/day")
-            return True
-        else:
-            print(f"API Error: {response.status_code}")
-            print(response.json())
-            return False
-    except Exception as e:
-        print(f"Connection failed: {str(e)}")
-        return False
+# Implement retry logic for API calls
+import time
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+def create_session_with_retries():
+    """Create requests session with automatic retries"""
+    session = requests.Session()
+    
+    retry_strategy = Retry(
+        total=3,
+        backoff_factor=1,
+        status_forcelist=[429, 500, 502, 503, 504]
+    )
+    
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    
+    return session
+
+# Usage
+session = create_session_with_retries()
+response = session.get(url, headers=headers, params=params)
 ```
 
-**Data Refresh Issues:**
-
-- Check internet connection
-- Verify API rate limits haven't been exceeded
-- Clear cache directory: `%APPDATA%\CMC-Diamonds\cache`
-- Restart application
-
-**Performance Optimization:**
+#### 2. Rate Limiting
 
 ```python
-# Use caching to reduce API calls
+# Handle API rate limits
+import time
+from functools import wraps
+
+def rate_limit(calls=30, period=60):
+    """Decorator to enforce rate limiting"""
+    min_interval = period / calls
+    last_called = [0.0]
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = time.time() - last_called[0]
+            left_to_wait = min_interval - elapsed
+            
+            if left_to_wait > 0:
+                time.sleep(left_to_wait)
+            
+            ret = func(*args, **kwargs)
+            last_called[0] = time.time()
+            return ret
+        return wrapper
+    return decorator
+
+@rate_limit(calls=30, period=60)
+def fetch_market_data(symbol):
+    """Rate-limited market data fetch"""
+    # API call here
+    pass
+```
+
+#### 3. Data Validation
+
+```python
+# Validate incoming market data
+def validate_market_data(data):
+    """Validate market data integrity"""
+    required_fields = ['symbol', 'price', 'volume', 'market_cap']
+    
+    if not all(field in data for field in required_fields):
+        raise ValueError(f"Missing required fields in market data")
+    
+    if data['price'] <= 0:
+        raise ValueError(f"Invalid price: {data['price']}")
+    
+    if data['volume'] < 0:
+        raise ValueError(f"Invalid volume: {data['volume']}")
+    
+    return True
+```
+
+### Performance Optimization
+
+```python
+# Cache frequently accessed data
 from functools import lru_cache
 import time
 
-@lru_cache(maxsize=100)
-def cached_market_data(symbols_tuple, timestamp):
-    """Cache market data for 60 seconds"""
-    return get_market_data(list(symbols_tuple))
+@lru_cache(maxsize=128)
+def get_cached_crypto_info(symbol, ttl_hash=None):
+    """Cache crypto information with TTL"""
+    del ttl_hash  # Not used, just for cache invalidation
+    # Fetch data
+    return fetch_crypto_info(symbol)
 
-def get_cached_data(symbols):
-    """Get data with 60-second cache"""
-    current_minute = int(time.time() / 60)
-    return cached_market_data(tuple(symbols), current_minute)
+def get_ttl_hash(seconds=300):
+    """Generate hash for cache TTL"""
+    return round(time.time() / seconds)
+
+# Usage with 5-minute cache
+crypto_info = get_cached_crypto_info('BTC', ttl_hash=get_ttl_hash(300))
 ```
-
-## Security Considerations
-
-**Important Security Practices:**
-
-1. Never hardcode API keys in code
-2. Store credentials in environment variables or secure vaults
-3. Use demo mode before live trading
-4. Implement proper error handling for API failures
-5. Validate all input data before processing
-6. Enable rate limiting to avoid API bans
-7. Use HTTPS for all API communications
 
 ## Best Practices
 
-1. **Always use environment variables for sensitive data**
-2. **Test strategies in demo mode first**
-3. **Implement proper logging for audit trails**
-4. **Set up stop-loss and take-profit limits**
-5. **Monitor API usage to stay within rate limits**
-6. **Regularly backup portfolio and configuration data**
-7. **Keep the application updated for security patches**
+1. **Always use environment variables for API keys**
+2. **Implement proper error handling and retries**
+3. **Cache data appropriately to minimize API calls**
+4. **Validate all incoming data before processing**
+5. **Use rate limiting to avoid API throttling**
+6. **Monitor application logs for anomalies**
+7. **Keep configuration files outside version control**
+8. **Regular backups of portfolio and settings data**
 
-```
+## Additional Resources
+
+- Official CoinMarketCap API Documentation: https://coinmarketcap.com/api/documentation/
+- Cryptocurrency trading best practices
+- Technical analysis fundamentals
+- Risk management strategies
