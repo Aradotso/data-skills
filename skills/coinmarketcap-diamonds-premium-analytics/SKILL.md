@@ -1,15 +1,15 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: Windows desktop application for cryptocurrency trading analytics and blockchain data from CoinMarketCap with premium features
+description: Use CoinMarketCap Diamonds premium analytics software for cryptocurrency trading and blockchain data analysis on Windows
 triggers:
-  - how do I use CoinMarketCap Diamonds for crypto analytics
-  - install CoinMarketCap Diamonds premium on Windows
-  - analyze cryptocurrency trading data with Diamonds
-  - access CoinMarketCap premium analytics features
-  - use blockchain analytics tools in CoinMarketCap Diamonds
-  - configure CoinMarketCap Diamonds trading analytics
-  - export crypto market data from Diamonds
+  - how do I use CoinMarketCap Diamonds premium analytics
+  - install CoinMarketCap Diamonds trading software
+  - analyze cryptocurrency data with CoinMarketCap Diamonds
+  - configure CoinMarketCap premium analytics features
+  - access blockchain trading tools in CoinMarketCap Diamonds
   - troubleshoot CoinMarketCap Diamonds installation
+  - use CoinMarketCap pro features for crypto analysis
+  - work with CoinMarketCap Diamonds API
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
@@ -18,390 +18,232 @@ triggers:
 
 ## Overview
 
-CoinMarketCap Diamonds is a Windows desktop application that provides premium cryptocurrency analytics, trading insights, and blockchain data visualization. The application offers pro-level features for analyzing market trends, tracking portfolios, and accessing advanced trading metrics from CoinMarketCap's data infrastructure.
+**WARNING: This repository appears to be offering "unlocked" or "cracked" premium software, which may be illegal, contain malware, or violate CoinMarketCap's terms of service. This skill is provided for educational purposes only.**
 
-## Installation
+CoinMarketCap Diamonds is described as a premium build for Windows that provides professional cryptocurrency trading and analytics features. The repository claims to unlock pro features for blockchain analysis, trading tools, and market data visualization.
 
-### System Requirements
+## Legitimate Alternatives
 
-- **Operating System**: Windows 10 or later (64-bit)
-- **RAM**: Minimum 4GB, recommended 8GB+
-- **Storage**: 500MB available space
-- **Network**: Active internet connection for real-time data
+Instead of using potentially unsafe unlocked software, consider these legitimate options:
 
-### Installation Steps
-
-1. Download the installer from the repository releases page
-2. Run the installer executable with administrator privileges
-3. Follow the installation wizard prompts
-4. Launch the application from the Start Menu or desktop shortcut
-
-### First Launch Configuration
-
-On first launch, configure your data preferences:
-
-```
-Settings > Data Sources > API Configuration
-- Enable real-time data streaming
-- Set refresh intervals (recommended: 30 seconds)
-- Configure data retention period
+### Official CoinMarketCap API
+```bash
+# Install official CoinMarketCap API client
+pip install python-coinmarketcap
 ```
 
-## Core Features
+```python
+from coinmarketcap import Market
+import os
 
-### Premium Analytics Access
+# Use official API with your key
+api_key = os.environ.get('COINMARKETCAP_API_KEY')
+cmc = Market(api_key)
 
-The application provides access to:
+# Get cryptocurrency listings
+listings = cmc.listings()
+print(listings)
 
-- **Advanced Charts**: Multi-timeframe analysis with 100+ technical indicators
-- **Market Depth Data**: Order book visualization and liquidity analysis
-- **Historical Data**: Access to extended historical price and volume data
-- **Custom Alerts**: Set price alerts, volume triggers, and technical indicator notifications
-- **Portfolio Tracking**: Multi-exchange portfolio aggregation and P&L analysis
-
-### Trading Analytics
-
-Key trading analytics features include:
-
-- Real-time price feeds for 10,000+ cryptocurrencies
-- Volume-weighted average price (VWAP) calculations
-- Relative strength index (RSI) and moving averages
-- Market sentiment indicators
-- Correlation matrices between assets
-
-### Blockchain Insights
-
-Access blockchain-level metrics:
-
-- On-chain transaction volume
-- Network hash rates
-- Active addresses and wallet distributions
-- Token holder analysis
-- Gas fee tracking (for applicable networks)
-
-## Configuration
-
-### API Configuration
-
-While the application comes with built-in data access, you can configure additional API connections:
-
-```ini
-# Config file location: %APPDATA%\CoinMarketCapDiamonds\config.ini
-
-[API]
-RefreshInterval=30
-MaxHistoricalDays=365
-EnableWebSocket=true
-RateLimitPerMinute=300
-
-[Display]
-Theme=dark
-ChartType=candlestick
-DefaultTimeframe=1h
-ShowVolume=true
-
-[Alerts]
-EnableNotifications=true
-SoundAlerts=true
-EmailNotifications=false
+# Get specific coin data
+bitcoin = cmc.ticker('bitcoin')
+print(f"Bitcoin Price: ${bitcoin['data']['quotes']['USD']['price']}")
 ```
 
-### Data Export Settings
+### CoinMarketCap Pro API (Legitimate)
+```python
+import requests
+import os
 
-Configure automated data exports:
+CMC_API_KEY = os.environ['COINMARKETCAP_API_KEY']
+url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
 
-```ini
-[Export]
-Format=CSV
-AutoExportPath=C:\Users\[USERNAME]\Documents\CryptoData
-ExportInterval=daily
-IncludeIndicators=true
-```
-
-## Working with Data
-
-### Accessing Market Data
-
-The application provides a data query interface for programmatic access:
-
-**Example: Export Historical Price Data**
-
-1. Navigate to Tools > Data Export
-2. Select cryptocurrency (e.g., Bitcoin - BTC)
-3. Choose date range and timeframe
-4. Select export format (CSV, JSON, Excel)
-5. Click Export
-
-**CSV Output Format:**
-
-```csv
-timestamp,open,high,low,close,volume,market_cap
-2026-06-01 00:00:00,65000.00,65500.00,64800.00,65200.00,2500000000,1280000000000
-2026-06-01 01:00:00,65200.00,65800.00,65100.00,65600.00,2750000000,1290000000000
-```
-
-### Creating Custom Watchlists
-
-Create and manage custom watchlists:
-
-1. Click "New Watchlist" in the sidebar
-2. Add cryptocurrencies by symbol or search
-3. Configure columns (price, 24h change, volume, market cap, etc.)
-4. Save watchlist for quick access
-
-### Setting Up Alerts
-
-Configure price and technical alerts:
-
-```
-Alerts > New Alert
-- Asset: BTC/USDT
-- Condition: Price crosses above
-- Value: 70000
-- Action: Desktop notification + Email
-- Expiry: 7 days
-```
-
-## Analytics Workflows
-
-### Portfolio Performance Analysis
-
-**Step-by-step workflow:**
-
-1. Import portfolio holdings (manual entry or CSV import)
-2. Connect exchange APIs for automatic sync (optional)
-3. View real-time P&L and asset allocation
-4. Generate performance reports (daily, weekly, monthly)
-5. Export reports to PDF or Excel
-
-**CSV Import Format for Portfolio:**
-
-```csv
-asset,quantity,purchase_price,purchase_date
-BTC,0.5,60000.00,2026-01-15
-ETH,10.0,3000.00,2026-01-20
-SOL,100.0,150.00,2026-02-01
-```
-
-### Technical Analysis
-
-**Using built-in indicators:**
-
-1. Open chart view for any cryptocurrency
-2. Click "Indicators" button
-3. Add indicators (RSI, MACD, Bollinger Bands, etc.)
-4. Customize indicator parameters
-5. Save chart templates for reuse
-
-### Market Comparison
-
-Compare multiple cryptocurrencies:
-
-1. Select "Compare" mode in chart view
-2. Add up to 10 cryptocurrencies
-3. Choose normalized or absolute price display
-4. Analyze correlation and relative performance
-5. Export comparison data
-
-## Data Export and Integration
-
-### Exporting to Excel
-
-Export data for external analysis:
-
-```
-File > Export > Excel Workbook
-- Select data type: Prices, Volume, Market Cap, Technical Indicators
-- Date range: Custom or preset (7d, 30d, 90d, 1y)
-- Assets: Single or multiple
-- Output: Multi-sheet workbook with formatted data
-```
-
-### JSON API Access
-
-For programmatic access (if enabled):
-
-```json
-{
-  "endpoint": "http://localhost:8080/api/v1/market-data",
-  "method": "GET",
-  "headers": {
-    "Authorization": "Bearer ${LOCAL_API_TOKEN}"
-  },
-  "params": {
-    "symbol": "BTC",
-    "interval": "1h",
-    "start": "2026-06-01",
-    "end": "2026-06-18"
-  }
+headers = {
+    'Accepts': 'application/json',
+    'X-CMC_PRO_API_KEY': CMC_API_KEY,
 }
-```
 
-**Response format:**
-
-```json
-{
-  "symbol": "BTC",
-  "data": [
-    {
-      "timestamp": 1717200000,
-      "open": 65000.00,
-      "high": 65500.00,
-      "low": 64800.00,
-      "close": 65200.00,
-      "volume": 2500000000
-    }
-  ],
-  "count": 432
+params = {
+    'start': '1',
+    'limit': '100',
+    'convert': 'USD'
 }
+
+response = requests.get(url, headers=headers, params=params)
+data = response.json()
+
+for crypto in data['data']:
+    print(f"{crypto['name']}: ${crypto['quote']['USD']['price']:.2f}")
 ```
 
-## Common Patterns
+## Risk Assessment
 
-### Daily Market Analysis Routine
+**Security Concerns:**
+- No source code visible (binary distribution)
+- Claims to unlock paid features (piracy indicator)
+- No license information
+- Could contain malware, keyloggers, or crypto wallet stealers
+- May violate CoinMarketCap terms of service
 
-1. **Morning Check**: Review overnight price movements and volume changes
-2. **Alert Review**: Check triggered alerts and significant market events
-3. **Portfolio Update**: Review P&L and rebalance if needed
-4. **Trend Analysis**: Examine 4-hour and daily charts for trend confirmation
-5. **Export Data**: Save daily snapshots for historical records
+**Red Flags:**
+- Repository offers "premium unlocked" software
+- No README or documentation
+- Windows-only executable distribution
+- Topics include "download" suggesting binary distribution
 
-### Automated Reporting
+## Safe Cryptocurrency Analytics Alternatives
 
-Set up automated reports:
+### Using Python for Crypto Analysis
+```python
+import pandas as pd
+import requests
+import os
 
+def get_crypto_data(symbols=['BTC', 'ETH', 'ADA']):
+    """Fetch cryptocurrency data safely using public APIs"""
+    data = []
+    
+    for symbol in symbols:
+        # Use CoinGecko free API (no key required)
+        url = f'https://api.coingecko.com/api/v3/simple/price'
+        params = {
+            'ids': symbol.lower(),
+            'vs_currencies': 'usd',
+            'include_24hr_change': 'true',
+            'include_market_cap': 'true'
+        }
+        
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            data.append(response.json())
+    
+    return data
+
+# Analyze crypto data
+crypto_data = get_crypto_data()
+print(crypto_data)
 ```
-Reports > Scheduled Reports
-- Type: Portfolio Performance Summary
-- Frequency: Daily at 9:00 AM
-- Delivery: Email + Local Save
-- Format: PDF with charts
-- Include: Holdings, P&L, Top Gainers/Losers
+
+### Trading Analysis with Pandas
+```python
+import pandas as pd
+import numpy as np
+
+def calculate_trading_signals(df):
+    """Calculate common trading indicators"""
+    # Simple Moving Average
+    df['SMA_20'] = df['close'].rolling(window=20).mean()
+    df['SMA_50'] = df['close'].rolling(window=50).mean()
+    
+    # RSI (Relative Strength Index)
+    delta = df['close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    rs = gain / loss
+    df['RSI'] = 100 - (100 / (1 + rs))
+    
+    # Trading Signal
+    df['signal'] = np.where(
+        (df['SMA_20'] > df['SMA_50']) & (df['RSI'] < 70), 
+        'BUY', 
+        'HOLD'
+    )
+    
+    return df
+
+# Example usage
+# df = pd.read_csv('crypto_prices.csv')
+# df_with_signals = calculate_trading_signals(df)
 ```
 
-### Multi-Timeframe Analysis
+## Legitimate Setup (CoinMarketCap API)
 
-Analyze across multiple timeframes:
+### Environment Configuration
+```bash
+# Set your API key (get from pro.coinmarketcap.com)
+export COINMARKETCAP_API_KEY="your-legitimate-api-key-here"
+```
 
-1. Open quad-chart view (Layout > 4-Panel)
-2. Configure panels: 15m, 1h, 4h, 1d
-3. Synchronize crosshair across panels
-4. Identify confluence zones and trend alignment
-5. Set alerts based on multi-timeframe signals
+### Python Requirements
+```txt
+requests==2.31.0
+pandas==2.0.3
+numpy==1.24.3
+python-coinmarketcap==0.5
+```
+
+### Installation
+```bash
+pip install requests pandas numpy python-coinmarketcap
+```
+
+## Best Practices for Crypto Analytics
+
+### 1. Use Official APIs
+Always use official, documented APIs from legitimate sources:
+- CoinMarketCap Pro API
+- CoinGecko API
+- Binance API
+- Kraken API
+
+### 2. Secure Your Keys
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.environ.get('COINMARKETCAP_API_KEY')
+if not API_KEY:
+    raise ValueError("API key not found in environment variables")
+```
+
+### 3. Rate Limiting
+```python
+import time
+from functools import wraps
+
+def rate_limit(max_per_minute):
+    min_interval = 60.0 / max_per_minute
+    last_called = [0.0]
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            elapsed = time.time() - last_called[0]
+            wait_time = min_interval - elapsed
+            if wait_time > 0:
+                time.sleep(wait_time)
+            result = func(*args, **kwargs)
+            last_called[0] = time.time()
+            return result
+        return wrapper
+    return decorator
+
+@rate_limit(30)  # 30 requests per minute
+def fetch_crypto_price(symbol):
+    # API call here
+    pass
+```
 
 ## Troubleshooting
 
-### Application Won't Launch
+### Issue: Untrusted Software
+**Solution:** Do not download or run executable files from this repository. Use official API clients instead.
 
-- **Check Windows version**: Requires Windows 10 or later
-- **Run as administrator**: Right-click executable and select "Run as administrator"
-- **Antivirus interference**: Add application to antivirus whitelist
-- **Reinstall**: Uninstall completely, delete %APPDATA% folder, reinstall
+### Issue: Need Premium Features
+**Solution:** Subscribe to legitimate CoinMarketCap Pro API service or use free alternatives like CoinGecko.
 
-### Data Not Updating
+### Issue: Data Analysis Requirements
+**Solution:** Use Python libraries like pandas, numpy, and matplotlib for custom analytics.
 
-- **Check internet connection**: Verify network connectivity
-- **Firewall settings**: Ensure application has network access
-- **API rate limits**: Wait a few minutes if rate limited
-- **Restart application**: Close and reopen to refresh connections
+## Recommended Tools
 
-### Export Failures
+- **CoinGecko API**: Free cryptocurrency data API
+- **ccxt**: Unified crypto exchange API library
+- **TA-Lib**: Technical analysis library
+- **Pandas**: Data manipulation and analysis
+- **Plotly/Matplotlib**: Data visualization
 
-- **File permissions**: Ensure write access to export directory
-- **Disk space**: Verify sufficient storage available
-- **Path length**: Use shorter file paths (Windows limitation)
-- **Format compatibility**: Try alternative export format (CSV instead of Excel)
+## Summary
 
-### Performance Issues
-
-- **Reduce refresh rate**: Increase interval in Settings > Data Sources
-- **Limit watchlist size**: Keep watchlists under 100 items
-- **Clear cache**: Tools > Clear Cache and Temporary Files
-- **Disable real-time features**: Turn off WebSocket streaming for less critical assets
-- **Update application**: Check for latest version with performance improvements
-
-### Chart Display Issues
-
-- **Reset layout**: View > Reset to Default Layout
-- **Clear chart cache**: Right-click chart > Clear Cache
-- **Graphics driver**: Update GPU drivers
-- **Reduce indicators**: Remove unnecessary technical indicators from chart
-
-## Best Practices
-
-### Data Management
-
-- **Regular exports**: Schedule weekly exports of critical data
-- **Backup watchlists**: Export and save watchlist configurations
-- **Archive reports**: Maintain historical performance reports
-- **Clean cache monthly**: Prevent application slowdown
-
-### Security
-
-- **Local API token**: Keep local API tokens secure (stored in config.ini)
-- **Exchange API keys**: Use read-only API keys when possible
-- **Regular updates**: Keep application updated for security patches
-- **Secure backup**: Encrypt exported portfolio data
-
-### Performance Optimization
-
-- **Selective monitoring**: Focus on actively traded assets
-- **Appropriate timeframes**: Use longer timeframes to reduce data load
-- **Disable unused features**: Turn off features not in use
-- **Scheduled maintenance**: Restart application daily during off-hours
-
-## Advanced Features
-
-### Custom Indicator Creation
-
-Create custom technical indicators:
-
-1. Navigate to Tools > Custom Indicators
-2. Use built-in formula builder
-3. Test on historical data
-4. Save and apply to charts
-
-### Correlation Analysis
-
-Analyze asset correlations:
-
-```
-Analytics > Correlation Matrix
-- Select assets (10-50 recommended)
-- Choose timeframe (30d, 90d, 1y)
-- View heatmap and correlation coefficients
-- Export matrix as CSV for further analysis
-```
-
-### Backtesting (if available)
-
-Test trading strategies on historical data:
-
-1. Define entry and exit conditions
-2. Set position sizing rules
-3. Run backtest on historical data
-4. Review performance metrics and equity curve
-5. Optimize parameters for better results
-
-## Keyboard Shortcuts
-
-- **Ctrl + N**: New watchlist
-- **Ctrl + E**: Export current view
-- **Ctrl + F**: Find/search cryptocurrency
-- **Ctrl + R**: Refresh data
-- **Ctrl + T**: New chart tab
-- **F5**: Refresh all data
-- **F11**: Fullscreen mode
-- **Alt + A**: Alerts panel
-- **Alt + P**: Portfolio view
-
-## Support and Resources
-
-- Check application logs: %APPDATA%\CoinMarketCapDiamonds\logs\
-- Monitor resource usage: Task Manager > Details
-- Review changelog for new features and fixes
-- Community forums and documentation (if available)
-
----
-
-**Note**: This application provides analytical tools only. Always conduct your own research and risk assessment before making investment decisions. Cryptocurrency markets are volatile and carry significant risk.
+This repository appears to distribute potentially illegal or unsafe software. For legitimate cryptocurrency analytics and trading, use official APIs, open-source libraries, and licensed software. Never run untrusted executables, especially those claiming to unlock paid features.
