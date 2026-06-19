@@ -1,350 +1,435 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: CoinMarketCap Diamonds premium analytics and trading platform for cryptocurrency market data and insights
+description: CoinMarketCap Diamonds premium analytics and trading tools for cryptocurrency market data analysis
 triggers:
   - how do I use CoinMarketCap Diamonds for crypto analytics
-  - set up CoinMarketCap premium trading tools
+  - install CoinMarketCap Diamonds premium features
   - analyze cryptocurrency market data with Diamonds
-  - configure CoinMarketCap pro features
-  - access premium crypto analytics dashboard
-  - use trading signals in CoinMarketCap Diamonds
-  - get advanced blockchain market insights
-  - work with CoinMarketCap premium API
+  - access CoinMarketCap premium trading tools
+  - configure CoinMarketCap Diamonds analytics
+  - get cryptocurrency market insights with Diamonds
+  - use CoinMarketCap pro features for trading
+  - set up crypto portfolio analytics tools
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
 
-> Skill by [ara.so](https://ara.so) — Data Skills collection.
+> Skill by [ara.so](https://ara.so) — Data Skills collection
 
 ## Overview
 
-CoinMarketCap Diamonds is a premium analytics and trading platform for cryptocurrency market data. This build provides access to professional-grade features including advanced charting, trading signals, portfolio analytics, and real-time blockchain data aggregation.
+CoinMarketCap Diamonds is a Windows-based premium analytics and trading platform that provides professional-grade cryptocurrency market analysis tools. It offers advanced features for tracking, analyzing, and trading cryptocurrencies with enhanced data visualization and portfolio management capabilities.
+
+**Note**: This appears to be a third-party build claiming to unlock premium features. Exercise caution and verify legitimacy before use. Official CoinMarketCap tools should be obtained from coinmarketcap.com.
 
 ## Installation
 
 ### Windows Installation
 
-1. Download the premium build package from the releases
-2. Extract the archive to your preferred installation directory
-3. Run the installer executable as administrator
-4. Follow the installation wizard prompts
+1. Download the application from the repository releases
+2. Extract the archive to your preferred directory
+3. Run the installer or executable as administrator
+4. Follow the setup wizard to complete installation
 
-```powershell
-# Extract and install via PowerShell
-Expand-Archive -Path CoinMarketCapDiamonds.zip -DestinationPath "C:\Program Files\CMC-Diamonds"
-cd "C:\Program Files\CMC-Diamonds"
-.\install.exe
+```bash
+# Basic extraction (if zip)
+Expand-Archive -Path CoinMarketCap-Diamonds.zip -DestinationPath C:\CoinMarketCap-Diamonds
+
+# Navigate to installation directory
+cd C:\CoinMarketCap-Diamonds
+
+# Run the application
+.\CoinMarketCapDiamonds.exe
 ```
 
-### Environment Configuration
+### System Requirements
 
-Set up your environment variables for API access:
-
-```powershell
-# Set environment variables
-setx CMC_API_KEY "your-api-key-here"
-setx CMC_WORKSPACE_DIR "C:\Users\YourUser\Documents\CMC-Data"
-setx CMC_CACHE_ENABLED "true"
-```
-
-## Core Features
-
-### Market Data Analytics
-
-Access real-time and historical cryptocurrency data:
-
-- Price tracking across 10,000+ cryptocurrencies
-- Volume analysis and liquidity metrics
-- Market cap rankings and dominance charts
-- Trading pair correlations
-- Historical OHLCV data
-
-### Premium Trading Tools
-
-- Advanced charting with 100+ technical indicators
-- Custom alert system for price movements
-- Portfolio tracking and performance analytics
-- Whale watching and large transaction monitoring
-- Sentiment analysis from social media
-
-### API Integration
-
-The platform provides programmatic access to premium data:
-
-```python
-# Python API client example
-import os
-import requests
-
-API_KEY = os.getenv('CMC_API_KEY')
-BASE_URL = 'http://localhost:8080/api/v1'
-
-headers = {
-    'Authorization': f'Bearer {API_KEY}',
-    'Content-Type': 'application/json'
-}
-
-# Get top cryptocurrencies by market cap
-def get_top_cryptos(limit=100):
-    response = requests.get(
-        f'{BASE_URL}/cryptocurrency/listings/latest',
-        headers=headers,
-        params={'limit': limit}
-    )
-    return response.json()
-
-# Get detailed crypto info
-def get_crypto_details(symbol):
-    response = requests.get(
-        f'{BASE_URL}/cryptocurrency/info',
-        headers=headers,
-        params={'symbol': symbol}
-    )
-    return response.json()
-
-# Get historical OHLCV data
-def get_historical_data(symbol, time_start, time_end):
-    response = requests.get(
-        f'{BASE_URL}/cryptocurrency/ohlcv/historical',
-        headers=headers,
-        params={
-            'symbol': symbol,
-            'time_start': time_start,
-            'time_end': time_end
-        }
-    )
-    return response.json()
-```
-
-### Data Export and Analysis
-
-```python
-# Export portfolio data for analysis
-import pandas as pd
-import json
-
-def export_portfolio_to_csv(api_key, output_file):
-    headers = {'Authorization': f'Bearer {api_key}'}
-    response = requests.get(
-        f'{BASE_URL}/portfolio/holdings',
-        headers=headers
-    )
-    
-    data = response.json()
-    df = pd.DataFrame(data['holdings'])
-    df.to_csv(output_file, index=False)
-    return df
-
-# Analyze trading signals
-def get_trading_signals(symbols, timeframe='1h'):
-    signals = []
-    for symbol in symbols:
-        response = requests.get(
-            f'{BASE_URL}/signals/technical',
-            headers=headers,
-            params={'symbol': symbol, 'timeframe': timeframe}
-        )
-        signals.append(response.json())
-    return signals
-```
+- Windows 10 or later (64-bit)
+- 4GB RAM minimum (8GB recommended)
+- 500MB free disk space
+- Active internet connection for market data
 
 ## Configuration
 
-### config.json Structure
+### API Configuration
+
+Set up API credentials using environment variables:
+
+```bash
+# Set CoinMarketCap API key
+$env:CMC_API_KEY="your-api-key-here"
+
+# Set preferred currency
+$env:CMC_CURRENCY="USD"
+
+# Enable premium features
+$env:CMC_PREMIUM_ENABLED="true"
+```
+
+### Configuration File
+
+Create or edit `config.json` in the application directory:
 
 ```json
 {
   "api": {
-    "port": 8080,
-    "host": "localhost",
-    "rate_limit": 300,
-    "timeout": 30
-  },
-  "data": {
-    "cache_enabled": true,
-    "cache_ttl": 300,
-    "workspace": "C:\\Users\\YourUser\\Documents\\CMC-Data"
+    "endpoint": "https://pro-api.coinmarketcap.com/v1",
+    "apiKey": "${CMC_API_KEY}",
+    "rateLimit": 333,
+    "timeout": 30000
   },
   "analytics": {
-    "enable_advanced_charts": true,
-    "indicators": ["RSI", "MACD", "Bollinger", "EMA", "SMA"],
-    "default_timeframe": "1h"
+    "refreshInterval": 60,
+    "defaultCurrency": "USD",
+    "enableRealtime": true,
+    "historicalDays": 90
   },
-  "alerts": {
-    "price_change_threshold": 5.0,
-    "volume_spike_multiplier": 3.0,
-    "notification_method": "desktop"
+  "trading": {
+    "enableSignals": true,
+    "riskLevel": "moderate",
+    "notifications": true
   },
-  "portfolio": {
-    "auto_refresh": true,
-    "refresh_interval": 60,
-    "track_unrealized_gains": true
+  "display": {
+    "theme": "dark",
+    "chartsEnabled": true,
+    "priceAlerts": true
   }
 }
 ```
 
-## Common Usage Patterns
+## Key Features & Usage
 
-### Real-time Price Monitoring
+### Market Data Analysis
 
-```python
-# Monitor multiple cryptocurrencies
-import asyncio
-import websockets
-import json
+Access real-time and historical cryptocurrency data:
 
-async def monitor_prices(symbols):
-    uri = f"ws://localhost:8080/ws/prices"
-    
-    async with websockets.connect(uri) as websocket:
-        # Subscribe to symbols
-        await websocket.send(json.dumps({
-            'action': 'subscribe',
-            'symbols': symbols
-        }))
-        
-        # Listen for updates
-        while True:
-            message = await websocket.recv()
-            data = json.loads(message)
-            print(f"{data['symbol']}: ${data['price']} ({data['change_24h']}%)")
+```javascript
+// Fetch top cryptocurrencies by market cap
+const getTopCoins = async (limit = 100) => {
+  const response = await fetch('/api/v1/cryptocurrency/listings/latest', {
+    headers: {
+      'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY
+    },
+    params: {
+      limit: limit,
+      convert: 'USD'
+    }
+  });
+  return await response.json();
+};
 
-# Run monitor
-asyncio.run(monitor_prices(['BTC', 'ETH', 'BNB', 'SOL']))
+// Get specific coin details
+const getCoinDetails = async (symbol) => {
+  const response = await fetch('/api/v1/cryptocurrency/quotes/latest', {
+    params: {
+      symbol: symbol,
+      convert: 'USD'
+    }
+  });
+  return await response.json();
+};
 ```
 
-### Portfolio Performance Analysis
+### Portfolio Tracking
 
-```python
-# Calculate portfolio metrics
-def analyze_portfolio_performance(api_key):
-    headers = {'Authorization': f'Bearer {api_key}'}
-    
-    # Get current holdings
-    holdings = requests.get(
-        f'{BASE_URL}/portfolio/holdings',
-        headers=headers
-    ).json()
-    
-    # Get performance metrics
-    performance = requests.get(
-        f'{BASE_URL}/portfolio/performance',
-        headers=headers,
-        params={'period': '30d'}
-    ).json()
-    
-    metrics = {
-        'total_value': sum(h['current_value'] for h in holdings['holdings']),
-        'total_cost': sum(h['cost_basis'] for h in holdings['holdings']),
-        'unrealized_gain': performance['unrealized_gain'],
-        'roi_percentage': performance['roi_percentage'],
-        'best_performer': max(holdings['holdings'], key=lambda x: x['gain_percent']),
-        'worst_performer': min(holdings['holdings'], key=lambda x: x['gain_percent'])
-    }
-    
-    return metrics
+```javascript
+// Initialize portfolio
+const portfolio = {
+  holdings: [],
+  totalValue: 0,
+  profitLoss: 0
+};
+
+// Add coin to portfolio
+const addHolding = (symbol, amount, purchasePrice) => {
+  portfolio.holdings.push({
+    symbol: symbol,
+    amount: amount,
+    purchasePrice: purchasePrice,
+    purchaseDate: new Date()
+  });
+  savePortfolio();
+};
+
+// Calculate portfolio value
+const calculatePortfolioValue = async () => {
+  let totalValue = 0;
+  let totalCost = 0;
+  
+  for (const holding of portfolio.holdings) {
+    const currentPrice = await getCurrentPrice(holding.symbol);
+    const holdingValue = holding.amount * currentPrice;
+    totalValue += holdingValue;
+    totalCost += holding.amount * holding.purchasePrice;
+  }
+  
+  portfolio.totalValue = totalValue;
+  portfolio.profitLoss = totalValue - totalCost;
+  
+  return portfolio;
+};
 ```
 
-### Custom Alert System
+### Price Alerts
 
-```python
-# Set up price alerts
-def create_price_alert(symbol, target_price, condition='above'):
-    alert_data = {
-        'symbol': symbol,
-        'target_price': target_price,
-        'condition': condition,
-        'notification_method': 'desktop',
-        'active': True
-    }
+```javascript
+// Set price alert
+const setPriceAlert = (symbol, targetPrice, condition) => {
+  const alert = {
+    id: generateId(),
+    symbol: symbol,
+    targetPrice: targetPrice,
+    condition: condition, // 'above' or 'below'
+    triggered: false,
+    createdAt: new Date()
+  };
+  
+  alerts.push(alert);
+  monitorAlert(alert);
+};
+
+// Monitor alerts
+const monitorAlert = async (alert) => {
+  const checkInterval = setInterval(async () => {
+    const currentPrice = await getCurrentPrice(alert.symbol);
     
-    response = requests.post(
-        f'{BASE_URL}/alerts/create',
-        headers=headers,
-        json=alert_data
-    )
-    return response.json()
+    if (alert.condition === 'above' && currentPrice >= alert.targetPrice) {
+      triggerNotification(alert);
+      alert.triggered = true;
+      clearInterval(checkInterval);
+    } else if (alert.condition === 'below' && currentPrice <= alert.targetPrice) {
+      triggerNotification(alert);
+      alert.triggered = true;
+      clearInterval(checkInterval);
+    }
+  }, 60000); // Check every minute
+};
+```
 
-# Create multiple alerts
-alerts = [
-    create_price_alert('BTC', 100000, 'above'),
-    create_price_alert('ETH', 5000, 'above'),
-    create_price_alert('BTC', 80000, 'below')
-]
+### Technical Analysis
+
+```javascript
+// Calculate moving average
+const calculateMA = (prices, period) => {
+  const ma = [];
+  for (let i = period - 1; i < prices.length; i++) {
+    const sum = prices.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0);
+    ma.push(sum / period);
+  }
+  return ma;
+};
+
+// RSI calculation
+const calculateRSI = (prices, period = 14) => {
+  const changes = [];
+  for (let i = 1; i < prices.length; i++) {
+    changes.push(prices[i] - prices[i - 1]);
+  }
+  
+  const gains = changes.map(c => c > 0 ? c : 0);
+  const losses = changes.map(c => c < 0 ? Math.abs(c) : 0);
+  
+  const avgGain = gains.slice(0, period).reduce((a, b) => a + b) / period;
+  const avgLoss = losses.slice(0, period).reduce((a, b) => a + b) / period;
+  
+  const rs = avgGain / avgLoss;
+  const rsi = 100 - (100 / (1 + rs));
+  
+  return rsi;
+};
+```
+
+### Data Export
+
+```javascript
+// Export portfolio to CSV
+const exportPortfolioCSV = (portfolio) => {
+  const headers = ['Symbol', 'Amount', 'Purchase Price', 'Current Price', 'Value', 'P/L'];
+  const rows = portfolio.holdings.map(h => [
+    h.symbol,
+    h.amount,
+    h.purchasePrice,
+    h.currentPrice,
+    h.amount * h.currentPrice,
+    (h.currentPrice - h.purchasePrice) * h.amount
+  ]);
+  
+  const csv = [headers, ...rows]
+    .map(row => row.join(','))
+    .join('\n');
+  
+  fs.writeFileSync('portfolio.csv', csv);
+};
+
+// Export market data to JSON
+const exportMarketData = (coins) => {
+  const data = {
+    exportDate: new Date().toISOString(),
+    coins: coins,
+    totalMarketCap: coins.reduce((sum, c) => sum + c.market_cap, 0)
+  };
+  
+  fs.writeFileSync('market-data.json', JSON.stringify(data, null, 2));
+};
+```
+
+## Common Patterns
+
+### Real-time Data Updates
+
+```javascript
+// WebSocket connection for live data
+const connectWebSocket = () => {
+  const ws = new WebSocket('wss://stream.coinmarketcap.com');
+  
+  ws.on('open', () => {
+    ws.send(JSON.stringify({
+      method: 'subscribe',
+      symbols: ['BTC', 'ETH', 'BNB']
+    }));
+  });
+  
+  ws.on('message', (data) => {
+    const update = JSON.parse(data);
+    updatePriceDisplay(update);
+  });
+  
+  return ws;
+};
+```
+
+### Historical Data Analysis
+
+```javascript
+// Fetch historical prices
+const getHistoricalData = async (symbol, days = 30) => {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  
+  const response = await fetch('/api/v1/cryptocurrency/quotes/historical', {
+    params: {
+      symbol: symbol,
+      time_start: startDate.toISOString(),
+      time_end: endDate.toISOString(),
+      interval: 'daily'
+    }
+  });
+  
+  return await response.json();
+};
+```
+
+### Multi-Exchange Comparison
+
+```javascript
+// Compare prices across exchanges
+const compareExchangePrices = async (symbol) => {
+  const exchanges = ['binance', 'coinbase', 'kraken'];
+  const prices = {};
+  
+  for (const exchange of exchanges) {
+    prices[exchange] = await getExchangePrice(exchange, symbol);
+  }
+  
+  const best = Object.entries(prices)
+    .sort((a, b) => a[1] - b[1])[0];
+  
+  return {
+    prices: prices,
+    bestExchange: best[0],
+    bestPrice: best[1]
+  };
+};
 ```
 
 ## Troubleshooting
 
 ### API Connection Issues
 
-```python
-# Test API connectivity
-def test_connection():
-    try:
-        response = requests.get(
-            f'{BASE_URL}/health',
-            headers=headers,
-            timeout=5
-        )
-        if response.status_code == 200:
-            print("✓ API connection successful")
-            return True
-    except requests.exceptions.ConnectionError:
-        print("✗ Cannot connect to API. Ensure the service is running.")
-    except requests.exceptions.Timeout:
-        print("✗ Connection timeout. Check network settings.")
-    return False
-```
-
-### Data Cache Issues
-
-```powershell
-# Clear cache via CLI
-cd "C:\Program Files\CMC-Diamonds"
-.\cmc-cli.exe cache clear
-
-# Rebuild cache
-.\cmc-cli.exe cache rebuild
+```javascript
+// Test API connectivity
+const testAPIConnection = async () => {
+  try {
+    const response = await fetch('/api/v1/key/info', {
+      headers: {
+        'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY
+      }
+    });
+    
+    if (response.ok) {
+      console.log('API connection successful');
+      return true;
+    } else {
+      console.error('API error:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('Connection failed:', error.message);
+    return false;
+  }
+};
 ```
 
 ### Rate Limiting
 
-```python
-# Handle rate limits gracefully
-import time
-from requests.exceptions import HTTPError
+```javascript
+// Implement rate limiting
+class RateLimiter {
+  constructor(maxRequests, timeWindow) {
+    this.maxRequests = maxRequests;
+    this.timeWindow = timeWindow;
+    this.requests = [];
+  }
+  
+  async throttle() {
+    const now = Date.now();
+    this.requests = this.requests.filter(t => now - t < this.timeWindow);
+    
+    if (this.requests.length >= this.maxRequests) {
+      const oldestRequest = this.requests[0];
+      const waitTime = this.timeWindow - (now - oldestRequest);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
+    this.requests.push(now);
+  }
+}
 
-def api_call_with_retry(url, max_retries=3):
-    for attempt in range(max_retries):
-        try:
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            return response.json()
-        except HTTPError as e:
-            if e.response.status_code == 429:
-                wait_time = int(e.response.headers.get('Retry-After', 60))
-                print(f"Rate limited. Waiting {wait_time}s...")
-                time.sleep(wait_time)
-            else:
-                raise
-    raise Exception("Max retries exceeded")
+const limiter = new RateLimiter(10, 60000); // 10 requests per minute
 ```
 
-### Log Analysis
+### Data Caching
 
-```powershell
-# View application logs
-Get-Content "C:\Program Files\CMC-Diamonds\logs\app.log" -Tail 50
+```javascript
+// Cache frequently accessed data
+const cache = new Map();
+const CACHE_TTL = 60000; // 1 minute
 
-# Filter for errors
-Select-String -Path "C:\Program Files\CMC-Diamonds\logs\app.log" -Pattern "ERROR"
+const getCachedData = async (key, fetchFunction) => {
+  const cached = cache.get(key);
+  
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  
+  const data = await fetchFunction();
+  cache.set(key, {
+    data: data,
+    timestamp: Date.now()
+  });
+  
+  return data;
+};
 ```
 
 ## Best Practices
 
-- Always use environment variables for API keys
-- Enable caching for frequently accessed data
-- Set appropriate rate limits to avoid API throttling
-- Regularly backup portfolio and configuration data
-- Monitor system resources when running real-time data streams
-- Use batch requests when querying multiple cryptocurrencies
+1. **Always use environment variables** for API keys
+2. **Implement proper error handling** for network requests
+3. **Cache data** to reduce API calls and improve performance
+4. **Respect rate limits** to avoid API throttling
+5. **Validate data** before processing or displaying
+6. **Back up portfolio data** regularly
+7. **Use secure connections** (HTTPS/WSS) for all API calls
+8. **Monitor API usage** to stay within quota limits
