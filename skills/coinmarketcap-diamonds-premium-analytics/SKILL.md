@@ -3,13 +3,13 @@ name: coinmarketcap-diamonds-premium-analytics
 description: CoinMarketCap Diamonds premium analytics and trading tools for cryptocurrency data analysis on Windows
 triggers:
   - how do I use CoinMarketCap Diamonds premium features
-  - set up CoinMarketCap analytics tool
-  - access premium crypto trading analytics
-  - use CoinMarketCap Diamonds for market analysis
-  - configure CoinMarketCap premium software
-  - analyze cryptocurrency data with Diamonds
-  - unlock CoinMarketCap pro features
-  - get started with CoinMarketCap trading tools
+  - set up CoinMarketCap Diamonds analytics tools
+  - install CoinMarketCap Diamonds for crypto trading
+  - configure CoinMarketCap premium analytics
+  - use CoinMarketCap Diamonds pro features
+  - access CoinMarketCap trading analytics
+  - work with CoinMarketCap Diamonds data
+  - integrate CoinMarketCap premium tools
 ---
 
 # CoinMarketCap Diamonds Premium Analytics
@@ -18,417 +18,344 @@ triggers:
 
 ## Overview
 
-CoinMarketCap Diamonds is a premium Windows desktop application providing advanced cryptocurrency analytics, market data visualization, and trading tools. The software offers pro-level features for analyzing blockchain data, tracking portfolio performance, and accessing real-time market intelligence from CoinMarketCap.
-
-**Key Features:**
-- Real-time cryptocurrency price tracking and alerts
-- Advanced charting and technical analysis tools
-- Portfolio management and performance analytics
-- Market trend analysis and signals
-- Premium API access to CoinMarketCap data
-- Historical data analysis and backtesting
+CoinMarketCap Diamonds is a premium Windows application that provides advanced cryptocurrency analytics, trading insights, and blockchain data visualization. It extends CoinMarketCap's standard features with professional-grade tools for market analysis, portfolio tracking, and trading signal generation.
 
 ## Installation
 
-### Windows Installation
+### System Requirements
 
-1. **Download the Build:**
-   ```bash
-   # Clone the repository
-   git clone https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked.git
-   cd CoinMarketCap-Diamonds-Premium-Analytics-Unlocked
-   ```
+- Windows 10 or later (64-bit)
+- .NET Framework 4.7.2 or higher
+- 4GB RAM minimum (8GB recommended)
+- Internet connection for real-time data
 
-2. **Extract and Run:**
-   - Locate the executable installer in the downloaded files
-   - Run the `.exe` installer with administrator privileges
-   - Follow the installation wizard
+### Setup Steps
 
-3. **System Requirements:**
-   - Windows 10/11 (64-bit)
-   - 4GB RAM minimum (8GB recommended)
-   - 500MB free disk space
-   - Internet connection for live data
+1. Download the installer from the releases page
+2. Run the installer as Administrator
+3. Follow the installation wizard
+4. Launch CoinMarketCap Diamonds from Start Menu or Desktop shortcut
 
-## Configuration
+### First Launch Configuration
 
-### Initial Setup
-
-Create a configuration file at `%APPDATA%/CoinMarketCapDiamonds/config.json`:
-
-```json
-{
-  "api": {
-    "endpoint": "https://pro-api.coinmarketcap.com/v1",
-    "key": "${CMC_API_KEY}"
-  },
-  "features": {
-    "premiumAnalytics": true,
-    "advancedCharts": true,
-    "portfolioTracking": true,
-    "realTimeAlerts": true
-  },
-  "display": {
-    "theme": "dark",
-    "currency": "USD",
-    "refreshInterval": 30
-  },
-  "alerts": {
-    "enabled": true,
-    "soundNotifications": true,
-    "emailNotifications": false
-  }
-}
-```
-
-### Environment Variables
-
-Set up required environment variables:
+On first launch, configure your API access:
 
 ```bash
-# Windows Command Prompt
-setx CMC_API_KEY "your-coinmarketcap-api-key"
-setx CMC_DIAMONDS_DATA_PATH "C:\Users\YourName\Documents\CMCDiamonds\data"
-
-# PowerShell
-$env:CMC_API_KEY = "your-coinmarketcap-api-key"
-$env:CMC_DIAMONDS_DATA_PATH = "C:\Users\YourName\Documents\CMCDiamonds\data"
+# Set environment variables for API access
+set CMC_API_KEY=%YOUR_COINMARKETCAP_API_KEY%
+set CMC_PREMIUM_TIER=diamonds
 ```
 
-## Core Features & Usage
+Or create a configuration file at `%APPDATA%\CoinMarketCapDiamonds\config.ini`:
 
-### Portfolio Tracking
+```ini
+[API]
+APIKey=${CMC_API_KEY}
+Tier=diamonds
+RefreshInterval=30
 
-**Adding Assets to Portfolio:**
+[Analytics]
+EnableAdvancedMetrics=true
+CacheData=true
+CacheDuration=300
 
-The application typically uses an internal database or JSON file for portfolio tracking:
-
-```json
-{
-  "portfolio": {
-    "name": "Main Portfolio",
-    "holdings": [
-      {
-        "symbol": "BTC",
-        "amount": 0.5,
-        "purchasePrice": 45000,
-        "purchaseDate": "2024-01-15"
-      },
-      {
-        "symbol": "ETH",
-        "amount": 5.0,
-        "purchasePrice": 3200,
-        "purchaseDate": "2024-02-01"
-      }
-    ]
-  }
-}
+[Trading]
+EnableSignals=true
+RiskLevel=moderate
 ```
 
-### Market Analysis
+## Core Features
 
-**Setting Up Price Alerts:**
+### 1. Premium Market Analytics
 
-Configure alerts in `alerts.json`:
+Access enhanced market data and analytics:
 
-```json
-{
-  "priceAlerts": [
-    {
-      "symbol": "BTC",
-      "condition": "above",
-      "price": 50000,
-      "enabled": true
-    },
-    {
-      "symbol": "ETH",
-      "condition": "below",
-      "price": 3000,
-      "enabled": true
-    }
-  ],
-  "volumeAlerts": [
-    {
-      "symbol": "BTC",
-      "threshold": 1000000000,
-      "timeframe": "24h"
-    }
-  ]
-}
-```
+- Real-time price tracking with sub-second updates
+- Advanced technical indicators (RSI, MACD, Bollinger Bands)
+- On-chain metrics and whale tracking
+- Market sentiment analysis
+- Historical data with unlimited lookback
 
-### Data Export
+### 2. Portfolio Management
 
-**Exporting Analytics Data:**
+Track and analyze your cryptocurrency holdings:
 
-The software typically supports exporting to CSV/JSON formats through menu options or configuration:
+- Multi-exchange portfolio aggregation
+- P&L tracking with tax reporting
+- Risk analysis and diversification metrics
+- Automated rebalancing suggestions
 
-```json
-{
-  "export": {
-    "format": "csv",
-    "outputPath": "${CMC_DIAMONDS_DATA_PATH}/exports",
-    "includeFields": [
-      "timestamp",
-      "symbol",
-      "price",
-      "volume",
-      "marketCap",
-      "change24h"
-    ],
-    "dateRange": {
-      "start": "2024-01-01",
-      "end": "2024-12-31"
-    }
-  }
-}
-```
+### 3. Trading Signals
 
-## Advanced Analytics
+Generate and receive trading alerts:
 
-### Technical Indicators Configuration
+- AI-powered buy/sell signals
+- Custom alert conditions
+- Price target notifications
+- Volume spike detection
 
-```json
-{
-  "technicalIndicators": {
-    "movingAverages": {
-      "periods": [7, 14, 30, 50, 200],
-      "type": "EMA"
-    },
-    "rsi": {
-      "enabled": true,
-      "period": 14,
-      "overbought": 70,
-      "oversold": 30
-    },
-    "macd": {
-      "enabled": true,
-      "fastPeriod": 12,
-      "slowPeriod": 26,
-      "signalPeriod": 9
-    },
-    "bollinger": {
-      "enabled": true,
-      "period": 20,
-      "standardDeviations": 2
-    }
-  }
-}
-```
+## API Integration
 
-### Watchlist Management
+### Programmatic Access
 
-```json
-{
-  "watchlists": [
-    {
-      "name": "Top Performers",
-      "symbols": ["BTC", "ETH", "BNB", "SOL", "ADA"],
-      "sortBy": "change24h",
-      "autoUpdate": true
-    },
-    {
-      "name": "DeFi Tokens",
-      "symbols": ["UNI", "AAVE", "LINK", "MKR", "CRV"],
-      "sortBy": "volume",
-      "autoUpdate": true
-    }
-  ]
-}
-```
-
-## Integration & Automation
-
-### Command-Line Interface (if available)
-
-Some premium builds may include CLI tools:
-
-```bash
-# Check version
-CMCDiamonds.exe --version
-
-# Export portfolio data
-CMCDiamonds.exe export --format csv --output portfolio.csv
-
-# Update market data cache
-CMCDiamonds.exe refresh --symbols BTC,ETH,BNB
-
-# Generate report
-CMCDiamonds.exe report --portfolio main --period 30d --output report.pdf
-```
-
-### Custom Scripts Integration
-
-If the software supports scripting, create automation scripts:
+If integrating with custom scripts or automation tools:
 
 ```python
-# Example Python integration (if API exposed)
-import os
+# Example Python integration
 import requests
+import os
 
-API_KEY = os.getenv('CMC_API_KEY')
-DIAMONDS_API = 'http://localhost:8080/api'  # Local API endpoint
+class CMCDiamondsAPI:
+    def __init__(self):
+        self.api_key = os.getenv('CMC_API_KEY')
+        self.base_url = "http://localhost:8080/api/v1"
+        
+    def get_premium_data(self, symbol):
+        """Fetch premium analytics for a cryptocurrency"""
+        headers = {
+            'X-CMC-PRO-API-KEY': self.api_key,
+            'Accept': 'application/json'
+        }
+        
+        endpoint = f"{self.base_url}/cryptocurrency/analytics"
+        params = {
+            'symbol': symbol,
+            'premium': 'true'
+        }
+        
+        response = requests.get(endpoint, headers=headers, params=params)
+        return response.json()
+    
+    def get_trading_signals(self, symbol, timeframe='1h'):
+        """Get trading signals for a specific asset"""
+        endpoint = f"{self.base_url}/trading/signals"
+        headers = {'X-CMC-PRO-API-KEY': self.api_key}
+        
+        params = {
+            'symbol': symbol,
+            'timeframe': timeframe
+        }
+        
+        response = requests.get(endpoint, headers=headers, params=params)
+        return response.json()
 
-def get_portfolio_value():
-    response = requests.get(
-        f'{DIAMONDS_API}/portfolio/value',
-        headers={'X-API-Key': API_KEY}
-    )
-    return response.json()
-
-def set_price_alert(symbol, price, condition='above'):
-    data = {
-        'symbol': symbol,
-        'price': price,
-        'condition': condition,
-        'enabled': True
-    }
-    response = requests.post(
-        f'{DIAMONDS_API}/alerts',
-        headers={'X-API-Key': API_KEY},
-        json=data
-    )
-    return response.json()
+# Usage
+api = CMCDiamondsAPI()
+btc_data = api.get_premium_data('BTC')
+signals = api.get_trading_signals('BTC', '4h')
 ```
 
-## Common Patterns
+### PowerShell Automation
 
-### Daily Market Monitoring Setup
+```powershell
+# PowerShell script for Windows automation
+$ApiKey = $env:CMC_API_KEY
+$BaseUrl = "http://localhost:8080/api/v1"
+
+function Get-CryptoPremiumData {
+    param(
+        [string]$Symbol
+    )
+    
+    $headers = @{
+        "X-CMC-PRO-API-KEY" = $ApiKey
+        "Accept" = "application/json"
+    }
+    
+    $url = "$BaseUrl/cryptocurrency/analytics?symbol=$Symbol&premium=true"
+    $response = Invoke-RestMethod -Uri $url -Headers $headers -Method Get
+    
+    return $response
+}
+
+# Get Bitcoin analytics
+$btcAnalytics = Get-CryptoPremiumData -Symbol "BTC"
+Write-Host "BTC Price: $($btcAnalytics.data.price)"
+Write-Host "24h Volume: $($btcAnalytics.data.volume_24h)"
+```
+
+## Common Workflows
+
+### Real-Time Market Monitoring
+
+Set up a monitoring dashboard:
+
+1. Launch CoinMarketCap Diamonds
+2. Navigate to **Analytics > Dashboard**
+3. Add watchlist coins
+4. Configure refresh interval (minimum 30 seconds for premium)
+5. Enable notifications for price alerts
+
+### Exporting Analytics Data
+
+Export data for external analysis:
+
+```bash
+# CLI export command (if available)
+cmc-diamonds export --symbol BTC --format csv --output btc_analytics.csv --days 90
+
+# Or use the GUI: File > Export Data > Select Format
+```
+
+### Custom Alert Configuration
+
+Create sophisticated alert rules:
 
 ```json
 {
-  "scheduledTasks": {
-    "dailyReports": {
-      "enabled": true,
-      "time": "09:00",
-      "includeMetrics": [
-        "topGainers",
-        "topLosers",
-        "volumeLeaders",
-        "portfolioSummary"
+  "alerts": [
+    {
+      "name": "BTC High Volume Spike",
+      "symbol": "BTC",
+      "conditions": [
+        {
+          "metric": "volume_24h",
+          "operator": "greater_than",
+          "value": "150%_of_7day_avg"
+        }
       ],
-      "emailReport": false,
-      "saveToFile": true
+      "actions": ["email", "push_notification"]
     },
-    "dataBackup": {
-      "enabled": true,
-      "frequency": "daily",
-      "time": "00:00",
-      "path": "${CMC_DIAMONDS_DATA_PATH}/backups"
+    {
+      "name": "ETH Support Level",
+      "symbol": "ETH",
+      "conditions": [
+        {
+          "metric": "price",
+          "operator": "less_than",
+          "value": 1800
+        }
+      ],
+      "actions": ["desktop_notification", "webhook"]
     }
-  }
+  ]
 }
 ```
 
-### Multi-Portfolio Management
+## Configuration Options
 
-```json
-{
-  "portfolios": {
-    "main": {
-      "name": "Long-term Holdings",
-      "riskProfile": "conservative",
-      "holdings": []
-    },
-    "trading": {
-      "name": "Active Trading",
-      "riskProfile": "aggressive",
-      "holdings": []
-    },
-    "defi": {
-      "name": "DeFi Investments",
-      "riskProfile": "moderate",
-      "holdings": []
-    }
-  }
-}
+### Advanced Settings
+
+Edit `config.ini` for fine-tuned control:
+
+```ini
+[Performance]
+MaxConcurrentRequests=10
+DataCacheSize=1000
+EnableGPUAcceleration=true
+
+[Display]
+Theme=dark
+ChartRefreshRate=1000
+EnableAnimations=true
+
+[Security]
+EncryptLocalData=true
+RequirePasswordOnLaunch=false
+AutoLogoutMinutes=30
+
+[Backup]
+AutoBackupEnabled=true
+BackupPath=%APPDATA%\CoinMarketCapDiamonds\backups
+BackupFrequency=daily
 ```
 
 ## Troubleshooting
 
-### Common Issues
+### Connection Issues
 
-**API Connection Failures:**
-- Verify `CMC_API_KEY` environment variable is set correctly
-- Check internet connection and firewall settings
-- Ensure API rate limits haven't been exceeded
-- Verify CoinMarketCap API subscription is active
+If the application cannot connect to CoinMarketCap servers:
 
-**Application Won't Launch:**
-- Run as administrator
-- Check Windows compatibility mode settings
-- Verify .NET Framework or required runtimes are installed
-- Check antivirus isn't blocking the executable
-
-**Data Not Updating:**
-- Check `config.json` refresh interval settings
-- Verify API endpoint URLs are correct
-- Clear application cache: Delete `%APPDATA%/CoinMarketCapDiamonds/cache`
-- Restart the application
-
-**Premium Features Not Working:**
-- Verify the build includes premium unlock
-- Check feature flags in `config.json` are set to `true`
-- Ensure proper license or unlock files are in place
-
-### Log Files
-
-Check logs for debugging:
-```bash
-# Default log location
-%APPDATA%\CoinMarketCapDiamonds\logs\application.log
-
-# View recent errors
-type %APPDATA%\CoinMarketCapDiamonds\logs\error.log
-```
+1. Verify your API key is valid: `echo %CMC_API_KEY%`
+2. Check firewall settings allow outbound connections
+3. Test connectivity: `ping api.coinmarketcap.com`
+4. Review logs at `%APPDATA%\CoinMarketCapDiamonds\logs\`
 
 ### Performance Optimization
 
-```json
-{
-  "performance": {
-    "cacheSize": "500MB",
-    "maxHistoricalData": "1 year",
-    "chartResolution": "medium",
-    "enableHardwareAcceleration": true,
-    "backgroundDataSync": false
-  }
-}
+For better performance:
+
+```ini
+[Performance]
+; Reduce data points for older history
+HistoricalDataPoints=500
+
+; Disable unnecessary features
+EnableBackgroundSync=false
+DisableAnimations=true
+
+; Increase cache
+DataCacheSize=2000
 ```
 
-## Data Backup & Recovery
+### Data Accuracy
 
-### Backup Configuration
+If data appears incorrect:
 
-```json
-{
-  "backup": {
-    "autoBackup": true,
-    "schedule": "daily",
-    "retentionDays": 30,
-    "includedData": [
-      "portfolios",
-      "watchlists",
-      "alerts",
-      "customSettings"
-    ],
-    "backupLocation": "${CMC_DIAMONDS_DATA_PATH}/backups",
-    "compression": true
-  }
-}
+1. Clear cache: Settings > Advanced > Clear Cache
+2. Force refresh: Press F5 or Ctrl+R
+3. Verify API tier supports requested features
+4. Check API rate limits haven't been exceeded
+
+## Best Practices
+
+1. **API Key Security**: Always use environment variables, never hardcode keys
+2. **Rate Limiting**: Respect API limits even with premium access
+3. **Data Validation**: Always validate data before making trading decisions
+4. **Backup Configuration**: Regularly export your settings and watchlists
+5. **Update Regularly**: Keep the application updated for latest features and fixes
+
+## Integration Examples
+
+### Excel/Google Sheets Integration
+
+Export data for spreadsheet analysis:
+
+```vba
+' VBA macro to import CMC Diamonds data
+Sub ImportCryptoData()
+    Dim http As Object
+    Set http = CreateObject("MSXML2.XMLHTTP")
+    
+    Dim apiKey As String
+    apiKey = Environ("CMC_API_KEY")
+    
+    Dim url As String
+    url = "http://localhost:8080/api/v1/cryptocurrency/listings/latest"
+    
+    http.Open "GET", url, False
+    http.setRequestHeader "X-CMC-PRO-API-KEY", apiKey
+    http.send
+    
+    ' Process JSON response
+    Debug.Print http.responseText
+End Sub
 ```
 
-### Manual Backup
+### Webhook Notifications
 
-Important files to backup:
-- `%APPDATA%/CoinMarketCapDiamonds/config.json`
-- `%APPDATA%/CoinMarketCapDiamonds/portfolios/`
-- `%APPDATA%/CoinMarketCapDiamonds/data/`
+Configure webhooks for alerts:
 
-## Security Best Practices
+```python
+# Webhook receiver example
+from flask import Flask, request
+import os
 
-- Store API keys in environment variables, never in config files
-- Regularly backup portfolio data
-- Use strong passwords if the application has authentication
-- Keep the software updated to the latest version
-- Be cautious with third-party plugins or extensions
+app = Flask(__name__)
+
+@app.route('/webhook/cmc-alerts', methods=['POST'])
+def handle_alert():
+    data = request.json
+    
+    print(f"Alert received: {data['alert_name']}")
+    print(f"Symbol: {data['symbol']}")
+    print(f"Price: {data['current_price']}")
+    print(f"Condition met: {data['condition']}")
+    
+    # Process alert (send email, SMS, etc.)
+    
+    return {"status": "received"}, 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+```
