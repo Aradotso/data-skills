@@ -80,6 +80,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [coinmarketcap-diamonds-premium-analytics](skills/coinmarketcap-diamonds-premium-analytics/) | [install](https://skills.sh/aradotso/data-skills/coinmarketcap-diamonds-premium-analytics) | [Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked](https://github.com/Torrenttewarm/CoinMarketCap-Diamonds-Premium-Analytics-Unlocked) | 2026-06-16 |
 | [bigquery-agent-analytics-sdk](skills/bigquery-agent-analytics-sdk/) | [install](https://skills.sh/aradotso/data-skills/bigquery-agent-analytics-sdk) | [GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK) | 2026-06-25 |
 | [harvard-artifacts-collection-analytics-etl](skills/harvard-artifacts-collection-analytics-etl/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-collection-analytics-etl) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-25 |
+| [harvard-artifacts-etl-streamlit-app](skills/harvard-artifacts-etl-streamlit-app/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-etl-streamlit-app) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-25 |
 <!-- SKILL_INDEX -->
 
 ---
