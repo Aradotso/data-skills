@@ -82,6 +82,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-artifacts-collection-analytics-etl](skills/harvard-artifacts-collection-analytics-etl/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-collection-analytics-etl) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-25 |
 | [harvard-artifacts-etl-streamlit-app](skills/harvard-artifacts-etl-streamlit-app/) | [install](https://skills.sh/aradotso/data-skills/harvard-artifacts-etl-streamlit-app) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-25 |
 | [adspy-analytics-intelligence](skills/adspy-analytics-intelligence/) | [install](https://skills.sh/aradotso/data-skills/adspy-analytics-intelligence) | [NebulaFormCorridor/adspy-analytics](https://github.com/NebulaFormCorridor/adspy-analytics) | 2026-06-25 |
+| [harvard-art-museum-etl-pipeline](skills/harvard-art-museum-etl-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museum-etl-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-26 |
 <!-- SKILL_INDEX -->
 
 ---
