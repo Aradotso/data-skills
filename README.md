@@ -85,6 +85,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [harvard-art-museum-etl-pipeline](skills/harvard-art-museum-etl-pipeline/) | [install](https://skills.sh/aradotso/data-skills/harvard-art-museum-etl-pipeline) | [Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App](https://github.com/Manali0711/Harvard-Artifacts-Collection-Data-Engineering-Analytics-App) | 2026-06-26 |
 | [enterprise-user-management-ai-analytics](skills/enterprise-user-management-ai-analytics/) | [install](https://skills.sh/aradotso/data-skills/enterprise-user-management-ai-analytics) | [Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics](https://github.com/Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics) | 2026-06-30 |
 | [power-bi-salespulse-360-dashboard](skills/power-bi-salespulse-360-dashboard/) | [install](https://skills.sh/aradotso/data-skills/power-bi-salespulse-360-dashboard) | [MahbubNibir/power-bi-retail-analytics-viz](https://github.com/MahbubNibir/power-bi-retail-analytics-viz) | 2026-06-30 |
+| [logifleet-pulse-supply-chain-analytics](skills/logifleet-pulse-supply-chain-analytics/) | [install](https://skills.sh/aradotso/data-skills/logifleet-pulse-supply-chain-analytics) | [Empty5i/LogiCore-Analytics-Adaptive-Supply-Chain-Pulse](https://github.com/Empty5i/LogiCore-Analytics-Adaptive-Supply-Chain-Pulse) | 2026-06-30 |
 <!-- SKILL_INDEX -->
 
 ---
