@@ -88,6 +88,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [logifleet-pulse-supply-chain-analytics](skills/logifleet-pulse-supply-chain-analytics/) | [install](https://skills.sh/aradotso/data-skills/logifleet-pulse-supply-chain-analytics) | [Empty5i/LogiCore-Analytics-Adaptive-Supply-Chain-Pulse](https://github.com/Empty5i/LogiCore-Analytics-Adaptive-Supply-Chain-Pulse) | 2026-06-30 |
 | [power-bi-retail-analytics-salespulse360](skills/power-bi-retail-analytics-salespulse360/) | [install](https://skills.sh/aradotso/data-skills/power-bi-retail-analytics-salespulse360) | [MahbubNibir/power-bi-retail-analytics-viz](https://github.com/MahbubNibir/power-bi-retail-analytics-viz) | 2026-06-30 |
 | [power-bi-salespulse-dashboard](skills/power-bi-salespulse-dashboard/) | [install](https://skills.sh/aradotso/data-skills/power-bi-salespulse-dashboard) | [MahbubNibir/power-bi-retail-analytics-viz](https://github.com/MahbubNibir/power-bi-retail-analytics-viz) | 2026-06-30 |
+| [commercevault-edd-commerce-orchestrator](skills/commercevault-edd-commerce-orchestrator/) | [install](https://skills.sh/aradotso/data-skills/commercevault-edd-commerce-orchestrator) | [dhapat3927/mcp-edd-analytics-vantage](https://github.com/dhapat3927/mcp-edd-analytics-vantage) | 2026-06-30 |
 <!-- SKILL_INDEX -->
 
 ---
