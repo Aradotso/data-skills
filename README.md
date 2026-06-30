@@ -86,6 +86,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [enterprise-user-management-ai-analytics](skills/enterprise-user-management-ai-analytics/) | [install](https://skills.sh/aradotso/data-skills/enterprise-user-management-ai-analytics) | [Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics](https://github.com/Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics) | 2026-06-30 |
 | [power-bi-salespulse-360-dashboard](skills/power-bi-salespulse-360-dashboard/) | [install](https://skills.sh/aradotso/data-skills/power-bi-salespulse-360-dashboard) | [MahbubNibir/power-bi-retail-analytics-viz](https://github.com/MahbubNibir/power-bi-retail-analytics-viz) | 2026-06-30 |
 | [logifleet-pulse-supply-chain-analytics](skills/logifleet-pulse-supply-chain-analytics/) | [install](https://skills.sh/aradotso/data-skills/logifleet-pulse-supply-chain-analytics) | [Empty5i/LogiCore-Analytics-Adaptive-Supply-Chain-Pulse](https://github.com/Empty5i/LogiCore-Analytics-Adaptive-Supply-Chain-Pulse) | 2026-06-30 |
+| [power-bi-retail-analytics-salespulse360](skills/power-bi-retail-analytics-salespulse360/) | [install](https://skills.sh/aradotso/data-skills/power-bi-retail-analytics-salespulse360) | [MahbubNibir/power-bi-retail-analytics-viz](https://github.com/MahbubNibir/power-bi-retail-analytics-viz) | 2026-06-30 |
 <!-- SKILL_INDEX -->
 
 ---
