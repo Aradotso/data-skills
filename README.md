@@ -91,6 +91,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [commercevault-edd-commerce-orchestrator](skills/commercevault-edd-commerce-orchestrator/) | [install](https://skills.sh/aradotso/data-skills/commercevault-edd-commerce-orchestrator) | [dhapat3927/mcp-edd-analytics-vantage](https://github.com/dhapat3927/mcp-edd-analytics-vantage) | 2026-06-30 |
 | [telegram-group-analytics-bot](skills/telegram-group-analytics-bot/) | [install](https://skills.sh/aradotso/data-skills/telegram-group-analytics-bot) | [ddperso/Telegram_Group_Statistics___Analytics_Bot](https://github.com/ddperso/Telegram_Group_Statistics___Analytics_Bot) | 2026-07-02 |
 | [telegram-group-statistics-analytics-bot](skills/telegram-group-statistics-analytics-bot/) | [install](https://skills.sh/aradotso/data-skills/telegram-group-statistics-analytics-bot) | [ddperso/Telegram_Group_Statistics___Analytics_Bot](https://github.com/ddperso/Telegram_Group_Statistics___Analytics_Bot) | 2026-07-02 |
+| [youtube-channel-analytics-dashboard](skills/youtube-channel-analytics-dashboard/) | [install](https://skills.sh/aradotso/data-skills/youtube-channel-analytics-dashboard) | [haywhy1759/YouTube_Channel_Analytics_Dashboard](https://github.com/haywhy1759/YouTube_Channel_Analytics_Dashboard) | 2026-07-02 |
 <!-- SKILL_INDEX -->
 
 ---
