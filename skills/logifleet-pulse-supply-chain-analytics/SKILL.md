@@ -1,783 +1,737 @@
 ---
 name: logifleet-pulse-supply-chain-analytics
-description: MS SQL Server & Power BI data warehousing template for logistics, fleet management, and supply chain analytics with multi-fact star schema
+description: MS SQL Server and Power BI data warehousing solution for multi-modal logistics intelligence with cross-fact KPI harmonization and predictive fleet optimization
 triggers:
-  - set up logistics analytics dashboard
-  - configure supply chain data warehouse
-  - implement fleet management reporting
-  - build warehouse operations KPI dashboard
-  - create multi-fact star schema for logistics
-  - deploy LogiFleet Pulse analytics platform
-  - integrate warehouse and fleet data models
-  - setup Power BI logistics visualization
+  - "set up LogiFleet Pulse supply chain analytics"
+  - "configure logicore warehouse and fleet tracking"
+  - "deploy SQL schema for logistics data warehouse"
+  - "create Power BI dashboard for supply chain metrics"
+  - "implement cross-modal logistics intelligence"
+  - "build multi-fact star schema for fleet operations"
+  - "integrate warehouse gravity zones analytics"
+  - "setup real-time fleet telemetry dashboards"
 ---
 
-# LogiFleet Pulse Supply Chain Analytics Skill
+# LogiFleet Pulse Supply Chain Analytics
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection
 
-## What This Project Does
+## Overview
 
-LogiFleet Pulse is a comprehensive data warehousing and analytics template for logistics and supply chain management. It provides:
+LogiFleet Pulse is an advanced MS SQL Server and Power BI data warehousing solution for logistics and supply chain analytics. It provides:
 
-- **Multi-fact star schema** combining warehouse operations, fleet telemetry, and inventory data
-- **MS SQL Server database scripts** for creating dimension and fact tables
-- **Power BI templates** for real-time logistics dashboards
-- **Cross-fact KPI harmonization** linking warehouse metrics with fleet performance
-- **Time-phased dimensional modeling** with 15-minute granularity
-- **Predictive analytics** for bottleneck detection and fleet optimization
+- **Multi-fact star schema** with time-phased dimensions for warehouse operations, fleet trips, and cross-dock activities
+- **Cross-fact KPI harmonization** linking inventory metrics with fleet performance
+- **Warehouse Gravity Zones™** spatial optimization based on pick frequency and item value
+- **Predictive bottleneck detection** using temporal elasticity modeling
+- **Real-time Power BI dashboards** with 15-minute refresh cycles
+- **Role-based access control** with row-level security
 
-The platform integrates warehouse management systems (WMS), telematics feeds, supplier data, and external APIs into a unified semantic layer for logistics intelligence.
+Primary language: **SQL** (T-SQL for MS SQL Server) with Power BI integration.
 
 ## Installation & Setup
 
 ### Prerequisites
 
-- MS SQL Server 2019+ (Express, Standard, or Enterprise)
+- MS SQL Server 2019+ (Standard or Enterprise edition recommended)
 - Power BI Desktop (latest version)
 - SQL Server Management Studio (SSMS) or Azure Data Studio
-- Access to source systems: WMS, TMS, telematics, ERP
+- WMS/TMS data sources with SQL, REST API, or flat file export capability
 
-### Database Deployment
-
-1. **Clone the repository:**
-
-```bash
-git clone https://github.com/Empty5i/LogiCore-Analytics-Adaptive-Supply-Chain-Pulse.git
-cd LogiCore-Analytics-Adaptive-Supply-Chain-Pulse
-```
-
-2. **Deploy SQL schema:**
+### Step 1: Deploy SQL Schema
 
 ```sql
 -- Create database
-CREATE DATABASE LogiFleetPulse;
+CREATE DATABASE LogiFleetPulse
 GO
 
-USE LogiFleetPulse;
+USE LogiFleetPulse
 GO
 
--- Run schema creation script
-:r schema/create_tables.sql
-:r schema/create_views.sql
-:r schema/create_stored_procedures.sql
-```
-
-3. **Configure data source connections:**
-
-Edit `config.json` with your connection strings:
-
-```json
-{
-  "connections": {
-    "sql_server": "Server=${SQL_SERVER_HOST};Database=LogiFleetPulse;User Id=${SQL_USER};Password=${SQL_PASSWORD};",
-    "wms_api": "${WMS_API_ENDPOINT}",
-    "telematics_api": "${TELEMATICS_API_ENDPOINT}",
-    "weather_api": "${WEATHER_API_KEY}"
-  },
-  "refresh_interval_minutes": 15,
-  "alert_thresholds": {
-    "fleet_idle_percent": 15,
-    "dwell_time_hours": 72,
-    "freezer_temp_deviation_celsius": 2
-  }
-}
-```
-
-### Power BI Configuration
-
-1. **Open the template:**
-
-```
-File > Open > LogiFleet_Pulse_Master.pbit
-```
-
-2. **Configure data source parameters:**
-
-- Server: Your SQL Server instance
-- Database: LogiFleetPulse
-- Authentication: Windows or SQL Server
-
-3. **Set up row-level security:**
-
-```dax
--- Create security role in Power BI
-[UserEmail] = USERPRINCIPALNAME()
-```
-
-## Core Database Schema
-
-### Dimension Tables
-
-**DimTime** - Time intelligence with 15-minute granularity:
-
-```sql
+-- Create dimension tables
 CREATE TABLE DimTime (
     TimeKey INT PRIMARY KEY,
-    FullDateTime DATETIME NOT NULL,
-    Date DATE NOT NULL,
+    FullDateTime DATETIME2 NOT NULL,
     Year INT NOT NULL,
     Quarter INT NOT NULL,
     Month INT NOT NULL,
     DayOfMonth INT NOT NULL,
     DayOfWeek INT NOT NULL,
     HourOfDay INT NOT NULL,
-    MinuteOfHour INT NOT NULL,
-    FiscalYear INT NOT NULL,
-    FiscalQuarter INT NOT NULL,
-    IsWeekend BIT NOT NULL,
-    IsHoliday BIT NOT NULL
-);
-
--- Insert time records
-DECLARE @StartDate DATETIME = '2024-01-01 00:00:00';
-DECLARE @EndDate DATETIME = '2027-12-31 23:45:00';
-
-WITH TimeCTE AS (
-    SELECT @StartDate AS TimeValue
-    UNION ALL
-    SELECT DATEADD(MINUTE, 15, TimeValue)
-    FROM TimeCTE
-    WHERE TimeValue < @EndDate
+    MinuteBucket INT NOT NULL, -- 0, 15, 30, 45
+    FiscalPeriod VARCHAR(10),
+    IsWeekend BIT DEFAULT 0,
+    IsHoliday BIT DEFAULT 0
 )
-INSERT INTO DimTime (TimeKey, FullDateTime, Date, Year, Quarter, Month, 
-                     DayOfMonth, DayOfWeek, HourOfDay, MinuteOfHour,
-                     FiscalYear, FiscalQuarter, IsWeekend, IsHoliday)
-SELECT 
-    CAST(FORMAT(TimeValue, 'yyyyMMddHHmm') AS INT) AS TimeKey,
-    TimeValue,
-    CAST(TimeValue AS DATE) AS Date,
-    YEAR(TimeValue),
-    DATEPART(QUARTER, TimeValue),
-    MONTH(TimeValue),
-    DAY(TimeValue),
-    DATEPART(WEEKDAY, TimeValue),
-    DATEPART(HOUR, TimeValue),
-    DATEPART(MINUTE, TimeValue),
-    CASE WHEN MONTH(TimeValue) >= 7 THEN YEAR(TimeValue) + 1 ELSE YEAR(TimeValue) END,
-    CASE WHEN MONTH(TimeValue) >= 7 THEN DATEPART(QUARTER, TimeValue) - 2 ELSE DATEPART(QUARTER, TimeValue) + 2 END,
-    CASE WHEN DATEPART(WEEKDAY, TimeValue) IN (1, 7) THEN 1 ELSE 0 END,
-    0  -- Update with holiday logic
-FROM TimeCTE
-OPTION (MAXRECURSION 0);
-```
+GO
 
-**DimGeography** - Hierarchical location dimension:
+CREATE CLUSTERED INDEX IX_DimTime_FullDateTime ON DimTime(FullDateTime)
+GO
 
-```sql
 CREATE TABLE DimGeography (
-    GeographyKey INT IDENTITY(1,1) PRIMARY KEY,
-    LocationID NVARCHAR(50) NOT NULL UNIQUE,
-    LocationName NVARCHAR(200) NOT NULL,
-    LocationType NVARCHAR(50) NOT NULL, -- Warehouse, Distribution Center, Route Node
-    Address NVARCHAR(500),
-    City NVARCHAR(100),
-    StateProvince NVARCHAR(100),
-    Country NVARCHAR(100),
-    Continent NVARCHAR(50),
-    PostalCode NVARCHAR(20),
+    GeographyKey INT PRIMARY KEY IDENTITY(1,1),
+    Continent VARCHAR(50),
+    Country VARCHAR(100),
+    Region VARCHAR(100),
+    WarehouseCode VARCHAR(50),
+    WarehouseName VARCHAR(200),
+    RouteNodeID VARCHAR(50),
     Latitude DECIMAL(9,6),
     Longitude DECIMAL(9,6),
-    TimeZone NVARCHAR(50),
-    ParentLocationID NVARCHAR(50),
-    EffectiveDate DATE NOT NULL,
-    EndDate DATE,
-    IsCurrent BIT DEFAULT 1
-);
+    TimeZone VARCHAR(50)
+)
+GO
 
-CREATE INDEX IX_DimGeography_LocationID ON DimGeography(LocationID);
-CREATE INDEX IX_DimGeography_LocationType ON DimGeography(LocationType);
-```
-
-**DimProductGravity** - Product classification with gravity scoring:
-
-```sql
 CREATE TABLE DimProductGravity (
-    ProductKey INT IDENTITY(1,1) PRIMARY KEY,
-    SKU NVARCHAR(50) NOT NULL UNIQUE,
-    ProductName NVARCHAR(200) NOT NULL,
-    Category NVARCHAR(100),
-    Subcategory NVARCHAR(100),
-    UnitWeight DECIMAL(10,3),
-    UnitVolume DECIMAL(10,3),
+    ProductKey INT PRIMARY KEY IDENTITY(1,1),
+    SKU VARCHAR(100) NOT NULL UNIQUE,
+    ProductName VARCHAR(500),
+    Category VARCHAR(100),
+    Subcategory VARCHAR(100),
+    IsFragile BIT DEFAULT 0,
     IsPerishable BIT DEFAULT 0,
-    RequiresRefrigeration BIT DEFAULT 0,
-    FragilityScore INT CHECK (FragilityScore BETWEEN 1 AND 10),
-    VelocityClass NVARCHAR(20), -- Fast, Medium, Slow
-    GravityScore DECIMAL(5,2), -- Calculated composite score
-    RecommendedZoneType NVARCHAR(50),
-    EffectiveDate DATE NOT NULL,
-    EndDate DATE,
-    IsCurrent BIT DEFAULT 1
-);
+    UnitValue DECIMAL(10,2),
+    VelocityScore DECIMAL(5,2), -- Calculated from historical pick frequency
+    FragilityScore DECIMAL(5,2), -- 0-10 scale
+    GravityScore AS (VelocityScore * 0.5 + UnitValue * 0.3 + FragilityScore * 0.2), -- Computed column
+    RecommendedZone VARCHAR(50)
+)
+GO
 
--- Calculate gravity score
-UPDATE DimProductGravity
-SET GravityScore = (
-    CASE VelocityClass 
-        WHEN 'Fast' THEN 10.0 
-        WHEN 'Medium' THEN 5.0 
-        WHEN 'Slow' THEN 1.0 
-    END * 0.4 +
-    FragilityScore * 0.3 +
-    CASE WHEN IsPerishable = 1 THEN 10.0 ELSE 0.0 END * 0.3
-);
-```
+CREATE TABLE DimSupplierReliability (
+    SupplierKey INT PRIMARY KEY IDENTITY(1,1),
+    SupplierID VARCHAR(100) NOT NULL UNIQUE,
+    SupplierName VARCHAR(500),
+    LeadTimeMean INT, -- Days
+    LeadTimeStdDev DECIMAL(5,2),
+    DefectRate DECIMAL(5,4),
+    ComplianceScore DECIMAL(3,2), -- 0-1 scale
+    LastUpdated DATETIME2 DEFAULT GETDATE()
+)
+GO
 
-### Fact Tables
+CREATE TABLE DimFleet (
+    FleetKey INT PRIMARY KEY IDENTITY(1,1),
+    VehicleID VARCHAR(100) NOT NULL UNIQUE,
+    VehicleType VARCHAR(100),
+    CapacityKg DECIMAL(10,2),
+    CapacityCubicM DECIMAL(10,2),
+    FuelType VARCHAR(50),
+    LastMaintenanceDate DATE,
+    NextMaintenanceDue DATE,
+    TireConditionScore DECIMAL(3,2)
+)
+GO
 
-**FactWarehouseOperations** - Warehouse activity tracking:
-
-```sql
+-- Create fact tables
 CREATE TABLE FactWarehouseOperations (
-    OperationKey BIGINT IDENTITY(1,1) PRIMARY KEY,
-    TimeKey INT NOT NULL,
-    LocationKey INT NOT NULL,
-    ProductKey INT NOT NULL,
-    OperationType NVARCHAR(50) NOT NULL, -- Receiving, Putaway, Picking, Packing, Shipping
-    OperationID NVARCHAR(100) NOT NULL,
-    OrderID NVARCHAR(100),
-    QuantityUnits INT NOT NULL,
-    DurationMinutes DECIMAL(10,2),
-    DwellTimeHours DECIMAL(10,2),
-    ZoneID NVARCHAR(50),
-    BinLocation NVARCHAR(100),
-    OperatorID NVARCHAR(50),
-    EquipmentID NVARCHAR(50),
-    BatchNumber NVARCHAR(100),
-    TemperatureAtOperation DECIMAL(5,2),
-    QualityCheckPassed BIT,
-    ExceptionCode NVARCHAR(50),
-    CONSTRAINT FK_FactWarehouse_Time FOREIGN KEY (TimeKey) REFERENCES DimTime(TimeKey),
-    CONSTRAINT FK_FactWarehouse_Location FOREIGN KEY (LocationKey) REFERENCES DimGeography(GeographyKey),
-    CONSTRAINT FK_FactWarehouse_Product FOREIGN KEY (ProductKey) REFERENCES DimProductGravity(ProductKey)
-);
+    OperationKey BIGINT PRIMARY KEY IDENTITY(1,1),
+    TimeKey INT NOT NULL FOREIGN KEY REFERENCES DimTime(TimeKey),
+    GeographyKey INT NOT NULL FOREIGN KEY REFERENCES DimGeography(GeographyKey),
+    ProductKey INT NOT NULL FOREIGN KEY REFERENCES DimProductGravity(ProductKey),
+    SupplierKey INT FOREIGN KEY REFERENCES DimSupplierReliability(SupplierKey),
+    OperationType VARCHAR(50) NOT NULL, -- Receiving, Putaway, Picking, Packing, Shipping
+    Quantity INT NOT NULL,
+    DwellTimeMinutes INT,
+    PickTimeSeconds INT,
+    PackTimeSeconds INT,
+    StorageZone VARCHAR(50),
+    BatchNumber VARCHAR(100),
+    OrderID VARCHAR(100)
+)
+GO
 
-CREATE INDEX IX_FactWarehouse_Time ON FactWarehouseOperations(TimeKey);
-CREATE INDEX IX_FactWarehouse_Product ON FactWarehouseOperations(ProductKey);
-CREATE INDEX IX_FactWarehouse_OperationType ON FactWarehouseOperations(OperationType);
-```
+CREATE NONCLUSTERED INDEX IX_FactWarehouse_Time ON FactWarehouseOperations(TimeKey)
+CREATE NONCLUSTERED INDEX IX_FactWarehouse_Product ON FactWarehouseOperations(ProductKey)
+CREATE NONCLUSTERED INDEX IX_FactWarehouse_Geography ON FactWarehouseOperations(GeographyKey)
+GO
 
-**FactFleetTrips** - Fleet and route performance:
-
-```sql
 CREATE TABLE FactFleetTrips (
-    TripKey BIGINT IDENTITY(1,1) PRIMARY KEY,
-    StartTimeKey INT NOT NULL,
-    EndTimeKey INT,
-    OriginLocationKey INT NOT NULL,
-    DestinationLocationKey INT,
-    VehicleID NVARCHAR(50) NOT NULL,
-    DriverID NVARCHAR(50),
-    TripID NVARCHAR(100) NOT NULL UNIQUE,
-    OrderIDs NVARCHAR(MAX), -- Comma-separated list
+    TripKey BIGINT PRIMARY KEY IDENTITY(1,1),
+    FleetKey INT NOT NULL FOREIGN KEY REFERENCES DimFleet(FleetKey),
+    TimeKeyStart INT NOT NULL FOREIGN KEY REFERENCES DimTime(TimeKey),
+    TimeKeyEnd INT FOREIGN KEY REFERENCES DimTime(TimeKey),
+    OriginGeographyKey INT NOT NULL FOREIGN KEY REFERENCES DimGeography(GeographyKey),
+    DestinationGeographyKey INT NOT NULL FOREIGN KEY REFERENCES DimGeography(GeographyKey),
     DistanceKm DECIMAL(10,2),
-    DurationMinutes DECIMAL(10,2),
-    IdleTimeMinutes DECIMAL(10,2),
+    DurationMinutes INT,
+    IdleTimeMinutes INT,
     FuelConsumedLiters DECIMAL(10,2),
     LoadWeightKg DECIMAL(10,2),
-    LoadVolumeCubicMeters DECIMAL(10,2),
-    AverageSpeedKmh DECIMAL(5,2),
-    MaxSpeedKmh DECIMAL(5,2),
-    HarshBrakingEvents INT DEFAULT 0,
-    HarshAccelerationEvents INT DEFAULT 0,
-    RouteDeviationKm DECIMAL(10,2),
-    WeatherCondition NVARCHAR(50),
-    TrafficDelayMinutes DECIMAL(10,2),
-    OnTimeDelivery BIT,
-    CustomerSignature BIT,
-    CONSTRAINT FK_FactFleet_StartTime FOREIGN KEY (StartTimeKey) REFERENCES DimTime(TimeKey),
-    CONSTRAINT FK_FactFleet_EndTime FOREIGN KEY (EndTimeKey) REFERENCES DimTime(TimeKey),
-    CONSTRAINT FK_FactFleet_Origin FOREIGN KEY (OriginLocationKey) REFERENCES DimGeography(GeographyKey),
-    CONSTRAINT FK_FactFleet_Destination FOREIGN KEY (DestinationLocationKey) REFERENCES DimGeography(GeographyKey)
-);
+    LoadingTimeMinutes INT,
+    UnloadingTimeMinutes INT,
+    DelayMinutes INT,
+    DelayReason VARCHAR(200),
+    DriverID VARCHAR(100)
+)
+GO
 
-CREATE INDEX IX_FactFleet_StartTime ON FactFleetTrips(StartTimeKey);
-CREATE INDEX IX_FactFleet_Vehicle ON FactFleetTrips(VehicleID);
-```
+CREATE NONCLUSTERED INDEX IX_FactFleet_TimeStart ON FactFleetTrips(TimeKeyStart)
+CREATE NONCLUSTERED INDEX IX_FactFleet_Fleet ON FactFleetTrips(FleetKey)
+CREATE NONCLUSTERED INDEX IX_FactFleet_Origin ON FactFleetTrips(OriginGeographyKey)
+GO
 
-## Key Stored Procedures
-
-### Data Loading Procedure
-
-```sql
-CREATE PROCEDURE sp_LoadWarehouseOperations
-    @StartDate DATETIME,
-    @EndDate DATETIME
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    -- Incremental load from staging table
-    INSERT INTO FactWarehouseOperations (
-        TimeKey, LocationKey, ProductKey, OperationType, OperationID,
-        OrderID, QuantityUnits, DurationMinutes, DwellTimeHours,
-        ZoneID, BinLocation, OperatorID
-    )
-    SELECT 
-        CAST(FORMAT(stg.OperationTimestamp, 'yyyyMMddHHmm') AS INT) / 15 * 15 AS TimeKey,
-        geo.GeographyKey,
-        prd.ProductKey,
-        stg.OperationType,
-        stg.OperationID,
-        stg.OrderID,
-        stg.Quantity,
-        DATEDIFF(MINUTE, stg.StartTime, stg.EndTime) AS DurationMinutes,
-        DATEDIFF(MINUTE, stg.FirstSeenTime, stg.OperationTimestamp) / 60.0 AS DwellTimeHours,
-        stg.ZoneID,
-        stg.BinLocation,
-        stg.OperatorID
-    FROM StagingWarehouseOperations stg
-    INNER JOIN DimGeography geo ON stg.LocationID = geo.LocationID AND geo.IsCurrent = 1
-    INNER JOIN DimProductGravity prd ON stg.SKU = prd.SKU AND prd.IsCurrent = 1
-    WHERE stg.OperationTimestamp BETWEEN @StartDate AND @EndDate
-        AND NOT EXISTS (
-            SELECT 1 FROM FactWarehouseOperations f 
-            WHERE f.OperationID = stg.OperationID
-        );
-    
-    -- Log execution
-    INSERT INTO ETLLog (ProcedureName, ExecutionTime, RowsAffected)
-    VALUES ('sp_LoadWarehouseOperations', GETDATE(), @@ROWCOUNT);
-END;
+CREATE TABLE FactCrossDock (
+    CrossDockKey BIGINT PRIMARY KEY IDENTITY(1,1),
+    TimeKeyReceived INT NOT NULL FOREIGN KEY REFERENCES DimTime(TimeKey),
+    TimeKeyShipped INT FOREIGN KEY REFERENCES DimTime(TimeKey),
+    GeographyKey INT NOT NULL FOREIGN KEY REFERENCES DimGeography(GeographyKey),
+    ProductKey INT NOT NULL FOREIGN KEY REFERENCES DimProductGravity(ProductKey),
+    InboundTripKey BIGINT FOREIGN KEY REFERENCES FactFleetTrips(TripKey),
+    OutboundTripKey BIGINT FOREIGN KEY REFERENCES FactFleetTrips(TripKey),
+    Quantity INT NOT NULL,
+    CrossDockDurationMinutes INT
+)
 GO
 ```
 
-### Alert Generation Procedure
+### Step 2: Populate Time Dimension
 
 ```sql
-CREATE PROCEDURE sp_GenerateFleetAlerts
+-- Stored procedure to populate DimTime at 15-minute granularity
+CREATE PROCEDURE PopulateDimTime
+    @StartDate DATE,
+    @EndDate DATE
 AS
 BEGIN
-    SET NOCOUNT ON;
+    DECLARE @CurrentDateTime DATETIME2 = @StartDate
+    DECLARE @TimeKey INT
     
-    -- Detect fleet idle time exceeding threshold
-    INSERT INTO AlertQueue (AlertType, Severity, EntityID, Message, DetectedTime)
+    WHILE @CurrentDateTime <= @EndDate
+    BEGIN
+        SET @TimeKey = CAST(FORMAT(@CurrentDateTime, 'yyyyMMddHHmm') AS INT)
+        
+        INSERT INTO DimTime (TimeKey, FullDateTime, Year, Quarter, Month, DayOfMonth, DayOfWeek, HourOfDay, MinuteBucket, IsWeekend)
+        VALUES (
+            @TimeKey,
+            @CurrentDateTime,
+            YEAR(@CurrentDateTime),
+            DATEPART(QUARTER, @CurrentDateTime),
+            MONTH(@CurrentDateTime),
+            DAY(@CurrentDateTime),
+            DATEPART(WEEKDAY, @CurrentDateTime),
+            DATEPART(HOUR, @CurrentDateTime),
+            (DATEPART(MINUTE, @CurrentDateTime) / 15) * 15,
+            CASE WHEN DATEPART(WEEKDAY, @CurrentDateTime) IN (1, 7) THEN 1 ELSE 0 END
+        )
+        
+        SET @CurrentDateTime = DATEADD(MINUTE, 15, @CurrentDateTime)
+    END
+END
+GO
+
+-- Populate for current year + 2 years
+EXEC PopulateDimTime '2025-01-01', '2027-12-31'
+GO
+```
+
+### Step 3: Configure Data Ingestion
+
+```sql
+-- Example stored procedure for incremental warehouse operations load
+CREATE PROCEDURE LoadWarehouseOperations
+    @LastLoadDateTime DATETIME2
+AS
+BEGIN
+    -- Assuming source system table: staging.WarehouseOps
+    INSERT INTO FactWarehouseOperations (
+        TimeKey,
+        GeographyKey,
+        ProductKey,
+        SupplierKey,
+        OperationType,
+        Quantity,
+        DwellTimeMinutes,
+        PickTimeSeconds,
+        PackTimeSeconds,
+        StorageZone,
+        BatchNumber,
+        OrderID
+    )
     SELECT 
-        'FleetIdleExceeded',
-        'High',
-        VehicleID,
-        'Vehicle ' + VehicleID + ' idle time ' + 
-        CAST(CAST(AVG(IdleTimeMinutes) AS INT) AS NVARCHAR) + 
-        ' min exceeds threshold in last 24 hours',
-        GETDATE()
-    FROM FactFleetTrips
-    WHERE StartTimeKey >= CAST(FORMAT(DATEADD(DAY, -1, GETDATE()), 'yyyyMMddHHmm') AS INT)
-    GROUP BY VehicleID
-    HAVING AVG(IdleTimeMinutes) / NULLIF(AVG(DurationMinutes), 0) > 0.15
-    
-    -- Detect temperature deviations
-    INSERT INTO AlertQueue (AlertType, Severity, EntityID, Message, DetectedTime)
-    SELECT 
-        'TemperatureDeviation',
-        'Critical',
-        OperationID,
-        'Temperature deviation detected for order ' + OrderID + 
-        ' in zone ' + ZoneID,
-        GETDATE()
-    FROM FactWarehouseOperations
-    WHERE TimeKey >= CAST(FORMAT(DATEADD(HOUR, -1, GETDATE()), 'yyyyMMddHHmm') AS INT)
-        AND TemperatureAtOperation NOT BETWEEN -2 AND 2
-        AND OperationType IN ('Receiving', 'Shipping');
-END;
+        dt.TimeKey,
+        dg.GeographyKey,
+        dp.ProductKey,
+        ds.SupplierKey,
+        so.OperationType,
+        so.Quantity,
+        so.DwellTimeMinutes,
+        so.PickTimeSeconds,
+        so.PackTimeSeconds,
+        so.StorageZone,
+        so.BatchNumber,
+        so.OrderID
+    FROM staging.WarehouseOps so
+    INNER JOIN DimTime dt ON dt.FullDateTime = DATEADD(MINUTE, (DATEPART(MINUTE, so.OperationDateTime) / 15) * 15, DATEADD(HOUR, DATEDIFF(HOUR, 0, so.OperationDateTime), 0))
+    INNER JOIN DimGeography dg ON dg.WarehouseCode = so.WarehouseCode
+    INNER JOIN DimProductGravity dp ON dp.SKU = so.SKU
+    LEFT JOIN DimSupplierReliability ds ON ds.SupplierID = so.SupplierID
+    WHERE so.OperationDateTime > @LastLoadDateTime
+END
+GO
+```
+
+### Step 4: Power BI Connection
+
+1. Open Power BI Desktop
+2. Get Data → SQL Server
+3. Enter server name and database: `LogiFleetPulse`
+4. Authentication: Windows or SQL Server (use `${SQL_USERNAME}` and `${SQL_PASSWORD}` env vars)
+5. Select tables: `FactWarehouseOperations`, `FactFleetTrips`, `FactCrossDock`, and all `Dim*` tables
+6. Power BI auto-detects relationships; verify in Model view
+
+## Key SQL Views & Queries
+
+### Cross-Fact KPI: Dwell Time vs Fleet Idle Time
+
+```sql
+CREATE VIEW vw_DwellVsIdleCorrelation AS
+SELECT 
+    dt.Year,
+    dt.Month,
+    dg.WarehouseName,
+    dp.Category,
+    AVG(CAST(fwo.DwellTimeMinutes AS FLOAT)) AS AvgDwellTimeMin,
+    AVG(CAST(fft.IdleTimeMinutes AS FLOAT)) AS AvgIdleTimeMin,
+    COUNT(DISTINCT fwo.ProductKey) AS DistinctProducts,
+    COUNT(DISTINCT fft.TripKey) AS TotalTrips
+FROM FactWarehouseOperations fwo
+INNER JOIN DimTime dt ON fwo.TimeKey = dt.TimeKey
+INNER JOIN DimGeography dg ON fwo.GeographyKey = dg.GeographyKey
+INNER JOIN DimProductGravity dp ON fwo.ProductKey = dp.ProductKey
+LEFT JOIN FactCrossDock fcd ON fcd.ProductKey = fwo.ProductKey AND fcd.GeographyKey = fwo.GeographyKey
+LEFT JOIN FactFleetTrips fft ON fft.TripKey = fcd.OutboundTripKey
+WHERE fwo.OperationType = 'Shipping'
+GROUP BY dt.Year, dt.Month, dg.WarehouseName, dp.Category
+GO
+```
+
+### Warehouse Gravity Zone Optimization
+
+```sql
+-- Identify products in suboptimal zones
+SELECT 
+    dp.SKU,
+    dp.ProductName,
+    dp.GravityScore,
+    dp.RecommendedZone,
+    fwo.StorageZone AS CurrentZone,
+    COUNT(*) AS PickCount,
+    AVG(fwo.PickTimeSeconds) AS AvgPickTime
+FROM FactWarehouseOperations fwo
+INNER JOIN DimProductGravity dp ON fwo.ProductKey = dp.ProductKey
+WHERE fwo.OperationType = 'Picking'
+    AND fwo.StorageZone != dp.RecommendedZone
+    AND fwo.TimeKey >= CAST(FORMAT(DATEADD(MONTH, -3, GETDATE()), 'yyyyMMddHHmm') AS INT)
+GROUP BY dp.SKU, dp.ProductName, dp.GravityScore, dp.RecommendedZone, fwo.StorageZone
+HAVING COUNT(*) > 10
+ORDER BY dp.GravityScore DESC, AVG(fwo.PickTimeSeconds) DESC
+GO
+```
+
+### Fleet Maintenance Priority Queue
+
+```sql
+CREATE VIEW vw_FleetMaintenancePriority AS
+SELECT 
+    df.VehicleID,
+    df.VehicleType,
+    df.TireConditionScore,
+    DATEDIFF(DAY, df.LastMaintenanceDate, GETDATE()) AS DaysSinceMaintenance,
+    DATEDIFF(DAY, GETDATE(), df.NextMaintenanceDue) AS DaysUntilDue,
+    SUM(fft.DistanceKm) AS TotalDistanceLast30Days,
+    AVG(fft.IdleTimeMinutes) AS AvgIdleTime,
+    COUNT(DISTINCT CASE WHEN fft.DelayMinutes > 30 THEN fft.TripKey END) AS DelayedTrips,
+    -- Weighted priority score
+    (
+        (1.0 - df.TireConditionScore) * 30 +
+        CASE WHEN DATEDIFF(DAY, GETDATE(), df.NextMaintenanceDue) < 0 THEN 50 ELSE 0 END +
+        (AVG(fft.IdleTimeMinutes) / 60.0) * 20
+    ) AS PriorityScore
+FROM DimFleet df
+LEFT JOIN FactFleetTrips fft ON df.FleetKey = fft.FleetKey
+WHERE fft.TimeKeyStart >= CAST(FORMAT(DATEADD(DAY, -30, GETDATE()), 'yyyyMMddHHmm') AS INT)
+GROUP BY df.VehicleID, df.VehicleType, df.TireConditionScore, df.LastMaintenanceDate, df.NextMaintenanceDue
 GO
 ```
 
 ## Power BI DAX Measures
 
-### Cross-Fact KPIs
-
-**Warehouse Efficiency Score:**
+### Cross-Fact Composite Metric
 
 ```dax
-Warehouse Efficiency = 
-VAR AvgPickTime = AVERAGE(FactWarehouseOperations[DurationMinutes])
-VAR AvgDwellTime = AVERAGE(FactWarehouseOperations[DwellTimeHours])
-VAR BenchmarkPickTime = 3.5
-VAR BenchmarkDwellTime = 24
-RETURN
-    (BenchmarkPickTime / DIVIDE(AvgPickTime, 1, 1) * 0.5 +
-     BenchmarkDwellTime / DIVIDE(AvgDwellTime, 1, 1) * 0.5) * 100
-```
-
-**Fleet Utilization Rate:**
-
-```dax
-Fleet Utilization % = 
-DIVIDE(
-    SUM(FactFleetTrips[DurationMinutes]) - SUM(FactFleetTrips[IdleTimeMinutes]),
-    SUM(FactFleetTrips[DurationMinutes]),
-    0
-) * 100
-```
-
-**Fuel Efficiency (km per liter):**
-
-```dax
-Fuel Efficiency = 
-DIVIDE(
-    SUM(FactFleetTrips[DistanceKm]),
-    SUM(FactFleetTrips[FuelConsumedLiters]),
-    0
-)
-```
-
-**Dwell Time by Gravity Zone:**
-
-```dax
-Avg Dwell Time by Gravity = 
-CALCULATE(
-    AVERAGE(FactWarehouseOperations[DwellTimeHours]),
-    ALLEXCEPT(DimProductGravity, DimProductGravity[VelocityClass])
-)
-```
-
-### Time Intelligence
-
-**YTD Shipments:**
-
-```dax
-YTD Shipments = 
-CALCULATE(
-    COUNTROWS(FactWarehouseOperations),
-    DATESYTD(DimTime[Date]),
-    FactWarehouseOperations[OperationType] = "Shipping"
-)
-```
-
-**Moving Average - Fleet Distance:**
-
-```dax
-Fleet Distance 7-Day MA = 
-CALCULATE(
-    AVERAGE(FactFleetTrips[DistanceKm]),
-    DATESINPERIOD(
-        DimTime[Date],
-        LASTDATE(DimTime[Date]),
-        -7,
-        DAY
+// Measure: Inventory Turn-Fleet Efficiency Index
+InventoryTurnFleetIndex = 
+VAR AvgDwellHours = AVERAGE(FactWarehouseOperations[DwellTimeMinutes]) / 60
+VAR AvgFleetUtilization = 
+    DIVIDE(
+        AVERAGE(FactFleetTrips[DurationMinutes]) - AVERAGE(FactFleetTrips[IdleTimeMinutes]),
+        AVERAGE(FactFleetTrips[DurationMinutes])
     )
-)
+VAR TurnIndex = DIVIDE(1, AvgDwellHours, 0) * 100
+VAR FleetIndex = AvgFleetUtilization * 100
+RETURN
+    (TurnIndex * 0.6) + (FleetIndex * 0.4)
 ```
 
-## Configuration Patterns
+### Predictive Bottleneck Score
+
+```dax
+// Measure: Bottleneck Probability Index
+BottleneckIndex = 
+VAR CurrentDwell = AVERAGE(FactWarehouseOperations[DwellTimeMinutes])
+VAR HistoricalDwell = 
+    CALCULATE(
+        AVERAGE(FactWarehouseOperations[DwellTimeMinutes]),
+        DATESBETWEEN(DimTime[FullDateTime], DATE(2025,1,1), DATE(2025,12,31))
+    )
+VAR DwellDeviation = DIVIDE(CurrentDwell - HistoricalDwell, HistoricalDwell, 0)
+
+VAR CurrentIdle = AVERAGE(FactFleetTrips[IdleTimeMinutes])
+VAR HistoricalIdle = 
+    CALCULATE(
+        AVERAGE(FactFleetTrips[IdleTimeMinutes]),
+        DATESBETWEEN(DimTime[FullDateTime], DATE(2025,1,1), DATE(2025,12,31))
+    )
+VAR IdleDeviation = DIVIDE(CurrentIdle - HistoricalIdle, HistoricalIdle, 0)
+
+RETURN
+    (DwellDeviation * 0.5 + IdleDeviation * 0.5) * 100
+```
+
+## Configuration
+
+### Environment Variables
+
+Store connection strings and API keys in environment variables:
+
+```sql
+-- SQL Server connection (use in application config, not hardcoded)
+-- Server=${SQL_SERVER_HOST}
+-- Database=LogiFleetPulse
+-- User=${SQL_USERNAME}
+-- Password=${SQL_PASSWORD}
+```
 
 ### Row-Level Security Setup
 
 ```sql
 -- Create security table
-CREATE TABLE UserSecurity (
-    UserEmail NVARCHAR(255) PRIMARY KEY,
-    LocationAccess NVARCHAR(MAX), -- Comma-separated location IDs
-    RoleType NVARCHAR(50) -- User, Supervisor, Executive
-);
-
--- Insert sample users
-INSERT INTO UserSecurity (UserEmail, LocationAccess, RoleType)
-VALUES 
-    ('${USER_EMAIL}', 'WH001,WH002', 'Supervisor'),
-    ('${MANAGER_EMAIL}', 'ALL', 'Executive');
-```
-
-**Power BI RLS DAX:**
-
-```dax
--- Create role: Regional Supervisor
-[LocationID] IN 
-    SELECTCOLUMNS(
-        FILTER(
-            UserSecurity,
-            UserSecurity[UserEmail] = USERPRINCIPALNAME()
-        ),
-        "Locations", UserSecurity[LocationAccess]
-    )
-```
-
-### Incremental Refresh Configuration
-
-In Power BI Desktop:
-
-1. Create parameters:
-   - `RangeStart` (Date/Time)
-   - `RangeEnd` (Date/Time)
-
-2. Filter fact table query:
-
-```powerquery
-= Table.SelectRows(
-    Source, 
-    each [OperationTimestamp] >= RangeStart and [OperationTimestamp] < RangeEnd
+CREATE TABLE SecurityRoles (
+    UserEmail VARCHAR(255),
+    RoleName VARCHAR(100),
+    WarehouseAccessList VARCHAR(MAX), -- Comma-separated warehouse codes
+    ProductCategoryAccess VARCHAR(MAX)
 )
+GO
+
+-- Create RLS function
+CREATE FUNCTION fn_SecurityPredicate(@GeographyKey INT)
+RETURNS TABLE
+WITH SCHEMABINDING
+AS
+RETURN 
+    SELECT 1 AS accessResult
+    WHERE 
+        @GeographyKey IN (
+            SELECT dg.GeographyKey
+            FROM dbo.DimGeography dg
+            INNER JOIN dbo.SecurityRoles sr ON 
+                CHARINDEX(dg.WarehouseCode, sr.WarehouseAccessList) > 0
+            WHERE sr.UserEmail = USER_NAME()
+        )
+GO
+
+-- Apply security policy
+CREATE SECURITY POLICY WarehouseSecurityPolicy
+ADD FILTER PREDICATE dbo.fn_SecurityPredicate(GeographyKey) ON dbo.FactWarehouseOperations,
+ADD FILTER PREDICATE dbo.fn_SecurityPredicate(OriginGeographyKey) ON dbo.FactFleetTrips
+WITH (STATE = ON)
+GO
 ```
 
-3. Enable incremental refresh:
-   - Refresh data from last: 7 days
-   - Store data for: 3 years
-   - Refresh complete days only: Yes
-
-## Common Usage Patterns
-
-### Analyzing Cross-Dock Efficiency
+### Automated Alerts Configuration
 
 ```sql
--- Find products with high cross-dock vs. storage ratios
+CREATE PROCEDURE ConfigureAlert
+    @AlertName VARCHAR(100),
+    @MetricType VARCHAR(50), -- 'DwellTime', 'IdleTime', 'DelayRate'
+    @ThresholdValue DECIMAL(10,2),
+    @ComparisonOperator VARCHAR(10), -- '>', '<', '='
+    @RecipientEmails VARCHAR(MAX)
+AS
+BEGIN
+    -- Store alert config in AlertConfig table
+    INSERT INTO AlertConfig (AlertName, MetricType, ThresholdValue, ComparisonOperator, RecipientEmails, IsActive)
+    VALUES (@AlertName, @MetricType, @ThresholdValue, @ComparisonOperator, @RecipientEmails, 1)
+    
+    -- Schedule SQL Server Agent job to run every 15 minutes
+    -- Implementation depends on environment
+END
+GO
+```
+
+## Common Patterns
+
+### Pattern 1: Time-Phased Query with 15-Min Buckets
+
+```sql
+-- Get hourly aggregates from 15-minute buckets
 SELECT 
-    p.SKU,
-    p.ProductName,
-    p.VelocityClass,
-    COUNT(CASE WHEN w.OperationType = 'Receiving' THEN 1 END) AS TotalReceived,
-    AVG(CASE WHEN w.OperationType = 'Shipping' THEN w.DwellTimeHours END) AS AvgDwellHours,
-    COUNT(CASE WHEN w.DwellTimeHours < 4 THEN 1 END) * 100.0 / 
-        COUNT(*) AS CrossDockPercentage
-FROM FactWarehouseOperations w
-INNER JOIN DimProductGravity p ON w.ProductKey = p.ProductKey
-WHERE w.TimeKey >= CAST(FORMAT(DATEADD(MONTH, -1, GETDATE()), 'yyyyMMddHHmm') AS INT)
-GROUP BY p.SKU, p.ProductName, p.VelocityClass
-HAVING COUNT(*) > 100
-ORDER BY CrossDockPercentage DESC;
+    dt.Year,
+    dt.Month,
+    dt.DayOfMonth,
+    dt.HourOfDay,
+    COUNT(*) AS OperationCount,
+    AVG(fwo.DwellTimeMinutes) AS AvgDwell,
+    MAX(fwo.DwellTimeMinutes) AS MaxDwell
+FROM FactWarehouseOperations fwo
+INNER JOIN DimTime dt ON fwo.TimeKey = dt.TimeKey
+WHERE dt.FullDateTime >= DATEADD(DAY, -7, GETDATE())
+GROUP BY dt.Year, dt.Month, dt.DayOfMonth, dt.HourOfDay
+ORDER BY dt.Year, dt.Month, dt.DayOfMonth, dt.HourOfDay
 ```
 
-### Route Optimization Analysis
+### Pattern 2: Bridge Table for Many-to-Many
 
 ```sql
--- Identify routes with high idle time for optimization
+-- If products can be on multiple routes simultaneously
+CREATE TABLE BridgeProductRoute (
+    ProductKey INT FOREIGN KEY REFERENCES DimProductGravity(ProductKey),
+    TripKey BIGINT FOREIGN KEY REFERENCES FactFleetTrips(TripKey),
+    QuantityOnTrip INT
+)
+GO
+
+-- Query using bridge
 SELECT 
-    origin.LocationName AS Origin,
-    dest.LocationName AS Destination,
-    COUNT(*) AS TripCount,
-    AVG(f.DistanceKm) AS AvgDistanceKm,
-    AVG(f.DurationMinutes) AS AvgDurationMin,
-    AVG(f.IdleTimeMinutes) AS AvgIdleMin,
-    AVG(f.IdleTimeMinutes) * 100.0 / NULLIF(AVG(f.DurationMinutes), 0) AS IdlePercentage,
-    SUM(f.FuelConsumedLiters) AS TotalFuelLiters
-FROM FactFleetTrips f
-INNER JOIN DimGeography origin ON f.OriginLocationKey = origin.GeographyKey
-INNER JOIN DimGeography dest ON f.DestinationLocationKey = dest.GeographyKey
-WHERE f.StartTimeKey >= CAST(FORMAT(DATEADD(MONTH, -3, GETDATE()), 'yyyyMMddHHmm') AS INT)
-    AND f.IdleTimeMinutes > 0
-GROUP BY origin.LocationName, dest.LocationName
-HAVING COUNT(*) > 10 AND AVG(f.IdleTimeMinutes) / NULLIF(AVG(f.DurationMinutes), 0) > 0.10
-ORDER BY IdlePercentage DESC;
+    dp.SKU,
+    df.VehicleID,
+    SUM(bpr.QuantityOnTrip) AS TotalQuantity
+FROM BridgeProductRoute bpr
+INNER JOIN DimProductGravity dp ON bpr.ProductKey = dp.ProductKey
+INNER JOIN FactFleetTrips fft ON bpr.TripKey = fft.TripKey
+INNER JOIN DimFleet df ON fft.FleetKey = df.FleetKey
+GROUP BY dp.SKU, df.VehicleID
 ```
 
-### Gravity Zone Recommendations
+### Pattern 3: Incremental Load with Change Detection
 
 ```sql
--- Suggest products to move to higher gravity zones
-WITH ProductVelocity AS (
+CREATE PROCEDURE IncrementalLoadFleetTrips
+AS
+BEGIN
+    DECLARE @LastLoadTime DATETIME2
+    SELECT @LastLoadTime = MAX(dt.FullDateTime) 
+    FROM FactFleetTrips fft
+    INNER JOIN DimTime dt ON fft.TimeKeyStart = dt.TimeKey
+    
+    INSERT INTO FactFleetTrips (FleetKey, TimeKeyStart, TimeKeyEnd, OriginGeographyKey, DestinationGeographyKey, DistanceKm, DurationMinutes, IdleTimeMinutes, FuelConsumedLiters, LoadWeightKg)
     SELECT 
-        ProductKey,
-        COUNT(*) AS PickCount,
-        AVG(DurationMinutes) AS AvgPickTime,
-        CASE 
-            WHEN COUNT(*) > 100 THEN 'Fast'
-            WHEN COUNT(*) > 50 THEN 'Medium'
-            ELSE 'Slow'
-        END AS ActualVelocity
-    FROM FactWarehouseOperations
-    WHERE OperationType = 'Picking'
-        AND TimeKey >= CAST(FORMAT(DATEADD(DAY, -30, GETDATE()), 'yyyyMMddHHmm') AS INT)
-    GROUP BY ProductKey
-)
-SELECT 
-    p.SKU,
-    p.ProductName,
-    p.VelocityClass AS ConfiguredVelocity,
-    pv.ActualVelocity,
-    pv.PickCount,
-    pv.AvgPickTime,
-    p.GravityScore AS CurrentGravityScore,
-    CASE 
-        WHEN pv.ActualVelocity = 'Fast' THEN 10.0
-        WHEN pv.ActualVelocity = 'Medium' THEN 5.0
-        ELSE 1.0
-    END * 0.4 + p.FragilityScore * 0.3 AS RecommendedGravityScore
-FROM DimProductGravity p
-INNER JOIN ProductVelocity pv ON p.ProductKey = pv.ProductKey
-WHERE p.VelocityClass <> pv.ActualVelocity
-    AND p.IsCurrent = 1
-ORDER BY ABS(p.GravityScore - (CASE 
-    WHEN pv.ActualVelocity = 'Fast' THEN 10.0
-    WHEN pv.ActualVelocity = 'Medium' THEN 5.0
-    ELSE 1.0 END * 0.4 + p.FragilityScore * 0.3)) DESC;
+        df.FleetKey,
+        dtStart.TimeKey,
+        dtEnd.TimeKey,
+        dgOrigin.GeographyKey,
+        dgDest.GeographyKey,
+        st.DistanceKm,
+        st.DurationMinutes,
+        st.IdleTimeMinutes,
+        st.FuelConsumedLiters,
+        st.LoadWeightKg
+    FROM staging.FleetTelemetry st
+    INNER JOIN DimFleet df ON df.VehicleID = st.VehicleID
+    INNER JOIN DimTime dtStart ON dtStart.FullDateTime = DATEADD(MINUTE, (DATEPART(MINUTE, st.StartDateTime) / 15) * 15, DATEADD(HOUR, DATEDIFF(HOUR, 0, st.StartDateTime), 0))
+    INNER JOIN DimTime dtEnd ON dtEnd.FullDateTime = DATEADD(MINUTE, (DATEPART(MINUTE, st.EndDateTime) / 15) * 15, DATEADD(HOUR, DATEDIFF(HOUR, 0, st.EndDateTime), 0))
+    INNER JOIN DimGeography dgOrigin ON dgOrigin.RouteNodeID = st.OriginNodeID
+    INNER JOIN DimGeography dgDest ON dgDest.RouteNodeID = st.DestinationNodeID
+    WHERE st.StartDateTime > @LastLoadTime
+END
+GO
 ```
 
 ## Troubleshooting
 
-### Performance Issues
+### Issue: Time dimension missing keys
 
-**Slow dashboard refresh:**
+**Symptom**: Fact table inserts fail with foreign key constraint errors on `TimeKey`.
+
+**Solution**: Ensure time dimension is populated for the full date range:
 
 ```sql
--- Check missing indexes
+-- Check time dimension coverage
+SELECT MIN(FullDateTime) AS MinDate, MAX(FullDateTime) AS MaxDate FROM DimTime
+
+-- Extend if needed
+EXEC PopulateDimTime '2027-01-01', '2028-12-31'
+```
+
+### Issue: Power BI refresh fails with timeout
+
+**Symptom**: Scheduled refresh in Power BI Service times out after 2 hours.
+
+**Solution**: Implement incremental refresh in Power BI:
+
+1. Add `RangeStart` and `RangeEnd` parameters (DateTime type)
+2. Filter fact tables: `FullDateTime >= RangeStart and FullDateTime < RangeEnd`
+3. In Power BI Service, configure Incremental Refresh policy (e.g., refresh last 30 days, keep 2 years)
+
+### Issue: Cross-fact queries slow
+
+**Symptom**: Views joining multiple fact tables take > 30 seconds.
+
+**Solution**: Create indexed views or aggregate tables:
+
+```sql
+CREATE VIEW vw_DailyFleetSummary
+WITH SCHEMABINDING
+AS
 SELECT 
-    OBJECT_NAME(s.object_id) AS TableName,
-    i.name AS IndexName,
-    s.user_seeks,
-    s.user_scans,
-    s.last_user_seek,
-    s.last_user_scan
-FROM sys.dm_db_index_usage_stats s
-INNER JOIN sys.indexes i ON s.object_id = i.object_id AND s.index_id = i.index_id
-WHERE database_id = DB_ID()
-    AND OBJECTPROPERTY(s.object_id, 'IsUserTable') = 1
-ORDER BY s.user_seeks + s.user_scans DESC;
+    fft.FleetKey,
+    dt.Year,
+    dt.Month,
+    dt.DayOfMonth,
+    COUNT_BIG(*) AS TripCount,
+    SUM(fft.DistanceKm) AS TotalDistance,
+    SUM(fft.FuelConsumedLiters) AS TotalFuel,
+    AVG(fft.IdleTimeMinutes) AS AvgIdle
+FROM dbo.FactFleetTrips fft
+INNER JOIN dbo.DimTime dt ON fft.TimeKeyStart = dt.TimeKey
+GROUP BY fft.FleetKey, dt.Year, dt.Month, dt.DayOfMonth
+GO
 
--- Add columnstore index for large fact tables
-CREATE NONCLUSTERED COLUMNSTORE INDEX IX_FactWarehouse_CS
-ON FactWarehouseOperations (
-    TimeKey, LocationKey, ProductKey, OperationType, 
-    QuantityUnits, DurationMinutes, DwellTimeHours
-);
+CREATE UNIQUE CLUSTERED INDEX IX_FleetSummary ON vw_DailyFleetSummary(FleetKey, Year, Month, DayOfMonth)
+GO
 ```
 
-**Partition large tables:**
+### Issue: Gravity score not updating
+
+**Symptom**: `DimProductGravity.GravityScore` shows outdated values.
+
+**Solution**: GravityScore is a computed column; update base columns:
 
 ```sql
--- Partition FactWarehouseOperations by month
-CREATE PARTITION FUNCTION PF_Monthly (INT)
-AS RANGE RIGHT FOR VALUES (
-    202401, 202402, 202403, 202404, 202405, 202406,
-    202407, 202408, 202409, 202410, 202411, 202412
-);
-
-CREATE PARTITION SCHEME PS_Monthly
-AS PARTITION PF_Monthly
-ALL TO ([PRIMARY]);
-
--- Rebuild table on partition scheme (requires recreating table)
+UPDATE DimProductGravity
+SET VelocityScore = (
+    SELECT COUNT(*) / 90.0 -- Picks per day over last 90 days
+    FROM FactWarehouseOperations fwo
+    INNER JOIN DimTime dt ON fwo.TimeKey = dt.TimeKey
+    WHERE fwo.ProductKey = DimProductGravity.ProductKey
+        AND fwo.OperationType = 'Picking'
+        AND dt.FullDateTime >= DATEADD(DAY, -90, GETDATE())
+)
+WHERE ProductKey IN (SELECT DISTINCT ProductKey FROM FactWarehouseOperations)
 ```
 
-### Data Quality Issues
+### Issue: Row-level security not working
 
-**Identify orphaned records:**
+**Symptom**: Users see all warehouses despite RLS policy.
+
+**Solution**: Verify user is mapped correctly:
 
 ```sql
--- Check for missing dimension references
-SELECT 'Missing Time Keys' AS Issue, COUNT(*) AS RecordCount
-FROM FactWarehouseOperations f
-LEFT JOIN DimTime t ON f.TimeKey = t.TimeKey
-WHERE t.TimeKey IS NULL
+-- Check current user mapping
+SELECT USER_NAME()
 
-UNION ALL
+-- Verify security table entries
+SELECT * FROM SecurityRoles WHERE UserEmail = 'user@company.com'
 
-SELECT 'Missing Product Keys', COUNT(*)
-FROM FactWarehouseOperations f
-LEFT JOIN DimProductGravity p ON f.ProductKey = p.ProductKey
-WHERE p.ProductKey IS NULL;
+-- Test security function directly
+SELECT * FROM dbo.fn_SecurityPredicate(5) -- Replace 5 with GeographyKey
 ```
 
-**Fix data type mismatches:**
+## Advanced Use Cases
+
+### Scenario: Correlate Weather Delays with Route Performance
 
 ```sql
--- Ensure TimeKey format consistency
-UPDATE FactWarehouseOperations
-SET TimeKey = CAST(FORMAT(
-    DATEADD(MINUTE, 
-        (CAST(TimeKey AS INT) % 100) / 15 * 15, 
-        CAST(CAST(TimeKey / 100 AS VARCHAR) + ':00' AS DATETIME)
-    ), 'yyyyMMddHHmm'
-) AS INT)
-WHERE TimeKey % 15 <> 0;
+-- Assuming external weather data in staging.WeatherEvents
+CREATE TABLE staging.WeatherEvents (
+    EventDateTime DATETIME2,
+    GeographyKey INT,
+    WeatherType VARCHAR(50), -- 'Snow', 'Rain', 'Fog'
+    SeverityLevel INT -- 1-5
+)
+GO
+
+-- Query delayed trips during weather events
+SELECT 
+    dt.Year,
+    dt.Month,
+    we.WeatherType,
+    COUNT(fft.TripKey) AS AffectedTrips,
+    AVG(fft.DelayMinutes) AS AvgDelay,
+    SUM(fft.FuelConsumedLiters) AS TotalFuelWasted
+FROM FactFleetTrips fft
+INNER JOIN DimTime dt ON fft.TimeKeyStart = dt.TimeKey
+INNER JOIN staging.WeatherEvents we ON 
+    fft.OriginGeographyKey = we.GeographyKey
+    AND ABS(DATEDIFF(MINUTE, dt.FullDateTime, we.EventDateTime)) < 120
+WHERE fft.DelayMinutes > 30
+GROUP BY dt.Year, dt.Month, we.WeatherType
+ORDER BY AVG(fft.DelayMinutes) DESC
 ```
 
-### Power BI Connection Issues
+### Scenario: Simulate Capacity Changes
 
-**Refresh fails with timeout:**
+```sql
+-- Stored procedure for temporal elasticity modeling
+CREATE PROCEDURE SimulateCapacityChange
+    @CapacityIncreasePct DECIMAL(5,2),
+    @SimulationStartDate DATE,
+    @SimulationEndDate DATE
+AS
+BEGIN
+    -- Create temp table with simulated capacity
+    SELECT 
+        fwo.OperationKey,
+        fwo.ProductKey,
+        fwo.Quantity,
+        fwo.DwellTimeMinutes,
+        -- Simulate reduced dwell time with more capacity
+        fwo.DwellTimeMinutes / (1 + (@CapacityIncreasePct / 100.0)) AS SimulatedDwellTime
+    INTO #SimulatedWarehouse
+    FROM FactWarehouseOperations fwo
+    INNER JOIN DimTime dt ON fwo.TimeKey = dt.TimeKey
+    WHERE dt.FullDateTime BETWEEN @SimulationStartDate AND @SimulationEndDate
+    
+    -- Compare actual vs simulated metrics
+    SELECT 
+        'Actual' AS Scenario,
+        AVG(DwellTimeMinutes) AS AvgDwell,
+        COUNT(*) AS OperationCount
+    FROM #SimulatedWarehouse
+    UNION ALL
+    SELECT 
+        'Simulated +' + CAST(@CapacityIncreasePct AS VARCHAR) + '%' AS Scenario,
+        AVG(SimulatedDwellTime) AS AvgDwell,
+        COUNT(*) AS OperationCount
+    FROM #SimulatedWarehouse
+    
+    DROP TABLE #SimulatedWarehouse
+END
+GO
 
-1. Increase command timeout in Power Query:
-
-```powerquery
-let
-    Source = Sql.Database(
-        "${SQL_SERVER_HOST}", 
-        "LogiFleetPulse",
-        [CommandTimeout=#duration(0, 1, 0, 0)] // 1 hour timeout
-    )
-in
-    Source
+-- Run simulation
+EXEC SimulateCapacityChange 15, '2026-01-01', '2026-03-31'
 ```
-
-2. Use native query for complex operations:
-
-```powerquery
-let
-    Source = Sql.Database("${SQL_SERVER_HOST}", "LogiFleetPulse"),
-    NativeQuery = Value.NativeQuery(
-        Source, 
-        "EXEC sp_LoadWarehouseOperations @StartDate, @EndDate",
-        [StartDate=#datetime(2026,1,1,0,0,0), EndDate=DateTime.LocalNow()]
-    )
-in
-    NativeQuery
-```
-
-## Best Practices
-
-1. **Always use surrogate keys** for dimensions instead of natural keys
-2. **Implement Type 2 slowly changing dimensions** for historical tracking (EffectiveDate, EndDate, IsCurrent)
-3. **Run incremental loads** every 15 minutes rather than full refreshes
-4. **Archive old data** to separate tables after 3 years
-5. **Use query folding** in Power BI to push transformations to SQL Server
-6. **Test RLS** with different user contexts before deploying to production
-7. **Monitor ETL execution** via ETLLog table for performance degradation
-8. **Document custom measures** with comments for maintainability
 
 ## Integration Examples
 
-### Streaming Data from Telematics API
+### Export to Azure Synapse Analytics
 
 ```sql
--- Create external table for real-time telematics feed
-CREATE EXTERNAL DATA SOURCE TelematicsAPI
+-- Create external data source (one-time setup)
+CREATE EXTERNAL DATA SOURCE SynapseDataLake
 WITH (
-    TYPE = BLOB_STORAGE,
-    LOCATION = '${TELEMATICS_BLOB_URL}',
-    CREDENTIAL = TelematicsCredential
-);
-
-CREATE EXTERNAL FILE FORMAT JSONFormat
-WITH (FORMAT_TYPE = JSON);
-
-CREATE EXTERNAL TABLE StagingTelemetry (
-    VehicleID NVARCHAR(50),
-    Timestamp DATETIME2,
-    Latitude DECIMAL(9,6),
-    Longitude DECIMAL(9,6),
-    Speed DECIMAL(5,2),
-    FuelLevel DECIMAL(5,2),
-    EngineStatus NVARCHAR(20)
+    TYPE = HADOOP,
+    LOCATION = 'wasbs://container@${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net',
+    CREDENTIAL = AzureStorageCredential
 )
+GO
+
+-- Export aggregated data
+CREATE EXTERNAL TABLE ext_FleetSummary
 WITH (
-    LOCATION = '/telemetry/',
-    DATA_SOURCE = TelematicsAPI,
-    FILE_FORMAT = JSONFormat
-);
-```
-
-### Exporting Alerts to Azure Service Bus
-
-```sql
--- Use SQL Server Service Broker or external stored procedure
-CREATE PROCEDURE sp_SendAlertToServiceBus
-    @AlertID INT
-AS
-BEGIN
-    DECLARE @Message NVARCHAR(MAX);
-    
-    SELECT @Message = (
-        SELECT AlertType, Severity, EntityID, Message, DetectedTime
-        FROM AlertQueue
-        WHERE AlertID = @AlertID
-        FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-    );
-    
-    -- Call Azure Function or Logic App via HTTP
-    EXEC sp_OACreate 'MSXML2.ServerXMLHTTP', @Object OUT;
-    EXEC sp_OAMethod @Object, 'open', NULL, 'POST', '${AZURE_FUNCTION_URL}', 'false';
-    EXEC sp_OAMethod @Object, 'setRequestHeader', NULL, 'Content-Type', 'application/json';
-    EXEC sp_OAMethod @Object, 'send', NULL, @Message;
-END;
-```
-
-This skill provides the foundation for deploying and customizing LogiFleet Pulse for any logistics operation. Focus on adapting the schema to match your specific source systems and KPI requirements.
+    LOCATION = '/logifleet/fleet_summary/',
+    DATA_SOURCE = SynapseDataLake,
+    FILE_FORMAT = ParquetFormat
