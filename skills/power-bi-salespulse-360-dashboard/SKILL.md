@@ -1,43 +1,43 @@
 ---
 name: power-bi-salespulse-360-dashboard
-description: Master SalesPulse 360 Power BI dashboard for retail analytics, profit analysis, and multi-regional sales visualization with forecasting.
+description: Master the SalesPulse 360 Power BI retail analytics dashboard for profit analysis, regional insights, and predictive sales forecasting
 triggers:
-  - "set up the SalesPulse 360 Power BI dashboard"
-  - "configure retail analytics dashboard in Power BI"
-  - "analyze sales data with Power BI regional views"
-  - "create profit margin alerts in Power BI"
-  - "build a global superstore dashboard"
-  - "implement Power BI forecasting for sales trends"
-  - "customize the SalesPulse dashboard thresholds"
-  - "troubleshoot Power BI data refresh schedules"
+  - how do I set up the SalesPulse 360 dashboard
+  - configure Power BI retail analytics with Global Superstore data
+  - create sales and profit visualizations in Power BI
+  - implement regional performance analysis dashboard
+  - add predictive forecasting to Power BI dashboard
+  - customize Power BI dashboard thresholds and alerts
+  - publish and share Power BI sales dashboard
+  - troubleshoot Power BI data refresh issues
 ---
 
-# SalesPulse 360 Power BI Dashboard Skill
+# Power BI SalesPulse 360 Dashboard Skill
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
 ## Overview
 
-SalesPulse 360 is an advanced Power BI retail analytics dashboard designed for comprehensive sales performance, profit analysis, and regional business intelligence. Built on the Global Superstore dataset (2011-2015), it provides interactive visualizations, predictive forecasting, exception alerts, and multi-granularity data slicing across regions, segments, and product categories.
+SalesPulse 360 is a comprehensive Power BI dashboard for retail analytics, designed to transform the Global Superstore dataset into actionable business intelligence. This dashboard provides:
 
-**Key Capabilities:**
-- Responsive multi-screen dashboard design
-- Real-time data refresh with autonomous scheduling
-- Predictive sales and profit forecasting (12-month horizon)
-- Exception alerts for profit margins and return rates
-- Multi-level drill-down from global to transaction-level
-- Multilingual semantic layer (English, Spanish, French, German, Mandarin)
-- Row-level security (RLS) for regional data access control
+- **Multi-dimensional sales analysis** across regions, categories, and time periods
+- **Profit architecture mapping** with heatmaps and margin analysis
+- **Predictive forecasting** for 12-month sales and profit trends
+- **Real-time alerts** for profit margin drops and anomaly detection
+- **Multilingual support** with automatic localization
+- **Responsive design** for cross-device viewing
 
-## Installation
+The project is built entirely in Power BI Desktop using DAX (Data Analysis Expressions) and Power Query M for data transformation.
+
+## Installation & Setup
 
 ### Prerequisites
 
-- **Power BI Desktop** (version 2.120 or higher)
-- **Power BI Service** account (for publishing and scheduled refresh)
-- Modern web browser (for published dashboard viewing)
+- **Power BI Desktop** version 2.120 or higher ([download here](https://powerbi.microsoft.com/desktop/))
+- **Global Superstore dataset** (included in repository as CSV)
+- Minimum 8GB RAM for smooth performance
 
-### Setup Steps
+### Initial Setup
 
 1. **Clone the repository:**
 ```bash
@@ -47,676 +47,717 @@ cd power-bi-retail-analytics-viz
 
 2. **Extract the dataset:**
 ```bash
-# Extract the Global Superstore CSV from the compressed archive
+# Extract the Global Superstore CSV from the data archive
 unzip data/GlobalSuperstore.zip -d data/
 ```
 
-3. **Open the Power BI file:**
-```bash
-# On Windows
-start SalesPulse360.pbix
+3. **Open the dashboard:**
+   - Launch Power BI Desktop
+   - Open `SalesPulse360.pbix`
+   - Wait for initial data transformation (2-3 minutes)
 
-# On macOS with Power BI Desktop installed
-open SalesPulse360.pbix
+4. **Verify data connection:**
+   - Navigate to **Home > Transform Data**
+   - Check that all queries are loading successfully
+   - Close the Power Query Editor
+
+## Project Structure
+
 ```
-
-4. **First load triggers automatic data transformation** (typically 2-3 minutes)
+power-bi-retail-analytics-viz/
+├── SalesPulse360.pbix          # Main Power BI dashboard file
+├── data/
+│   ├── GlobalSuperstore.csv    # Source dataset (2011-2015)
+│   └── ConfigThresholds.csv    # Alert threshold configuration
+├── scripts/
+│   ├── DataCleaningSteps.txt   # Power Query M transformation log
+│   └── DAXMeasures.txt         # All DAX formulas used
+├── preview.svg                 # Dashboard preview image
+└── README.md
+```
 
 ## Core Components
 
-### Dashboard Structure
+### 1. Data Model Architecture
 
-The `.pbix` file contains the following pages:
-- **Executive Overview** - High-level KPIs and global metrics
-- **Regional Compass** - Region-specific performance dials
-- **Profit Architecture** - Geographic heatmap + category treemap
-- **Trend Analysis** - Time-series charts with forecasting
-- **Exception Monitor** - Alert flags for threshold violations
-- **Settings & Configuration** - Adjustable parameters
+The dashboard uses a **star schema** with the following structure:
 
-### Data Model
+**Fact Table:**
+- `Sales` (Orders, Sales Amount, Profit, Discount, Quantity, Shipping Cost)
 
-**Primary Tables:**
-- `Orders` - Transaction-level sales data
-- `Returns` - Product return records
-- `People` - Regional manager assignments
-- `Config` - Dashboard threshold parameters
+**Dimension Tables:**
+- `Calendar` (Date, Year, Quarter, Month, Week)
+- `Geography` (Region, Country, State, City, Postal Code)
+- `Product` (Category, Sub-Category, Product Name)
+- `Customer` (Customer ID, Segment)
 
-**Key Measures (DAX):**
+**Relationships:**
+- Sales[Order Date] → Calendar[Date] (Many-to-One)
+- Sales[Postal Code] → Geography[Postal Code] (Many-to-One)
+- Sales[Product ID] → Product[Product ID] (Many-to-One)
+- Sales[Customer ID] → Customer[Customer ID] (Many-to-One)
+
+### 2. Key DAX Measures
+
+#### Total Sales
 ```dax
--- Total Sales
-Total Sales = SUM(Orders[Sales])
+Total Sales = SUM(Sales[Sales Amount])
+```
 
--- Profit Margin %
-Profit Margin = 
+#### Total Profit
+```dax
+Total Profit = SUM(Sales[Profit])
+```
+
+#### Profit Margin %
+```dax
+Profit Margin % = 
 DIVIDE(
-    SUM(Orders[Profit]),
-    SUM(Orders[Sales]),
+    [Total Profit],
+    [Total Sales],
     0
 ) * 100
+```
 
--- Moving Annual Total (MAT)
+#### Sales vs Previous Period
+```dax
+Sales vs Previous Period = 
+VAR CurrentSales = [Total Sales]
+VAR PreviousSales = 
+    CALCULATE(
+        [Total Sales],
+        DATEADD(Calendar[Date], -1, YEAR)
+    )
+RETURN
+    DIVIDE(
+        CurrentSales - PreviousSales,
+        PreviousSales,
+        0
+    ) * 100
+```
+
+#### Moving Annual Total (MAT)
+```dax
 MAT Sales = 
 CALCULATE(
     [Total Sales],
     DATESINPERIOD(
-        Orders[Order Date],
-        LASTDATE(Orders[Order Date]),
+        Calendar[Date],
+        LASTDATE(Calendar[Date]),
         -12,
         MONTH
     )
 )
+```
 
--- YoY Growth Rate
-YoY Growth = 
-VAR CurrentYear = [Total Sales]
-VAR PreviousYear = 
-    CALCULATE(
-        [Total Sales],
-        SAMEPERIODLASTYEAR(Orders[Order Date])
+#### Profit Alert Flag
+```dax
+Profit Alert = 
+VAR ProfitMarginThreshold = 15
+VAR CurrentMargin = [Profit Margin %]
+RETURN
+    IF(
+        CurrentMargin < ProfitMarginThreshold,
+        "🔴 Alert",
+        IF(
+            CurrentMargin < ProfitMarginThreshold + 5,
+            "🟡 Caution",
+            "🟢 Healthy"
+        )
+    )
+```
+
+#### 12-Month Sales Forecast
+```dax
+Sales Forecast = 
+VAR HistoricalData = 
+    CALCULATETABLE(
+        ADDCOLUMNS(
+            Calendar,
+            "Sales", [Total Sales]
+        ),
+        Calendar[Date] <= TODAY()
     )
 RETURN
-DIVIDE(CurrentYear - PreviousYear, PreviousYear, 0)
+    // Power BI automatically applies forecasting algorithm
+    // when this measure is used in a forecast visualization
+    [Total Sales]
+```
 
--- Profit Alert Flag
-Profit Alert = 
-IF(
-    [Profit Margin] < [Threshold: Min Profit Margin],
-    "⚠️ Below Threshold",
-    "✓ Healthy"
-)
+### 3. Power Query M Transformations
+
+#### Clean Column Names
+```m
+let
+    Source = Csv.Document(File.Contents("data/GlobalSuperstore.csv")),
+    PromotedHeaders = Table.PromoteHeaders(Source),
+    CleanedNames = Table.TransformColumnNames(
+        PromotedHeaders,
+        each Text.Trim(_),
+        each Text.Replace(_, " ", "")
+    )
+in
+    CleanedNames
+```
+
+#### Parse Dates
+```m
+let
+    Source = #"Previous Step",
+    ParsedDates = Table.TransformColumnTypes(
+        Source,
+        {
+            {"OrderDate", type date},
+            {"ShipDate", type date}
+        }
+    ),
+    AddedCalendarColumns = Table.AddColumn(
+        ParsedDates,
+        "Year",
+        each Date.Year([OrderDate]),
+        Int64.Type
+    )
+in
+    AddedCalendarColumns
+```
+
+#### Handle Missing Values
+```m
+let
+    Source = #"Previous Step",
+    ReplacedNulls = Table.ReplaceValue(
+        Source,
+        null,
+        0,
+        Replacer.ReplaceValue,
+        {"Discount", "Profit"}
+    )
+in
+    ReplacedNulls
+```
+
+#### Create Geography Hierarchy
+```m
+let
+    Source = #"Previous Step",
+    GroupedGeo = Table.Group(
+        Source,
+        {"Region", "Country", "State", "City", "PostalCode"},
+        {{"Count", each Table.RowCount(_), Int64.Type}}
+    ),
+    SortedHierarchy = Table.Sort(
+        GroupedGeo,
+        {{"Region", Order.Ascending}, {"Country", Order.Ascending}}
+    )
+in
+    SortedHierarchy
 ```
 
 ## Configuration
 
-### Adjusting Alert Thresholds
+### Alert Thresholds
 
-Navigate to the **Settings** page or directly edit the `Config` table:
+Modify alert thresholds by editing the `ConfigThresholds.csv` file or creating a DAX measure:
 
 ```dax
--- In Power Query Editor (M language)
-let
-    Source = Table.FromRows(
-        {
-            {"Min Profit Margin", 15},
-            {"Max Return Rate", 8},
-            {"Rolling Avg Days", 90}
-        },
-        type table [Parameter = text, Value = number]
-    )
-in
-    Source
+Profit Margin Threshold = 15  // %
+Return Rate Threshold = 8     // %
+Rolling Average Period = 90   // days
 ```
 
-**Accessing thresholds in measures:**
+### Refresh Schedule
+
+Configure data refresh in Power BI Desktop:
+
+1. **File > Options and Settings > Options**
+2. Navigate to **Data Load**
+3. Set refresh interval (recommended: daily at 02:00 UTC)
+
+For Power BI Service deployment:
+
+1. Publish dashboard to workspace
+2. Go to **Settings > Scheduled refresh**
+3. Set refresh frequency and time
+4. Configure credentials for data source
+
+### Localization
+
+Add language support by creating a translation table:
+
 ```dax
-Threshold: Min Profit Margin = 
-MAXX(
-    FILTER(Config, Config[Parameter] = "Min Profit Margin"),
-    Config[Value]
+Translation Table = 
+DATATABLE(
+    "Key", STRING,
+    "English", STRING,
+    "Spanish", STRING,
+    "French", STRING,
+    {
+        {"Total Sales", "Total Sales", "Ventas Totales", "Ventes Totales"},
+        {"Profit", "Profit", "Beneficio", "Profit"},
+        {"Region", "Region", "Región", "Région"}
+    }
 )
 ```
 
-### Data Source Configuration
+Then use in measures:
 
-**Changing the data source path:**
-
-1. Open Power Query Editor (Home → Transform Data)
-2. Select the `Orders` query
-3. Modify the `Source` step:
-
-```m
-// M language - Power Query
-let
-    Source = Csv.Document(
-        File.Contents("C:\Data\GlobalSuperstore.csv"),
-        [Delimiter=",", Columns=21, Encoding=65001, QuoteStyle=QuoteStyle.Csv]
-    ),
-    PromotedHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-    ChangedType = Table.TransformColumnTypes(PromotedHeaders, {
-        {"Order Date", type date},
-        {"Sales", type number},
-        {"Profit", type number},
-        {"Quantity", type number}
-    })
-in
-    ChangedType
-```
-
-**For database connections:**
-```m
-// SQL Server example
-let
-    Source = Sql.Database(
-        "YOUR_SERVER_NAME",
-        "YOUR_DATABASE_NAME",
-        [Query="SELECT * FROM Sales.Orders WHERE OrderYear >= 2020"]
-    )
-in
-    Source
-```
-
-### Localization Setup
-
-**Switching language in Power BI:**
-
-1. Create language-specific tables for labels:
 ```dax
--- Labels_EN table
-Label | EN
-"Total Sales" | "Total Sales"
-"Profit Margin" | "Profit Margin"
-"Region" | "Region"
-
--- Labels_ES table
-Label | ES
-"Total Sales" | "Ventas Totales"
-"Profit Margin" | "Margen de Beneficio"
-"Region" | "Región"
-```
-
-2. Create a parameter for language selection:
-```dax
-Selected Language = "EN" // Can be bound to a slicer
-```
-
-3. Build dynamic measure:
-```dax
-Dynamic Label = 
-VAR Lang = [Selected Language]
+Localized Label = 
+VAR UserLanguage = SELECTEDVALUE(Settings[Language])
 RETURN
-SWITCH(
-    Lang,
-    "EN", LOOKUPVALUE(Labels_EN[EN], Labels_EN[Label], "Total Sales"),
-    "ES", LOOKUPVALUE(Labels_ES[ES], Labels_ES[Label], "Total Sales"),
-    "N/A"
-)
-```
-
-## Publishing and Scheduling Refresh
-
-### Publishing to Power BI Service
-
-```bash
-# Within Power BI Desktop:
-# File → Publish → Select Workspace
-```
-
-**Via Power BI Service UI:**
-1. Navigate to your workspace
-2. Upload → `.pbix` file
-3. Configure gateway connection (if using on-premises data)
-
-### Scheduling Automatic Refresh
-
-**Power BI Service settings:**
-1. Go to workspace → Dataset → Settings
-2. Navigate to **Scheduled refresh**
-3. Configure:
-   - **Time zone:** UTC
-   - **Refresh frequency:** Daily at 02:00
-   - **Refresh option:** Keep your data up to date
-
-**Using REST API for programmatic scheduling:**
-```python
-import requests
-
-# Environment variables for security
-import os
-ACCESS_TOKEN = os.environ.get('POWERBI_ACCESS_TOKEN')
-WORKSPACE_ID = os.environ.get('POWERBI_WORKSPACE_ID')
-DATASET_ID = os.environ.get('POWERBI_DATASET_ID')
-
-url = f"https://api.powerbi.com/v1.0/myorg/groups/{WORKSPACE_ID}/datasets/{DATASET_ID}/refreshes"
-headers = {
-    "Authorization": f"Bearer {ACCESS_TOKEN}",
-    "Content-Type": "application/json"
-}
-
-response = requests.post(url, headers=headers, json={"notifyOption": "MailOnFailure"})
-print(f"Refresh triggered: {response.status_code}")
-```
-
-## Advanced Features
-
-### Implementing Row-Level Security (RLS)
-
-**Create security roles:**
-
-1. In Power BI Desktop: Modeling → Manage Roles
-2. Define role filters:
-
-```dax
--- Role: South Region Manager
-[Region] = "South"
-
--- Role: Corporate Segment Manager
-[Segment] = "Corporate"
-
--- Role: Dynamic by User Email
-[Region Manager Email] = USERPRINCIPALNAME()
-```
-
-**Test roles locally:**
-- Modeling → View As Roles → Select role(s)
-
-**Apply in Power BI Service:**
-1. Dataset → Security
-2. Assign users/groups to roles
-
-### Predictive Forecasting Configuration
-
-**Built-in forecasting (native Power BI):**
-
-1. Select a line chart with time-series data
-2. Analytics pane → Forecast
-3. Configure:
-   - **Forecast length:** 12 months
-   - **Confidence interval:** 95%
-   - **Seasonality:** Auto-detect
-
-**Custom forecasting with R/Python:**
-
-```python
-# Python script in Power BI (requires Python integration)
-import pandas as pd
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
-
-# 'dataset' is the incoming dataframe from Power BI
-df = dataset[['Order Date', 'Sales']].set_index('Order Date')
-df = df.resample('M').sum()
-
-model = ExponentialSmoothing(
-    df['Sales'],
-    seasonal='add',
-    seasonal_periods=12
-)
-fit = model.fit()
-forecast = fit.forecast(steps=12)
-
-# Output forecast as new dataframe
-forecast_df = pd.DataFrame({
-    'Date': pd.date_range(start=df.index[-1], periods=13, freq='M')[1:],
-    'Forecasted Sales': forecast.values
-})
-```
-
-### Exception Alerts with Power Automate
-
-**Create alert flow:**
-
-1. In Power BI Service: Set data alert on a visual (e.g., Profit Margin tile)
-2. Power Automate triggers when threshold crossed
-3. Example flow action:
-
-```json
-{
-  "type": "SendEmailV2",
-  "inputs": {
-    "to": "manager@company.com",
-    "subject": "⚠️ Profit Alert: @{triggerBody()?['regionName']}",
-    "body": "Profit margin has dropped to @{triggerBody()?['profitMargin']}% in @{triggerBody()?['regionName']}. Threshold: 15%.",
-    "importance": "High"
-  }
-}
-```
-
-## Common Patterns and Use Cases
-
-### Pattern 1: Multi-Region Performance Comparison
-
-```dax
--- Create a measure for ranking regions by profit
-Region Profit Rank = 
-RANKX(
-    ALL(Orders[Region]),
-    [Total Profit],
-    ,
-    DESC,
-    Dense
-)
-
--- Conditional formatting expression
-Profit Rank Color = 
-SWITCH(
-    TRUE(),
-    [Region Profit Rank] = 1, "#00A65A", // Green
-    [Region Profit Rank] <= 3, "#F39C12", // Orange
-    "#DD4B39" // Red
-)
-```
-
-**Visual setup:**
-- Matrix visual: Regions in rows, Sales/Profit/Margin in columns
-- Conditional formatting: Apply `Profit Rank Color` to Profit column
-
-### Pattern 2: Drill-Through for Transaction Details
-
-**Source page (summary):**
-- Any visual with Region/Category dimension
-
-**Target page (detail):**
-1. Add drill-through field: `Orders[Order ID]`
-2. Create table visual with:
-   - Order ID, Product Name, Customer Name, Sales, Profit, Quantity
-
-**DAX for context-aware title:**
-```dax
-Drill-Through Title = 
-"Orders in " & SELECTEDVALUE(Orders[Region], "All Regions") & 
-" - " & SELECTEDVALUE(Orders[Category], "All Categories")
-```
-
-### Pattern 3: Dynamic Time Intelligence
-
-```dax
--- Flexible period comparison
-Sales Comparison = 
-VAR SelectedPeriod = [Selected Time Period] // Parameter: "YoY", "QoQ", "MoM"
-VAR CurrentValue = [Total Sales]
-VAR CompareValue = 
     SWITCH(
-        SelectedPeriod,
-        "YoY", CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Orders[Order Date])),
-        "QoQ", CALCULATE([Total Sales], PARALLELPERIOD(Orders[Order Date], -1, QUARTER)),
-        "MoM", CALCULATE([Total Sales], PARALLELPERIOD(Orders[Order Date], -1, MONTH)),
-        BLANK()
+        UserLanguage,
+        "Spanish", LOOKUPVALUE(Translation[Spanish], Translation[Key], "Total Sales"),
+        "French", LOOKUPVALUE(Translation[French], Translation[Key], "Total Sales"),
+        LOOKUPVALUE(Translation[English], Translation[Key], "Total Sales")
     )
-RETURN
-DIVIDE(CurrentValue - CompareValue, CompareValue, 0)
 ```
 
-### Pattern 4: KPI Card with Trend Indicator
+## Common Patterns
+
+### Pattern 1: Regional Drill-Down Analysis
+
+Create a hierarchy for seamless drill-down:
 
 ```dax
--- Sales Trend Indicator
-Sales Trend Icon = 
-VAR CurrentSales = [Total Sales]
-VAR PriorSales = CALCULATE([Total Sales], PREVIOUSMONTH(Orders[Order Date]))
-VAR Trend = CurrentSales - PriorSales
-RETURN
-SWITCH(
-    TRUE(),
-    Trend > 0, "↑ Increasing",
-    Trend < 0, "↓ Decreasing",
-    "→ Stable"
-)
-
--- Color coding
-Trend Color = 
-IF(
-    FIND("↑", [Sales Trend Icon], 1, BLANK()) > 0,
-    "#28a745",
-    IF(FIND("↓", [Sales Trend Icon], 1, BLANK()) > 0, "#dc3545", "#6c757d")
-)
+// Create hierarchy in Geography table
+Geography Hierarchy = 
+    PATH(
+        Geography[Region],
+        Geography[Country],
+        Geography[State],
+        Geography[City]
+    )
 ```
+
+Add a matrix visual:
+- **Rows:** Geography Hierarchy
+- **Values:** [Total Sales], [Total Profit], [Profit Margin %]
+- **Enable drill-down** in visual settings
+
+### Pattern 2: Time Intelligence Comparisons
+
+```dax
+// Year-over-Year Growth
+YoY Sales Growth = 
+VAR CurrentYearSales = [Total Sales]
+VAR PreviousYearSales = 
+    CALCULATE(
+        [Total Sales],
+        SAMEPERIODLASTYEAR(Calendar[Date])
+    )
+RETURN
+    DIVIDE(
+        CurrentYearSales - PreviousYearSales,
+        PreviousYearSales,
+        0
+    )
+
+// Quarter-over-Quarter Growth
+QoQ Sales Growth = 
+VAR CurrentQuarterSales = [Total Sales]
+VAR PreviousQuarterSales = 
+    CALCULATE(
+        [Total Sales],
+        DATEADD(Calendar[Date], -1, QUARTER)
+    )
+RETURN
+    DIVIDE(
+        CurrentQuarterSales - PreviousQuarterSales,
+        PreviousQuarterSales,
+        0
+    )
+```
+
+### Pattern 3: Dynamic Top N Analysis
+
+```dax
+// Top 10 Products by Sales
+Top 10 Products = 
+VAR CurrentProductSales = [Total Sales]
+VAR ProductRank = 
+    RANKX(
+        ALL(Product[ProductName]),
+        [Total Sales],
+        ,
+        DESC,
+        Dense
+    )
+RETURN
+    IF(ProductRank <= 10, CurrentProductSales, BLANK())
+```
+
+Use in a bar chart with Product Name on axis and this measure as value.
+
+### Pattern 4: Exception Highlighting
+
+```dax
+// Flag underperforming regions
+Region Performance Flag = 
+VAR RegionMargin = [Profit Margin %]
+VAR AvgMargin = 
+    CALCULATE(
+        [Profit Margin %],
+        ALL(Geography[Region])
+    )
+VAR StdDev = 
+    STDEVX.P(
+        ALL(Geography[Region]),
+        [Profit Margin %]
+    )
+RETURN
+    IF(
+        RegionMargin < AvgMargin - StdDev,
+        "Underperforming",
+        IF(
+            RegionMargin > AvgMargin + StdDev,
+            "Outperforming",
+            "Normal"
+        )
+    )
+```
+
+Apply conditional formatting in table visuals based on this flag.
+
+### Pattern 5: Customer Segmentation
+
+```dax
+// RFM Score (Recency, Frequency, Monetary)
+Customer RFM Score = 
+VAR Recency = 
+    DATEDIFF(
+        MAX(Sales[OrderDate]),
+        TODAY(),
+        DAY
+    )
+VAR Frequency = COUNTROWS(Sales)
+VAR Monetary = [Total Sales]
+VAR RecencyScore = 
+    SWITCH(
+        TRUE(),
+        Recency <= 30, 5,
+        Recency <= 90, 4,
+        Recency <= 180, 3,
+        Recency <= 365, 2,
+        1
+    )
+VAR FrequencyScore = 
+    SWITCH(
+        TRUE(),
+        Frequency >= 50, 5,
+        Frequency >= 25, 4,
+        Frequency >= 10, 3,
+        Frequency >= 5, 2,
+        1
+    )
+VAR MonetaryScore = 
+    SWITCH(
+        TRUE(),
+        Monetary >= 10000, 5,
+        Monetary >= 5000, 4,
+        Monetary >= 2000, 3,
+        Monetary >= 1000, 2,
+        1
+    )
+RETURN
+    RecencyScore + FrequencyScore + MonetaryScore
+```
+
+## Publishing & Sharing
+
+### Publish to Power BI Service
+
+1. **In Power BI Desktop:**
+   - Click **Home > Publish**
+   - Select target workspace
+   - Wait for upload completion
+
+2. **Configure access:**
+   - Open workspace in Power BI Service
+   - Click **Access** button
+   - Add users/groups with appropriate roles:
+     - **Viewer:** Read-only access
+     - **Contributor:** Can edit and publish
+     - **Admin:** Full control
+
+3. **Embed in website (optional):**
+```html
+<iframe 
+    width="800" 
+    height="600" 
+    src="https://app.powerbi.com/view?r=YOUR_REPORT_ID" 
+    frameborder="0" 
+    allowFullScreen="true">
+</iframe>
+```
+
+### Row-Level Security (RLS)
+
+Implement region-based data filtering:
+
+1. **In Power BI Desktop, go to Modeling > Manage Roles**
+
+2. **Create role:**
+```dax
+// Role: RegionalManager
+[Region] = USERNAME()
+```
+
+For email-based filtering:
+```dax
+// Role: EmailBasedAccess
+VAR UserEmail = USERPRINCIPALNAME()
+VAR UserRegion = 
+    LOOKUPVALUE(
+        UserMapping[Region],
+        UserMapping[Email],
+        UserEmail
+    )
+RETURN
+    [Region] = UserRegion
+```
+
+3. **Test role in Desktop:**
+   - **Modeling > View as Roles**
+   - Select role and test
+
+4. **Assign roles in Service:**
+   - Open dataset settings
+   - Navigate to **Security**
+   - Add users to roles
 
 ## Troubleshooting
 
-### Issue: Data Refresh Fails in Power BI Service
+### Issue: Data Refresh Fails
 
-**Symptoms:** Scheduled refresh shows error, "Unable to connect to data source"
+**Symptoms:** Scheduled refresh shows error in Power BI Service
 
 **Solutions:**
 
-1. **Check gateway connection:**
-   - Ensure on-premises data gateway is running
-   - Verify credentials in gateway configuration
+1. **Check data source credentials:**
+   - Dataset settings > Data source credentials
+   - Re-enter credentials if expired
 
-2. **Update data source credentials:**
-   ```bash
-   # Power BI Service
-   Workspace → Dataset → Settings → Data source credentials
-   # Re-enter username/password or OAuth token
-   ```
+2. **Verify file paths:**
+   - In Power Query Editor, check `File.Contents()` paths
+   - Use relative paths or data gateway for cloud refresh
 
-3. **Test connection manually:**
-   ```powershell
-   # In Power BI Desktop
-   # Home → Transform Data → Data Source Settings
-   # Select source → Edit Permissions → Test Connection
-   ```
-
-### Issue: Visuals Show "(Blank)" Instead of Data
-
-**Cause:** Relationships not properly configured or data type mismatch
-
-**Solution:**
-
-```dax
--- Check for nulls in key columns
-Blank Count = 
-CALCULATE(
-    COUNTROWS(Orders),
-    ISBLANK(Orders[Region])
-)
-
--- Replace blanks with default value
-Orders[Region Clean] = 
-IF(
-    ISBLANK(Orders[Region]),
-    "Unknown",
-    Orders[Region]
-)
-```
-
-**Verify relationships:**
-- Model view → Check cardinality (1:many vs many:many)
-- Ensure cross-filter direction is appropriate
-
-### Issue: DAX Measure Returns Wrong Results
-
-**Debugging technique:**
-
-```dax
--- Create diagnostic measure
-Debug Measure = 
-VAR FilterContext = CONCATENATEX(VALUES(Orders[Region]), Orders[Region], ", ")
-VAR RowCount = COUNTROWS(Orders)
-VAR CalcValue = [Total Sales]
-RETURN
-"Regions: " & FilterContext & " | Rows: " & RowCount & " | Result: " & CalcValue
-```
-
-**Use DAX Studio for performance analysis:**
-```bash
-# Install DAX Studio (separate tool)
-# Connect to .pbix file
-# Run query with Server Timings enabled
-```
-
-### Issue: Dashboard Loads Slowly
-
-**Optimization strategies:**
-
-1. **Reduce data volume:**
+3. **Enable data gateway (for on-premises data):**
 ```m
-// In Power Query, filter early
+// Update source to use gateway
 let
-    Source = ...,
-    FilteredRows = Table.SelectRows(Source, each [Order Date] >= #date(2020, 1, 1))
+    Source = Sql.Database(
+        "SERVER_NAME",
+        "DATABASE_NAME",
+        [Query="SELECT * FROM Sales"]
+    )
 in
-    FilteredRows
+    Source
 ```
 
-2. **Use aggregated tables:**
+### Issue: Slow Dashboard Performance
+
+**Symptoms:** Visuals take >5 seconds to load
+
+**Solutions:**
+
+1. **Reduce data model size:**
 ```dax
--- Create summary table
-Sales Summary = 
-SUMMARIZE(
-    Orders,
-    Orders[Order Date].[Year],
-    Orders[Region],
-    "Total Sales", SUM(Orders[Sales]),
-    "Total Profit", SUM(Orders[Profit])
+// Remove unnecessary columns in Power Query
+let
+    Source = #"Previous Step",
+    RemovedColumns = Table.RemoveColumns(
+        Source,
+        {"Column1", "Column2"}
+    )
+in
+    RemovedColumns
+```
+
+2. **Optimize DAX measures:**
+```dax
+// BAD: Uses ALL() unnecessarily
+Slow Measure = 
+CALCULATE(
+    [Total Sales],
+    ALL(Geography)
+)
+
+// GOOD: Uses ALLSELECTED() for context
+Fast Measure = 
+CALCULATE(
+    [Total Sales],
+    ALLSELECTED(Geography)
 )
 ```
 
-3. **Disable auto date/time:**
-   - File → Options → Data Load
-   - Uncheck "Auto date/time for new files"
+3. **Use aggregations:**
+   - Create pre-aggregated tables in Power Query
+   - Enable query folding when possible
 
-4. **Optimize DAX measures:**
-```dax
--- Avoid iterating measures; use SUM instead of SUMX when possible
--- BAD: SUMX(Orders, Orders[Sales])
--- GOOD: SUM(Orders[Sales])
+4. **Limit visual elements:**
+   - Reduce number of visuals per page to <15
+   - Use bookmarks for alternative views
+
+### Issue: Forecast Not Displaying
+
+**Symptoms:** Forecast line missing from visualization
+
+**Solutions:**
+
+1. **Enable analytics pane:**
+   - Select line chart visual
+   - Click **Analytics** pane (graph icon)
+   - Add **Forecast**
+   - Set forecast length (e.g., 12 months)
+
+2. **Ensure continuous date axis:**
+```m
+// Create full date range in Power Query
+let
+    StartDate = #date(2011, 1, 1),
+    EndDate = Date.AddYears(Date.From(DateTime.LocalNow()), 1),
+    DateRange = List.Dates(
+        StartDate,
+        Duration.Days(EndDate - StartDate),
+        #duration(1, 0, 0, 0)
+    ),
+    ConvertedToTable = Table.FromList(
+        DateRange,
+        Splitter.SplitByNothing(),
+        {"Date"}
+    )
+in
+    ConvertedToTable
 ```
 
-### Issue: Multi-Language Labels Not Switching
+### Issue: Incorrect Geographic Mapping
 
-**Verification steps:**
+**Symptoms:** Map visual shows wrong locations
 
-1. Check parameter binding:
-```dax
--- Ensure parameter exists
-Selected Language = "EN"
+**Solutions:**
 
--- Verify lookup
-Test Lookup = 
-LOOKUPVALUE(
-    Labels_EN[EN],
-    Labels_EN[Label],
-    "Total Sales"
-)
+1. **Set data category:**
+   - Select geography column
+   - **Column tools > Data category**
+   - Choose appropriate type (City, State, Country, etc.)
+
+2. **Standardize location names:**
+```m
+// Clean and standardize state names
+let
+    Source = #"Previous Step",
+    StandardizedStates = Table.ReplaceValue(
+        Source,
+        "CA",
+        "California",
+        Replacer.ReplaceText,
+        {"State"}
+    )
+in
+    StandardizedStates
 ```
 
-2. Confirm table references in measure:
+### Issue: Alert Flags Not Updating
+
+**Symptoms:** Profit Alert measure shows outdated status
+
+**Solutions:**
+
+1. **Force refresh of calculated columns:**
+   - Modify measure slightly (add comment)
+   - Save and refresh data
+
+2. **Check threshold configuration:**
 ```dax
--- Debug language measure
-Language Debug = 
-"Selected: " & [Selected Language] & 
-" | Found: " & 
-LOOKUPVALUE(Labels_ES[ES], Labels_ES[Label], "Total Sales")
+// Debug: Show threshold value
+Debug Threshold = 
+VAR Threshold = 15
+VAR CurrentMargin = [Profit Margin %]
+RETURN
+    "Threshold: " & Threshold & " | Current: " & CurrentMargin
 ```
 
-## Integration Examples
+3. **Verify filter context:**
+```dax
+// Add context awareness
+Profit Alert Fixed = 
+VAR ProfitMarginThreshold = 15
+VAR CurrentMargin = [Profit Margin %]
+VAR HasData = NOT(ISBLANK(CurrentMargin))
+RETURN
+    IF(
+        HasData,
+        IF(
+            CurrentMargin < ProfitMarginThreshold,
+            "🔴 Alert",
+            "🟢 Healthy"
+        ),
+        BLANK()
+    )
+```
 
-### Exporting Data to Excel with Formatting
+## Advanced Techniques
 
-```python
-import os
-import requests
-import pandas as pd
+### Dynamic Measure Selection
 
-ACCESS_TOKEN = os.environ.get('POWERBI_ACCESS_TOKEN')
-WORKSPACE_ID = os.environ.get('POWERBI_WORKSPACE_ID')
-DATASET_ID = os.environ.get('POWERBI_DATASET_ID')
+Create a slicer that switches between different metrics:
 
-# Query Power BI dataset via REST API
-url = f"https://api.powerbi.com/v1.0/myorg/groups/{WORKSPACE_ID}/datasets/{DATASET_ID}/executeQueries"
-headers = {
-    "Authorization": f"Bearer {ACCESS_TOKEN}",
-    "Content-Type": "application/json"
-}
-
-query = {
-    "queries": [{
-        "query": "EVALUATE Orders"
-    }],
-    "serializerSettings": {
-        "includeNulls": False
+1. **Create parameter table:**
+```dax
+Measure Selector = 
+DATATABLE(
+    "Metric", STRING,
+    "MeasureID", INTEGER,
+    {
+        {"Total Sales", 1},
+        {"Total Profit", 2},
+        {"Profit Margin %", 3}
     }
-}
-
-response = requests.post(url, headers=headers, json=query)
-data = response.json()
-
-# Convert to DataFrame and export
-df = pd.DataFrame(data['results'][0]['tables'][0]['rows'])
-df.to_excel('SalesPulse_Export.xlsx', index=False, sheet_name='Orders')
+)
 ```
 
-### Embedding Dashboard in Web Application
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/powerbi-client/dist/powerbi.min.js"></script>
-</head>
-<body>
-    <div id="reportContainer" style="height:600px;"></div>
-    
-    <script>
-        const embedConfig = {
-            type: 'report',
-            id: 'YOUR_REPORT_ID', // From environment variable in production
-            embedUrl: 'YOUR_EMBED_URL',
-            accessToken: 'YOUR_ACCESS_TOKEN', // Use secure backend call in production
-            tokenType: models.TokenType.Embed,
-            settings: {
-                panes: {
-                    filters: { visible: true },
-                    pageNavigation: { visible: true }
-                }
-            }
-        };
-        
-        const reportContainer = document.getElementById('reportContainer');
-        const report = powerbi.embed(reportContainer, embedConfig);
-        
-        report.on('loaded', () => {
-            console.log('Report loaded successfully');
-        });
-    </script>
-</body>
-</html>
+2. **Create dynamic measure:**
+```dax
+Selected Metric = 
+VAR SelectedID = SELECTEDVALUE('Measure Selector'[MeasureID])
+RETURN
+    SWITCH(
+        SelectedID,
+        1, [Total Sales],
+        2, [Total Profit],
+        3, [Profit Margin %],
+        BLANK()
+    )
 ```
 
-### Automating Report Distribution
+3. Add slicer with Metric column and use [Selected Metric] in visuals
 
-```python
-# Python script to email Power BI report snapshot
-import os
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-import requests
+### Custom Tooltips
 
-# Export visual as image
-ACCESS_TOKEN = os.environ.get('POWERBI_ACCESS_TOKEN')
-REPORT_ID = os.environ.get('POWERBI_REPORT_ID')
-VISUAL_NAME = "ProfitOverview"
+Create a detailed tooltip page:
 
-url = f"https://api.powerbi.com/v1.0/myorg/reports/{REPORT_ID}/pages/ReportSection1/visuals/{VISUAL_NAME}/export"
-headers = {"Authorization": f"Bearer {ACCESS_TOKEN}"}
-
-response = requests.get(url, headers=headers)
-visual_image = response.content
-
-# Send email
-msg = MIMEMultipart()
-msg['From'] = os.environ.get('EMAIL_FROM')
-msg['To'] = 'stakeholder@company.com'
-msg['Subject'] = 'Daily SalesPulse Dashboard Summary'
-
-body = "Please find attached today's profit overview visual."
-msg.attach(MIMEText(body, 'plain'))
-msg.attach(MIMEImage(visual_image, name='profit_overview.png'))
-
-server = smtplib.SMTP(os.environ.get('SMTP_SERVER'), 587)
-server.starttls()
-server.login(os.environ.get('SMTP_USER'), os.environ.get('SMTP_PASSWORD'))
-server.send_message(msg)
-server.quit()
-```
+1. Create new page named "Tooltip - Product Detail"
+2. Set page as tooltip: **Page settings > Tooltip > ON**
+3. Add visuals showing product-specific metrics
+4. Apply to main visual: **Format > Tooltip > Report page > Tooltip - Product Detail**
 
 ## Best Practices
 
-1. **Version control `.pbix` files:** Use Git LFS for binary files
-2. **Document data lineage:** Add descriptions to tables and measures
-3. **Use variables in DAX:** Improves readability and performance
-4. **Test with real data volumes:** Development environment should mirror production scale
-5. **Implement incremental refresh:** For large datasets (>1M rows)
-6. **Monitor query performance:** Use Performance Analyzer in Power BI Desktop
-7. **Standardize naming conventions:** Prefix measures with icon (e.g., 🔢 Total Sales)
-8. **Create data dictionary:** Document all calculated columns and measures
+1. **Use variables in DAX:** Improves readability and performance
+2. **Avoid calculated columns when possible:** Use measures instead
+3. **Create a date table:** Essential for time intelligence
+4. **Document complex measures:** Add comments explaining logic
+5. **Test with different date ranges:** Ensure measures work across all periods
+6. **Use SELECTEDVALUE() for parameters:** Handles multi-selection gracefully
+7. **Apply visual level filters:** Reduces data volume in memory
+8. **Regular model optimization:** Use Performance Analyzer to identify slow visuals
 
 ## Resources
 
 - **Official Power BI Documentation:** https://docs.microsoft.com/power-bi/
 - **DAX Guide:** https://dax.guide/
-- **SQLBI (DAX patterns):** https://www.sqlbi.com/articles/
-- **Power BI Community:** https://community.powerbi.com/
+- **Power Query M Reference:** https://docs.microsoft.com/powerquery-m/
+- **SQLBI (Advanced DAX patterns):** https://www.sqlbi.com/
+
+This skill covers the complete workflow for implementing, customizing, and deploying the SalesPulse 360 dashboard for retail analytics and business intelligence.
