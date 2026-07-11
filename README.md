@@ -94,6 +94,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [youtube-channel-analytics-dashboard](skills/youtube-channel-analytics-dashboard/) | [install](https://skills.sh/aradotso/data-skills/youtube-channel-analytics-dashboard) | [haywhy1759/YouTube_Channel_Analytics_Dashboard](https://github.com/haywhy1759/YouTube_Channel_Analytics_Dashboard) | 2026-07-02 |
 | [power-bi-retail-analytics-dashboard](skills/power-bi-retail-analytics-dashboard/) | [install](https://skills.sh/aradotso/data-skills/power-bi-retail-analytics-dashboard) | [MahbubNibir/power-bi-retail-analytics-viz](https://github.com/MahbubNibir/power-bi-retail-analytics-viz) | 2026-07-11 |
 | [power-bi-sales-analytics-dashboard](skills/power-bi-sales-analytics-dashboard/) | [install](https://skills.sh/aradotso/data-skills/power-bi-sales-analytics-dashboard) | [MahbubNibir/power-bi-retail-analytics-viz](https://github.com/MahbubNibir/power-bi-retail-analytics-viz) | 2026-07-11 |
+| [commercevault-edd-digital-commerce](skills/commercevault-edd-digital-commerce/) | [install](https://skills.sh/aradotso/data-skills/commercevault-edd-digital-commerce) | [dhapat3927/mcp-edd-analytics-vantage](https://github.com/dhapat3927/mcp-edd-analytics-vantage) | 2026-07-11 |
 <!-- SKILL_INDEX -->
 
 ---
