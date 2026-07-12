@@ -1,46 +1,64 @@
 ---
 name: commercevault-edd-digital-commerce
-description: EDD MCP server for Easy Digital Downloads sales analytics, product management, and order orchestration
+description: MCP server for Easy Digital Downloads API integration with sales analytics, product management, and revenue reporting
 triggers:
   - "connect to Easy Digital Downloads API"
   - "fetch EDD sales data and analytics"
-  - "query digital product sales statistics"
-  - "retrieve EDD customer orders and revenue"
-  - "analyze Easy Digital Downloads metrics"
-  - "integrate with WordPress EDD store"
-  - "pull digital commerce transaction data"
-  - "monitor EDD subscription and license keys"
+  - "integrate with WordPress commerce backend"
+  - "query digital product sales metrics"
+  - "manage EDD customer and order data"
+  - "retrieve WordPress ecommerce analytics"
+  - "build EDD sales dashboard"
+  - "sync digital downloads inventory"
 ---
 
-# CommerceVault EDD Digital Commerce Skill
+# CommerceVault EDD Analytics Skill
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-CommerceVault (mcp-edd-analytics-vantage) is a Model Context Protocol (MCP) server that provides a unified API layer for Easy Digital Downloads (EDD) WordPress installations. It enables programmatic access to sales data, product catalogs, customer analytics, order lifecycle management, and license/entitlement tracking through a secure, standardized REST interface.
+CommerceVault (mcp-edd-analytics-vantage) is an MCP (Model Context Protocol) server that provides a unified interface for interacting with Easy Digital Downloads (EDD) WordPress e-commerce installations. It abstracts REST API complexity into structured tools for retrieving sales data, managing products, analyzing customer behavior, and generating revenue reports.
 
 ## What It Does
 
-- **Sales Analytics**: Query revenue metrics, GMV, AOV, cohort analysis, and time-series sales data
-- **Product Catalog Management**: Sync product listings, pricing tiers, digital downloads, and variable products
-- **Order Processing**: Create, retrieve, update, and refund orders with full lifecycle tracking
-- **Customer Segmentation**: Access customer profiles, LTV calculations, purchase history, and behavioral cohorts
-- **License Management**: Generate and validate license keys for digital products and SaaS offerings
-- **Real-time Webhooks**: Receive event-driven notifications for order completions, refunds, and customer updates
+- **Sales & Revenue Analytics**: Query gross merchandise value (GMV), average order value (AOV), revenue by period
+- **Product Catalog Management**: List, filter, and sync digital product catalogs with pricing and download details
+- **Order Lifecycle**: Retrieve orders, track fulfillment status, process refunds
+- **Customer Segmentation**: Fetch customer profiles, lifetime value (LTV), purchase history
+- **License Management**: Handle software license keys and entitlements for digital products
+- **Real-time Reporting**: Generate dashboards with product performance and cohort analysis
 
 ## Installation
 
 ### Prerequisites
 
 - Node.js 18+ or Python 3.9+
-- Easy Digital Downloads WordPress installation with REST API enabled
-- Valid EDD API credentials (consumer key and consumer secret)
+- Access to an Easy Digital Downloads WordPress installation
+- EDD REST API credentials (API key or OAuth token)
 
-### MCP Server Setup
+### As MCP Server
 
-Install as an MCP server for Claude Desktop, Cursor, or other MCP-compatible tools:
+Add to your MCP client configuration (e.g., Claude Desktop):
+
+```json
+{
+  "mcpServers": {
+    "edd-analytics": {
+      "command": "npx",
+      "args": ["-y", "mcp-edd-analytics-vantage"],
+      "env": {
+        "EDD_API_URL": "https://your-site.com/wp-json/edd/v2",
+        "EDD_API_KEY": "ck_xxxxxxxxxxxxx",
+        "EDD_API_SECRET": "cs_xxxxxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+### As Standalone Service
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/dhapat3927/mcp-edd-analytics-vantage.git
 cd mcp-edd-analytics-vantage
 
@@ -49,466 +67,528 @@ npm install
 # or
 pip install -r requirements.txt
 
-# Configure environment variables
+# Configure environment
 cp .env.example .env
+# Edit .env with your EDD credentials
 ```
 
-### Environment Configuration
+## Configuration
 
-Edit `.env` with your EDD credentials:
+### Environment Variables
 
 ```bash
-EDD_SITE_URL=https://your-wordpress-site.com
-EDD_CONSUMER_KEY=ck_your_consumer_key_here
-EDD_CONSUMER_SECRET=cs_your_consumer_secret_here
-EDD_API_VERSION=v2
-CACHE_ENABLED=true
-CACHE_TTL_SECONDS=300
-LOG_LEVEL=info
-WEBHOOK_SECRET=your_webhook_signing_secret
+# Required: EDD API endpoint
+EDD_API_URL=https://yourstore.com/wp-json/edd/v2
+
+# Required: Authentication (choose one method)
+EDD_API_KEY=ck_your_consumer_key
+EDD_API_SECRET=cs_your_consumer_secret
+
+# OR use OAuth
+EDD_OAUTH_TOKEN=your_oauth_token
+
+# Optional: Performance tuning
+EDD_CACHE_TTL=300                    # Cache expiration in seconds
+EDD_RATE_LIMIT_PER_MIN=60           # Max requests per minute
+EDD_REQUEST_TIMEOUT=30000            # Timeout in milliseconds
+
+# Optional: Data residency
+EDD_DATA_REGION=EU                   # EU, US, APAC for GDPR compliance
+EDD_AUDIT_LOG_ENABLED=true          # Enable immutable audit logging
 ```
 
-### MCP Configuration
+### Adapter Configuration
 
-Add to your MCP settings file (e.g., `claude_desktop_config.json`):
+For multi-platform support, configure adapters in `config.json`:
 
 ```json
 {
-  "mcpServers": {
-    "commercevault-edd": {
-      "command": "node",
-      "args": ["/path/to/mcp-edd-analytics-vantage/index.js"],
-      "env": {
-        "EDD_SITE_URL": "https://your-store.com",
-        "EDD_CONSUMER_KEY": "${EDD_CONSUMER_KEY}",
-        "EDD_CONSUMER_SECRET": "${EDD_CONSUMER_SECRET}"
-      }
+  "adapters": {
+    "edd": {
+      "endpoint": "${EDD_API_URL}",
+      "auth": {
+        "type": "basic",
+        "key": "${EDD_API_KEY}",
+        "secret": "${EDD_API_SECRET}"
+      },
+      "features": ["products", "orders", "customers", "licenses"]
     }
+  },
+  "cache": {
+    "enabled": true,
+    "backend": "redis",
+    "ttl": 300,
+    "invalidateOnWebhook": true
+  },
+  "security": {
+    "hmacVerification": true,
+    "hmacSecret": "${HMAC_SECRET}"
   }
 }
 ```
 
-## Key API Methods
+## Core API Tools
 
-### Fetching Sales Analytics
+### Product Operations
+
+#### List Products
 
 ```javascript
-// Get sales summary for last 30 days
-const salesData = await mcp.call('edd.getSalesSummary', {
+// Fetch all digital products
+const products = await commerceVault.listProducts({
+  status: 'publish',
+  type: 'download',
+  per_page: 50,
+  orderby: 'date',
+  order: 'desc'
+});
+
+// Filter by category
+const softwareProducts = await commerceVault.listProducts({
+  category: 'software',
+  status: 'publish'
+});
+
+// With pricing and license info
+const detailedProducts = await commerceVault.listProducts({
+  include_pricing: true,
+  include_licensing: true
+});
+```
+
+#### Get Product Details
+
+```javascript
+const product = await commerceVault.getProduct({
+  id: 1234,
+  include: ['variations', 'downloads', 'reviews']
+});
+
+console.log(product.name);
+console.log(product.price);
+console.log(product.licensing_model); // 'per_site', 'unlimited', etc.
+```
+
+### Sales Analytics
+
+#### Revenue Reports
+
+```javascript
+// Daily revenue for last 30 days
+const revenue = await commerceVault.getRevenue({
+  period: 'daily',
   start_date: '2026-06-01',
   end_date: '2026-06-30',
-  granularity: 'daily'
+  currency: 'USD'
 });
 
-console.log(salesData);
-// {
-//   total_revenue: 45230.50,
-//   total_orders: 342,
-//   average_order_value: 132.25,
-//   refund_rate: 0.02,
-//   daily_breakdown: [...]
-// }
+revenue.forEach(day => {
+  console.log(`${day.date}: $${day.gross_revenue}`);
+});
+
+// Monthly GMV breakdown
+const monthlyGMV = await commerceVault.getRevenue({
+  period: 'monthly',
+  start_date: '2026-01-01',
+  end_date: '2026-12-31',
+  metrics: ['gmv', 'net_revenue', 'refunds']
+});
 ```
 
-### Querying Products
+#### Product Performance
 
 ```javascript
-// Retrieve product catalog with filters
-const products = await mcp.call('edd.getProducts', {
-  status: 'publish',
-  category: 'software',
-  page: 1,
-  per_page: 50
+const topProducts = await commerceVault.getProductPerformance({
+  period: '30d',
+  sort_by: 'revenue',
+  limit: 10,
+  include_refund_rate: true
 });
 
-products.forEach(product => {
-  console.log(`${product.name} - $${product.price}`);
+topProducts.forEach(p => {
+  console.log(`${p.name}: $${p.revenue} (${p.units_sold} units)`);
 });
 ```
 
-### Creating Orders
+### Order Management
+
+#### Retrieve Orders
 
 ```javascript
-// Create new order programmatically
-const newOrder = await mcp.call('edd.createOrder', {
-  customer_email: 'customer@example.com',
-  products: [
-    { id: 123, quantity: 1, price: 49.99 },
-    { id: 456, quantity: 2, price: 29.99 }
-  ],
-  payment_method: 'stripe',
-  status: 'completed'
+// Recent orders
+const orders = await commerceVault.listOrders({
+  status: 'completed',
+  per_page: 100,
+  date_range: {
+    after: '2026-06-01T00:00:00',
+    before: '2026-06-30T23:59:59'
+  }
 });
 
-console.log(`Order created: ${newOrder.id}`);
+// Filter by customer
+const customerOrders = await commerceVault.listOrders({
+  customer_id: 567,
+  status: ['completed', 'refunded']
+});
 ```
 
-### Customer Lifetime Value Analysis
+#### Get Order Details
 
 ```javascript
-// Get customer analytics with LTV calculation
-const customerData = await mcp.call('edd.getCustomerAnalytics', {
-  customer_id: 789,
-  include_ltv: true,
-  include_purchase_history: true
+const order = await commerceVault.getOrder({
+  id: 8901,
+  include: ['customer', 'line_items', 'licenses']
 });
 
-console.log(`Customer LTV: $${customerData.lifetime_value}`);
-console.log(`Total Purchases: ${customerData.total_orders}`);
-console.log(`Average Purchase Frequency: ${customerData.purchase_frequency} days`);
+console.log(`Order #${order.number}`);
+console.log(`Total: ${order.total} ${order.currency}`);
+console.log(`Customer: ${order.customer.email}`);
+order.line_items.forEach(item => {
+  console.log(`  - ${item.product_name}: ${item.quantity}`);
+});
 ```
 
-### License Key Management
+#### Process Refund
 
 ```javascript
-// Generate license key for digital product
-const license = await mcp.call('edd.generateLicense', {
-  product_id: 101,
-  customer_email: 'customer@example.com',
-  activation_limit: 3,
-  expiration_date: '2027-06-30'
+const refund = await commerceVault.createRefund({
+  order_id: 8901,
+  amount: 49.99,
+  reason: 'Customer request',
+  revoke_licenses: true // Deactivate associated licenses
 });
 
-console.log(`License Key: ${license.key}`);
-console.log(`Activations Remaining: ${license.activations_left}`);
-
-// Validate license key
-const validation = await mcp.call('edd.validateLicense', {
-  license_key: license.key,
-  product_id: 101,
-  url: 'https://customer-site.com'
-});
-
-console.log(`Valid: ${validation.valid}`);
-console.log(`Status: ${validation.status}`);
+console.log(`Refund ${refund.id} processed`);
 ```
 
-## Python SDK Usage
+### Customer Insights
 
-```python
-from commercevault import EDDClient
-import os
+#### Customer Profile
 
-# Initialize client
-client = EDDClient(
-    site_url=os.getenv('EDD_SITE_URL'),
-    consumer_key=os.getenv('EDD_CONSUMER_KEY'),
-    consumer_secret=os.getenv('EDD_CONSUMER_SECRET')
-)
+```javascript
+const customer = await commerceVault.getCustomer({
+  id: 567,
+  include: ['purchase_history', 'ltv', 'licenses']
+});
 
-# Fetch revenue report
-revenue = client.analytics.get_revenue(
-    start_date='2026-06-01',
-    end_date='2026-06-30',
-    group_by='product'
-)
+console.log(`${customer.name} (${customer.email})`);
+console.log(`Lifetime Value: $${customer.lifetime_value}`);
+console.log(`Total Orders: ${customer.total_orders}`);
+console.log(`Active Licenses: ${customer.active_licenses.length}`);
+```
 
-for product_revenue in revenue:
-    print(f"{product_revenue['product_name']}: ${product_revenue['total']}")
+#### Cohort Analysis
 
-# Export customer segment to CSV
-segment = client.customers.get_segment(
-    filter='ltv_gt_1000',
-    recency_days=90
-)
+```javascript
+const cohorts = await commerceVault.getCohortAnalysis({
+  cohort_by: 'signup_month',
+  start_date: '2026-01-01',
+  end_date: '2026-06-30',
+  metrics: ['retention_rate', 'avg_order_value', 'churn_rate']
+});
 
-client.export.to_csv(segment, 'high_value_customers.csv')
+cohorts.forEach(cohort => {
+  console.log(`${cohort.period}: Retention ${cohort.retention_rate}%`);
+});
+```
+
+### License & Entitlement
+
+#### List Licenses
+
+```javascript
+const licenses = await commerceVault.listLicenses({
+  status: 'active',
+  product_id: 1234,
+  per_page: 100
+});
+
+licenses.forEach(license => {
+  console.log(`${license.key}: ${license.activations}/${license.activation_limit}`);
+});
+```
+
+#### Validate License
+
+```javascript
+const validation = await commerceVault.validateLicense({
+  license_key: 'XXXX-XXXX-XXXX-XXXX',
+  product_id: 1234,
+  site_url: 'https://customer-site.com'
+});
+
+if (validation.valid) {
+  console.log('License valid');
+  console.log(`Expires: ${validation.expires_at}`);
+} else {
+  console.log(`Invalid: ${validation.reason}`);
+}
 ```
 
 ## Common Patterns
 
-### Delta Sync for Product Catalog
+### Building a Sales Dashboard
 
 ```javascript
-// Only fetch products modified since last sync
-const lastSync = await cache.get('last_product_sync');
+async function buildSalesDashboard(period = '30d') {
+  // Parallel fetch for performance
+  const [revenue, topProducts, orderStats] = await Promise.all([
+    commerceVault.getRevenue({ period: 'daily', last: period }),
+    commerceVault.getProductPerformance({ period, limit: 5 }),
+    commerceVault.getOrderStatistics({ period })
+  ]);
 
-const updatedProducts = await mcp.call('edd.getProducts', {
-  modified_after: lastSync || '2026-01-01',
-  per_page: 100
-});
-
-console.log(`${updatedProducts.length} products updated since last sync`);
-
-// Update sync timestamp
-await cache.set('last_product_sync', new Date().toISOString());
+  return {
+    totalRevenue: revenue.reduce((sum, day) => sum + day.gross_revenue, 0),
+    averageOrderValue: orderStats.average_order_value,
+    conversionRate: orderStats.conversion_rate,
+    topSellingProducts: topProducts.map(p => ({
+      name: p.name,
+      revenue: p.revenue,
+      units: p.units_sold
+    })),
+    dailyTrend: revenue.map(day => ({
+      date: day.date,
+      revenue: day.gross_revenue
+    }))
+  };
+}
 ```
 
-### Webhook Event Processing
+### Syncing Product Catalog
 
 ```javascript
-// Handle incoming EDD webhooks
-app.post('/webhooks/edd', async (req, res) => {
-  const signature = req.headers['x-edd-signature'];
-  const payload = req.body;
-  
-  // Verify webhook authenticity
-  const isValid = await mcp.call('edd.verifyWebhook', {
-    signature,
-    payload,
-    secret: process.env.WEBHOOK_SECRET
+async function syncProductCatalog() {
+  let page = 1;
+  let allProducts = [];
+  let hasMore = true;
+
+  while (hasMore) {
+    const response = await commerceVault.listProducts({
+      per_page: 100,
+      page,
+      status: 'publish',
+      _fields: 'id,name,price,sku,stock_quantity' // Optimize payload
+    });
+
+    allProducts = allProducts.concat(response.products);
+    hasMore = response.total_pages > page;
+    page++;
+  }
+
+  // Store in local database or cache
+  await db.products.bulkUpsert(allProducts);
+  console.log(`Synced ${allProducts.length} products`);
+}
+```
+
+### Customer LTV Calculation
+
+```javascript
+async function calculateCustomerLTV(customerId) {
+  const orders = await commerceVault.listOrders({
+    customer_id: customerId,
+    status: 'completed',
+    per_page: -1 // Get all orders
   });
-  
-  if (!isValid) {
+
+  const totalSpent = orders.reduce((sum, order) => {
+    return sum + parseFloat(order.total);
+  }, 0);
+
+  const avgOrderValue = totalSpent / orders.length;
+  const purchaseFrequency = orders.length / 
+    ((Date.now() - new Date(orders[0].date_created)) / (1000 * 60 * 60 * 24 * 365));
+
+  return {
+    total_spent: totalSpent,
+    order_count: orders.length,
+    avg_order_value: avgOrderValue,
+    purchase_frequency: purchaseFrequency,
+    estimated_ltv: avgOrderValue * purchaseFrequency * 3 // 3-year projection
+  };
+}
+```
+
+### Webhook Handler
+
+```javascript
+// Express.js webhook endpoint
+app.post('/webhooks/edd', async (req, res) => {
+  const event = req.body;
+  const signature = req.headers['x-edd-signature'];
+
+  // Verify HMAC signature
+  if (!commerceVault.verifyWebhookSignature(event, signature)) {
     return res.status(401).send('Invalid signature');
   }
-  
-  // Process event
-  switch (payload.event) {
+
+  // Handle events
+  switch (event.event) {
     case 'order.completed':
-      await processNewOrder(payload.data);
+      await handleOrderCompleted(event.data.order);
       break;
-    case 'refund.issued':
-      await handleRefund(payload.data);
+    case 'license.activated':
+      await handleLicenseActivation(event.data.license);
       break;
     case 'subscription.renewed':
-      await updateSubscription(payload.data);
+      await handleSubscriptionRenewal(event.data.subscription);
       break;
   }
-  
+
   res.status(200).send('OK');
 });
 ```
 
-### Cohort Analysis with Aggregation
+## Python Usage
 
-```javascript
-// Analyze customer cohorts by acquisition month
-const cohorts = await mcp.call('edd.getCohortAnalysis', {
-  start_date: '2025-01-01',
-  end_date: '2026-06-30',
-  cohort_by: 'acquisition_month',
-  metric: 'revenue'
-});
+```python
+from commercevault import CommerceVaultClient
+import os
 
-cohorts.forEach(cohort => {
-  console.log(`${cohort.month}: ${cohort.customer_count} customers, $${cohort.total_revenue}`);
-  console.log(`  Retention Rate: ${cohort.retention_rate}%`);
-  console.log(`  Repeat Purchase Rate: ${cohort.repeat_rate}%`);
-});
-```
+# Initialize client
+client = CommerceVaultClient(
+    api_url=os.getenv('EDD_API_URL'),
+    api_key=os.getenv('EDD_API_KEY'),
+    api_secret=os.getenv('EDD_API_SECRET')
+)
 
-### Batch Order Updates
+# Fetch products
+products = client.products.list(
+    status='publish',
+    per_page=50
+)
 
-```javascript
-// Update multiple orders efficiently
-const orderUpdates = [
-  { id: 1001, status: 'completed', tracking_number: 'TRACK001' },
-  { id: 1002, status: 'completed', tracking_number: 'TRACK002' },
-  { id: 1003, status: 'refunded', refund_reason: 'Customer request' }
-];
+for product in products:
+    print(f"{product.name}: ${product.price}")
 
-const results = await mcp.call('edd.batchUpdateOrders', {
-  updates: orderUpdates
-});
+# Revenue report
+revenue = client.analytics.get_revenue(
+    period='monthly',
+    start_date='2026-01-01',
+    end_date='2026-12-31'
+)
 
-console.log(`Updated ${results.success_count} orders`);
-if (results.errors.length > 0) {
-  console.error('Errors:', results.errors);
-}
-```
+total = sum(month['gross_revenue'] for month in revenue)
+print(f"Annual Revenue: ${total}")
 
-## Advanced Configuration
-
-### Rate Limiting Configuration
-
-```javascript
-// config/rate-limits.json
-{
-  "adaptive_throttling": true,
-  "max_requests_per_minute": 60,
-  "burst_allowance": 10,
-  "retry_strategy": {
-    "max_retries": 3,
-    "backoff_multiplier": 2,
-    "initial_delay_ms": 1000
-  },
-  "queue_overflow_strategy": "drop_oldest"
-}
-```
-
-### Cache Layer Setup (Redis)
-
-```bash
-# .env additions for caching
-CACHE_ADAPTER=redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=${REDIS_PASSWORD}
-REDIS_DB=0
-CACHE_KEY_PREFIX=commercevault:
-```
-
-```javascript
-// Use cached responses for frequently accessed data
-const products = await mcp.call('edd.getProducts', {
-  use_cache: true,
-  cache_ttl: 600 // 10 minutes
-});
-```
-
-### Middleware Pipeline Configuration
-
-```javascript
-// config/middleware.json
-{
-  "pipeline": [
-    {
-      "name": "geo-fencing",
-      "enabled": true,
-      "config": {
-        "allowed_countries": ["US", "CA", "GB"],
-        "blocked_products": [101, 102]
-      }
-    },
-    {
-      "name": "fraud-scoring",
-      "enabled": true,
-      "config": {
-        "threshold": 0.75,
-        "hold_suspicious_orders": true
-      }
-    },
-    {
-      "name": "currency-normalizer",
-      "enabled": true,
-      "config": {
-        "base_currency": "USD"
-      }
-    }
-  ]
-}
+# Customer insights
+customer = client.customers.get(567)
+print(f"LTV: ${customer.lifetime_value}")
 ```
 
 ## Troubleshooting
 
-### Authentication Errors
+### Authentication Failures
+
+```javascript
+// Test credentials
+try {
+  await commerceVault.testConnection();
+  console.log('Connection successful');
+} catch (error) {
+  console.error('Auth failed:', error.message);
+  // Check: EDD_API_KEY and EDD_API_SECRET are correct
+  // Verify: REST API is enabled in EDD settings
+  // Confirm: Key has required permissions
+}
+```
+
+### Rate Limiting
+
+```javascript
+// Handle 429 errors with retry
+const result = await commerceVault.listProducts({
+  per_page: 100
+}).catch(async (error) => {
+  if (error.status === 429) {
+    const retryAfter = error.headers['retry-after'] || 60;
+    console.log(`Rate limited, retrying after ${retryAfter}s`);
+    await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+    return commerceVault.listProducts({ per_page: 100 });
+  }
+  throw error;
+});
+```
+
+### Cache Invalidation
+
+```javascript
+// Force fresh data
+const products = await commerceVault.listProducts({
+  bypass_cache: true
+});
+
+// Manual cache clear
+await commerceVault.cache.invalidate('products:*');
+```
+
+### Debug Mode
 
 ```bash
-# Test API credentials
-curl -u "${EDD_CONSUMER_KEY}:${EDD_CONSUMER_SECRET}" \
-  "${EDD_SITE_URL}/wp-json/edd/v2/products?per_page=1"
+# Enable verbose logging
+export DEBUG=commercevault:*
+export LOG_LEVEL=debug
 
-# Common issue: URL encoding of consumer secret
-# Ensure special characters are properly escaped
+# Run with trace
+node --trace-warnings index.js
 ```
 
-### Rate Limit 429 Errors
+### Common Errors
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `ECONNREFUSED` | EDD API unreachable | Check `EDD_API_URL`, verify site is accessible |
+| `401 Unauthorized` | Invalid credentials | Regenerate API keys in EDD settings |
+| `403 Forbidden` | Insufficient permissions | Grant "Read/Write" permissions to API key |
+| `404 Not Found` | Resource doesn't exist | Verify IDs, check if resource was deleted |
+| `429 Too Many Requests` | Rate limit exceeded | Implement exponential backoff, reduce request frequency |
+
+## Advanced Features
+
+### Custom Middleware
 
 ```javascript
-// Enable adaptive rate limiting
-const config = {
-  adaptive_throttling: true,
-  observe_retry_after_header: true
-};
-
-// Check current rate limit status
-const status = await mcp.call('edd.getRateLimitStatus');
-console.log(`Remaining: ${status.remaining}/${status.limit}`);
-console.log(`Reset at: ${status.reset_at}`);
-```
-
-### Webhook Signature Verification Failures
-
-```javascript
-// Debug webhook signature issues
-const debugWebhook = async (req) => {
-  const receivedSig = req.headers['x-edd-signature'];
-  const payload = JSON.stringify(req.body);
-  const secret = process.env.WEBHOOK_SECRET;
-  
-  const expectedSig = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
-  
-  console.log('Received:', receivedSig);
-  console.log('Expected:', expectedSig);
-  console.log('Match:', receivedSig === expectedSig);
-};
-```
-
-### Data Sync Lag
-
-```javascript
-// Force cache invalidation
-await mcp.call('edd.invalidateCache', {
-  scope: 'products', // or 'orders', 'customers', 'all'
-  cascade: true
-});
-
-// Verify data freshness
-const metadata = await mcp.call('edd.getDataFreshness');
-console.log(`Last product sync: ${metadata.products.last_sync}`);
-console.log(`Staleness: ${metadata.products.staleness_seconds}s`);
-```
-
-### Memory Leaks in Long-Running Processes
-
-```javascript
-// Configure connection pooling
-const client = new EDDClient({
-  pool: {
-    max: 10,
-    min: 2,
-    idle_timeout_ms: 30000,
-    acquire_timeout_ms: 5000
+// Add fraud detection
+commerceVault.use('order:before', async (order) => {
+  const riskScore = await fraudService.evaluate(order);
+  if (riskScore > 80) {
+    throw new Error('High risk order flagged');
   }
+  return order;
 });
 
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-  await client.close();
-  process.exit(0);
-});
-```
-
-## Performance Optimization
-
-### Batch Operations for Large Datasets
-
-```javascript
-// Process large order sets in batches
-async function* batchOrders(startDate, endDate, batchSize = 100) {
-  let page = 1;
-  while (true) {
-    const orders = await mcp.call('edd.getOrders', {
-      start_date: startDate,
-      end_date: endDate,
-      page,
-      per_page: batchSize
-    });
-    
-    if (orders.length === 0) break;
-    
-    yield orders;
-    page++;
+// Currency conversion
+commerceVault.use('revenue:after', async (revenue) => {
+  if (revenue.currency !== 'USD') {
+    revenue.usd_equivalent = await currencyAPI.convert(
+      revenue.amount,
+      revenue.currency,
+      'USD'
+    );
   }
-}
-
-// Usage
-for await (const orderBatch of batchOrders('2026-01-01', '2026-06-30')) {
-  await processOrders(orderBatch);
-}
+  return revenue;
+});
 ```
 
-### Materialized Views for Analytics
+### Multi-Store Aggregation
 
 ```javascript
-// Pre-compute expensive analytics queries
-await mcp.call('edd.createMaterializedView', {
-  name: 'monthly_revenue_by_product',
-  query: {
-    aggregate: 'revenue',
-    group_by: ['month', 'product_id'],
-    date_range: 'last_12_months'
-  },
-  refresh_schedule: '0 0 * * *' // Daily at midnight
-});
+const stores = [
+  { name: 'Store A', url: process.env.STORE_A_URL, key: process.env.STORE_A_KEY },
+  { name: 'Store B', url: process.env.STORE_B_URL, key: process.env.STORE_B_KEY }
+];
 
-// Query the materialized view (much faster)
-const revenue = await mcp.call('edd.queryMaterializedView', {
-  view: 'monthly_revenue_by_product',
-  filters: { product_id: 101 }
-});
+const aggregatedRevenue = await Promise.all(
+  stores.map(async store => {
+    const client = new CommerceVaultClient(store);
+    const revenue = await client.analytics.get_revenue({ period: '30d' });
+    return { store: store.name, revenue };
+  })
+);
+
+const total = aggregatedRevenue.reduce(
+  (sum, store) => sum + store.revenue.reduce((s, day) => s + day.gross_revenue, 0),
+  0
+);
 ```
