@@ -98,6 +98,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [commercevault-edd-ecommerce-orchestrator](skills/commercevault-edd-ecommerce-orchestrator/) | [install](https://skills.sh/aradotso/data-skills/commercevault-edd-ecommerce-orchestrator) | [dhapat3927/mcp-edd-analytics-vantage](https://github.com/dhapat3927/mcp-edd-analytics-vantage) | 2026-07-12 |
 | [enterprise-user-management-ai-system](skills/enterprise-user-management-ai-system/) | [install](https://skills.sh/aradotso/data-skills/enterprise-user-management-ai-system) | [Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics](https://github.com/Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics) | 2026-07-12 |
 | [enterprise-user-management-system-ai-analytics](skills/enterprise-user-management-system-ai-analytics/) | [install](https://skills.sh/aradotso/data-skills/enterprise-user-management-system-ai-analytics) | [Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics](https://github.com/Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics) | 2026-07-13 |
+| [web-analytics-agent-skill](skills/web-analytics-agent-skill/) | [install](https://skills.sh/aradotso/data-skills/web-analytics-agent-skill) | [SeoToolkit/web-analytics-agent-skill](https://github.com/SeoToolkit/web-analytics-agent-skill) | 2026-07-14 |
 <!-- SKILL_INDEX -->
 
 ---
