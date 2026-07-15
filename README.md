@@ -100,6 +100,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [enterprise-user-management-system-ai-analytics](skills/enterprise-user-management-system-ai-analytics/) | [install](https://skills.sh/aradotso/data-skills/enterprise-user-management-system-ai-analytics) | [Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics](https://github.com/Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics) | 2026-07-13 |
 | [web-analytics-agent-skill](skills/web-analytics-agent-skill/) | [install](https://skills.sh/aradotso/data-skills/web-analytics-agent-skill) | [SeoToolkit/web-analytics-agent-skill](https://github.com/SeoToolkit/web-analytics-agent-skill) | 2026-07-14 |
 | [microsoft-fabric-unified-analytics](skills/microsoft-fabric-unified-analytics/) | [install](https://skills.sh/aradotso/data-skills/microsoft-fabric-unified-analytics) | [Abdoulkarimouattara/microsoft-fabric-unified-analytics-platformre](https://github.com/Abdoulkarimouattara/microsoft-fabric-unified-analytics-platformre) | 2026-07-15 |
+| [crypto-etl-analytics-core](skills/crypto-etl-analytics-core/) | [install](https://skills.sh/aradotso/data-skills/crypto-etl-analytics-core) | [Jad-srifi/crypto-etl-analytics-core](https://github.com/Jad-srifi/crypto-etl-analytics-core) | 2026-07-15 |
 <!-- SKILL_INDEX -->
 
 ---
