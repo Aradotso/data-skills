@@ -1,527 +1,554 @@
 ---
 name: microsoft-fabric-unified-analytics
-description: End-to-end data engineering with Microsoft Fabric using Lakehouse, Dataflow Gen2, PySpark notebooks, and Medallion Architecture for unified analytics
+description: End-to-end unified analytics platform using Microsoft Fabric, Lakehouse, Medallion Architecture, Dataflow Gen2, PySpark, and Power BI for retail data engineering.
 triggers:
-  - "setup microsoft fabric lakehouse project"
-  - "implement medallion architecture bronze silver gold"
-  - "create fabric dataflow gen2 transformation"
-  - "write pyspark notebook for fabric lakehouse"
-  - "configure onelake storage layers"
-  - "build semantic model in microsoft fabric"
-  - "process data using fabric notebooks"
+  - "build a Microsoft Fabric lakehouse"
+  - "implement medallion architecture in Fabric"
+  - "create dataflow gen2 transformations"
+  - "process data with Fabric notebooks"
   - "design unified analytics platform"
+  - "build retail analytics with OneLake"
+  - "create Power BI semantic model"
+  - "set up fabric data engineering pipeline"
 ---
 
-# Microsoft Fabric Unified Analytics Skill
+# Microsoft Fabric Unified Analytics Platform
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-## Overview
+This skill provides expertise in building end-to-end unified analytics platforms using **Microsoft Fabric**. The project demonstrates modern data engineering practices using Lakehouse architecture, Medallion layers (Bronze → Silver → Gold), Dataflow Gen2 for data integration, PySpark notebooks for transformations, and Power BI for business intelligence.
 
-This project demonstrates how to build a unified analytics platform using **Microsoft Fabric**, implementing the **Medallion Architecture** (Bronze → Silver → Gold) with OneLake storage, Dataflow Gen2 for data integration, Fabric Notebooks with PySpark for transformations, and Power BI for visualization.
+## What This Project Does
 
-Microsoft Fabric consolidates data ingestion, transformation, semantic modeling, and business intelligence into a single SaaS platform, eliminating the complexity of managing multiple disconnected services.
+Microsoft Fabric Unified Analytics Platform is a production-inspired reference implementation that shows how to:
 
-## Architecture
+- **Unify data engineering workflows** in a single SaaS platform
+- **Implement Medallion Architecture** (Bronze, Silver, Gold layers)
+- **Ingest and transform data** using Dataflow Gen2
+- **Process data at scale** with PySpark in Fabric Notebooks
+- **Create semantic models** for consistent business metrics
+- **Build interactive dashboards** with native Power BI integration
+- **Store everything in OneLake** for unified data governance
 
-The solution follows a **Lakehouse architecture** with three layers:
+**Use Case**: Retail analytics pipeline transforming raw transaction data into trusted business insights.
 
-- **🟤 Bronze Layer**: Raw source data preservation
-- **⚪ Silver Layer**: Cleansed and enriched data
-- **🟡 Gold Layer**: Business-ready datasets and KPIs
+## Architecture Overview
+
+```
+OneLake (Unified Storage)
+    ↓
+Lakehouse (Medallion Architecture)
+    ├── Bronze Layer (Raw data)
+    ├── Silver Layer (Cleansed data via Dataflow Gen2)
+    └── Gold Layer (Business-ready data via PySpark)
+        ↓
+    Semantic Model (Business metrics)
+        ↓
+    Power BI (Dashboards & Reports)
+```
 
 ## Prerequisites
 
-- Microsoft Fabric workspace with Lakehouse enabled
-- Microsoft Fabric capacity or trial
-- Power BI Premium or Fabric capacity
-- Python 3.x (for local development/testing)
-- PySpark knowledge for notebook development
+- **Microsoft Fabric** workspace with appropriate license
+- **OneLake** storage (automatically provisioned)
+- **Power BI** access (included in Fabric)
+- **Python 3.8+** for local development (optional)
+- **PySpark** knowledge for notebook development
 
-## Lakehouse Setup
+## Setting Up a Fabric Lakehouse
 
-### Create Lakehouse Structure
+### 1. Create a Lakehouse
 
-In Microsoft Fabric, create a Lakehouse with the following folder structure:
+```python
+# In Microsoft Fabric UI:
+# 1. Navigate to your workspace
+# 2. Click "+ New" → "Lakehouse"
+# 3. Name it: "RetailAnalyticsLakehouse"
 
-```
-lakehouse/
-├── Files/
-│   ├── bronze/
-│   │   └── online_retail/
-│   ├── silver/
-│   │   └── online_retail/
-│   └── gold/
-│       ├── revenue_trends/
-│       ├── product_performance/
-│       ├── customer_analytics/
-│       └── rfm_segmentation/
-└── Tables/
+# Lakehouse will automatically create:
+# - Tables folder (managed Delta tables)
+# - Files folder (raw files, organized by medallion layers)
 ```
 
-### Load Bronze Data
+### 2. Create Medallion Layer Folders
 
-Upload raw CSV/Parquet files to the `bronze/online_retail/` directory in your Lakehouse Files section. The Bronze layer preserves raw data exactly as received.
+In your Lakehouse **Files** section, create:
 
-## Dataflow Gen2 Configuration
+```
+Files/
+├── bronze/          # Raw source data
+│   ├── online_retail/
+│   └── customers/
+├── silver/          # Cleansed data
+│   ├── online_retail_clean/
+│   └── customers_clean/
+└── gold/           # Business-ready aggregates
+    ├── revenue_trends/
+    ├── product_performance/
+    └── customer_segments/
+```
 
-### Create Dataflow for Silver Layer
+## Data Ingestion with Dataflow Gen2
 
-Dataflow Gen2 provides low-code transformations to clean and enrich Bronze data:
+### Creating a Dataflow Gen2
 
-1. **Create New Dataflow Gen2** in your Fabric workspace
-2. **Connect to Lakehouse** Bronze layer
-3. **Apply Transformations**:
-   - Remove duplicates
-   - Handle missing values
-   - Standardize data types
-   - Add business columns
+```python
+# In Fabric UI:
+# 1. Navigate to workspace → "+ New" → "Dataflow Gen2"
+# 2. Name: "BronzeToSilver_DataCleaning"
 
-### Example Transformations (Power Query M)
+# Sample Power Query M transformations (in Dataflow Gen2 editor):
+```
 
 ```m
+// Load Bronze data
 let
-    Source = Lakehouse.Contents(null){[workspaceId="YOUR_WORKSPACE_ID"]}[Data],
-    BronzeData = Source{[lakehouseId="YOUR_LAKEHOUSE_ID"]}[Data],
-    OnlineRetail = BronzeData{[name="bronze/online_retail"]}[Data],
+    Source = Lakehouse.Contents(null),
+    BronzeData = Source{[workspaceId="YOUR_WORKSPACE_ID"]}[Data],
+    OnlineRetail = BronzeData{[lakehouseId="YOUR_LAKEHOUSE_ID"]}[Data],
+    BronzeTable = OnlineRetail{[Name="bronze",ItemKind="Folder"]}[Data],
+    RetailData = BronzeTable{[Name="online_retail"]}[Data],
     
     // Remove duplicates
-    RemoveDuplicates = Table.Distinct(OnlineRetail),
+    DuplicatesRemoved = Table.Distinct(RetailData, {"InvoiceNo", "StockCode", "InvoiceDate"}),
     
     // Handle missing values
-    RemoveNulls = Table.SelectRows(RemoveDuplicates, each [CustomerID] <> null and [Description] <> null),
-    
-    // Change data types
-    TypedData = Table.TransformColumnTypes(RemoveNulls,{
-        {"InvoiceNo", type text},
-        {"StockCode", type text},
-        {"Quantity", Int64.Type},
-        {"InvoiceDate", type datetime},
-        {"UnitPrice", type number},
-        {"CustomerID", type text},
-        {"Country", type text}
-    }),
+    RemovedNulls = Table.SelectRows(DuplicatesRemoved, each [CustomerID] <> null and [Description] <> null),
     
     // Add business columns
-    AddLineTotal = Table.AddColumn(TypedData, "line_total", each [Quantity] * [UnitPrice], type number),
+    AddLineTotal = Table.AddColumn(RemovedNulls, "line_total", each [Quantity] * [UnitPrice], type number),
     AddYear = Table.AddColumn(AddLineTotal, "year", each Date.Year([InvoiceDate]), Int64.Type),
     AddMonth = Table.AddColumn(AddYear, "month", each Date.Month([InvoiceDate]), Int64.Type),
-    AddIsReturn = Table.AddColumn(AddMonth, "is_return", each if [Quantity] < 0 then true else false, type logical)
+    AddIsReturn = Table.AddColumn(AddMonth, "is_return", each if [Quantity] < 0 then true else false, type logical),
+    
+    // Standardize data types
+    ChangedTypes = Table.TransformColumnTypes(AddIsReturn, {
+        {"InvoiceNo", type text},
+        {"Quantity", Int64.Type},
+        {"UnitPrice", type number},
+        {"CustomerID", type text}
+    })
 in
-    AddIsReturn
+    ChangedTypes
 ```
 
-4. **Set Destination** to Lakehouse `silver/online_retail/` as Delta table
-5. **Publish and Refresh** the dataflow
+### Dataflow Destination Configuration
 
-## Fabric Notebooks (PySpark)
+```python
+# In Dataflow Gen2 destination settings:
+# - Destination: Lakehouse
+# - Workspace: [Your Workspace]
+# - Lakehouse: RetailAnalyticsLakehouse
+# - Root Folder: Files/silver
+# - Table name: online_retail_clean
+# - Update method: Replace
+```
 
-### Bronze to Silver Processing
+## PySpark Processing in Fabric Notebooks
 
-Create a Fabric Notebook to validate Bronze data quality:
+### Example: Bronze to Silver Notebook
 
 ```python
 # Load Bronze data
-bronze_df = spark.read.format("delta").load("Files/bronze/online_retail/")
-
-# Data quality checks
-print(f"Total records: {bronze_df.count()}")
-print(f"Null CustomerID: {bronze_df.filter(col('CustomerID').isNull()).count()}")
-print(f"Duplicate records: {bronze_df.count() - bronze_df.dropDuplicates().count()}")
-
-# Display sample
-display(bronze_df.limit(10))
-```
-
-### Silver to Gold Transformations
-
-Create business-ready datasets in the Gold layer:
-
-#### Revenue Trends Analysis
-
-```python
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, sum, count, avg, year, month, to_date, round
+from pyspark.sql.functions import col, year, month, when, sum as _sum, count, countDistinct
+from pyspark.sql.types import DoubleType
 
-# Initialize Spark session (already available in Fabric Notebooks)
-# spark is pre-configured
+# Access Fabric Lakehouse
+bronze_path = "Files/bronze/online_retail/*.csv"
+df_bronze = spark.read.format("csv") \
+    .option("header", "true") \
+    .option("inferSchema", "true") \
+    .load(bronze_path)
 
-# Read Silver data
-silver_df = spark.read.format("delta").load("Files/silver/online_retail/")
+# Data quality transformations
+df_clean = df_bronze \
+    .dropna(subset=["CustomerID", "Description", "InvoiceDate"]) \
+    .dropDuplicates(["InvoiceNo", "StockCode", "InvoiceDate"]) \
+    .filter(col("Quantity") > 0) \
+    .filter(col("UnitPrice") > 0)
 
-# Filter out returns
-sales_df = silver_df.filter(col("is_return") == False)
+# Add business logic columns
+df_silver = df_clean \
+    .withColumn("line_total", col("Quantity") * col("UnitPrice")) \
+    .withColumn("year", year(col("InvoiceDate"))) \
+    .withColumn("month", month(col("InvoiceDate"))) \
+    .withColumn("is_return", when(col("Quantity") < 0, True).otherwise(False))
 
-# Calculate revenue trends
-revenue_trends = (
-    sales_df
-    .groupBy("year", "month")
+# Write to Silver layer as Delta table
+silver_table_path = "Tables/silver_online_retail"
+df_silver.write.format("delta") \
+    .mode("overwrite") \
+    .option("overwriteSchema", "true") \
+    .save(silver_table_path)
+
+print(f"Silver layer created: {df_silver.count()} records")
+```
+
+### Example: Silver to Gold - Revenue Trends
+
+```python
+# Create Gold layer aggregates
+from pyspark.sql.window import Window
+from pyspark.sql.functions import lag, round as sql_round
+
+# Load Silver data
+df_silver = spark.read.format("delta").load("Tables/silver_online_retail")
+
+# Calculate monthly revenue trends
+df_revenue_trends = df_silver \
+    .groupBy("year", "month") \
     .agg(
-        sum("line_total").alias("total_revenue"),
-        count("InvoiceNo").alias("transaction_count"),
-        avg("line_total").alias("avg_order_value"),
-        count(col("CustomerID").distinct()).alias("unique_customers")
-    )
+        sql_round(_sum("line_total"), 2).alias("total_revenue"),
+        countDistinct("InvoiceNo").alias("total_orders"),
+        countDistinct("CustomerID").alias("unique_customers"),
+        sql_round(_sum("line_total") / countDistinct("InvoiceNo"), 2).alias("avg_order_value")
+    ) \
     .orderBy("year", "month")
-    .withColumn("total_revenue", round(col("total_revenue"), 2))
-    .withColumn("avg_order_value", round(col("avg_order_value"), 2))
-)
+
+# Add month-over-month growth
+window_spec = Window.orderBy("year", "month")
+df_revenue_trends = df_revenue_trends \
+    .withColumn("prev_month_revenue", lag("total_revenue").over(window_spec)) \
+    .withColumn("mom_growth_pct", 
+                when(col("prev_month_revenue").isNotNull(),
+                     sql_round((col("total_revenue") - col("prev_month_revenue")) / col("prev_month_revenue") * 100, 2))
+                .otherwise(None))
 
 # Write to Gold layer
-(
-    revenue_trends
-    .write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .save("Files/gold/revenue_trends/")
-)
+gold_table_path = "Tables/gold_revenue_trends"
+df_revenue_trends.write.format("delta") \
+    .mode("overwrite") \
+    .option("overwriteSchema", "true") \
+    .save(gold_table_path)
 
-print("Revenue trends written to Gold layer")
-display(revenue_trends)
+# Display results
+display(df_revenue_trends)
 ```
 
-#### Product Performance Analysis
+### Example: Customer RFM Segmentation
 
 ```python
-from pyspark.sql.window import Window
-from pyspark.sql.functions import dense_rank
+from pyspark.sql.functions import datediff, max as _max, lit, current_date
+from pyspark.sql import Window
 
-# Product performance metrics
-product_performance = (
-    sales_df
-    .groupBy("StockCode", "Description")
-    .agg(
-        sum("Quantity").alias("total_quantity_sold"),
-        sum("line_total").alias("total_revenue"),
-        count("InvoiceNo").alias("transaction_count"),
-        avg("UnitPrice").alias("avg_unit_price"),
-        count(col("CustomerID").distinct()).alias("unique_buyers")
-    )
-    .withColumn("total_revenue", round(col("total_revenue"), 2))
-    .withColumn("avg_unit_price", round(col("avg_unit_price"), 2))
-)
-
-# Add ranking
-window_spec = Window.orderBy(col("total_revenue").desc())
-product_ranked = product_performance.withColumn(
-    "revenue_rank",
-    dense_rank().over(window_spec)
-)
-
-# Write to Gold layer
-(
-    product_ranked
-    .write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .save("Files/gold/product_performance/")
-)
-
-print("Product performance written to Gold layer")
-display(product_ranked.limit(20))
-```
-
-#### Customer Analytics
-
-```python
-from pyspark.sql.functions import min, max, countDistinct
-
-# Customer behavior analysis
-customer_analytics = (
-    sales_df
-    .groupBy("CustomerID", "Country")
-    .agg(
-        sum("line_total").alias("total_spent"),
-        count("InvoiceNo").alias("total_orders"),
-        avg("line_total").alias("avg_order_value"),
-        countDistinct("StockCode").alias("unique_products_purchased"),
-        min("InvoiceDate").alias("first_purchase_date"),
-        max("InvoiceDate").alias("last_purchase_date")
-    )
-    .withColumn("total_spent", round(col("total_spent"), 2))
-    .withColumn("avg_order_value", round(col("avg_order_value"), 2))
-)
-
-# Write to Gold layer
-(
-    customer_analytics
-    .write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .save("Files/gold/customer_analytics/")
-)
-
-print("Customer analytics written to Gold layer")
-display(customer_analytics.limit(20))
-```
-
-#### RFM Segmentation
-
-```python
-from pyspark.sql.functions import datediff, lit, current_date, ntile
-from pyspark.sql.window import Window
+# Load Silver data
+df_silver = spark.read.format("delta").load("Tables/silver_online_retail")
 
 # Calculate RFM metrics
-reference_date = sales_df.agg(max("InvoiceDate")).collect()[0][0]
+max_date = df_silver.agg(_max("InvoiceDate")).collect()[0][0]
 
-rfm_df = (
-    sales_df
-    .groupBy("CustomerID")
+df_rfm = df_silver \
+    .groupBy("CustomerID") \
     .agg(
-        datediff(lit(reference_date), max("InvoiceDate")).alias("recency"),
+        datediff(lit(max_date), _max("InvoiceDate")).alias("recency"),
         countDistinct("InvoiceNo").alias("frequency"),
-        sum("line_total").alias("monetary")
+        sql_round(_sum("line_total"), 2).alias("monetary")
     )
-    .withColumn("monetary", round(col("monetary"), 2))
-)
 
-# Create RFM scores using quartiles
-r_window = Window.orderBy(col("recency"))
-f_window = Window.orderBy(col("frequency").desc())
-m_window = Window.orderBy(col("monetary").desc())
+# Create RFM quartiles
+def assign_rfm_score(df, column_name):
+    """Assign RFM score (1-4) based on quartiles"""
+    quantiles = df.approxQuantile(column_name, [0.25, 0.5, 0.75], 0.01)
+    
+    return when(col(column_name) <= quantiles[0], 1) \
+        .when(col(column_name) <= quantiles[1], 2) \
+        .when(col(column_name) <= quantiles[2], 3) \
+        .otherwise(4)
 
-rfm_scored = (
-    rfm_df
-    .withColumn("r_score", ntile(4).over(r_window))
-    .withColumn("f_score", ntile(4).over(f_window))
-    .withColumn("m_score", ntile(4).over(m_window))
-)
+# Note: Recency is inverted (lower is better)
+df_rfm = df_rfm \
+    .withColumn("r_score", 5 - assign_rfm_score(df_rfm, "recency")) \
+    .withColumn("f_score", assign_rfm_score(df_rfm, "frequency")) \
+    .withColumn("m_score", assign_rfm_score(df_rfm, "monetary"))
 
-# Create RFM segment
-rfm_segmented = rfm_scored.withColumn(
-    "rfm_segment",
-    when((col("r_score") >= 3) & (col("f_score") >= 3) & (col("m_score") >= 3), "Champions")
-    .when((col("r_score") >= 3) & (col("f_score") >= 2), "Loyal Customers")
-    .when((col("r_score") >= 3) & (col("m_score") >= 3), "Big Spenders")
-    .when((col("r_score") >= 2) & (col("f_score") >= 2), "Potential Loyalists")
-    .when(col("r_score") >= 3, "Recent Customers")
-    .when((col("f_score") <= 2) & (col("r_score") <= 2), "At Risk")
-    .when(col("r_score") <= 2, "Lost Customers")
-    .otherwise("Others")
-)
+# Create customer segments
+df_rfm = df_rfm \
+    .withColumn("rfm_segment", 
+                when((col("r_score") >= 3) & (col("f_score") >= 3) & (col("m_score") >= 3), "Champions")
+                .when((col("r_score") >= 3) & (col("f_score") >= 2), "Loyal Customers")
+                .when((col("r_score") >= 3), "Potential Loyalists")
+                .when((col("f_score") >= 3) & (col("m_score") >= 3), "At Risk")
+                .when(col("r_score") <= 2, "Lost")
+                .otherwise("Others"))
 
 # Write to Gold layer
-(
-    rfm_segmented
-    .write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .save("Files/gold/rfm_segmentation/")
-)
+gold_rfm_path = "Tables/gold_customer_segments"
+df_rfm.write.format("delta") \
+    .mode("overwrite") \
+    .option("overwriteSchema", "true") \
+    .save(gold_rfm_path)
 
-print("RFM segmentation written to Gold layer")
-display(rfm_segmented.groupBy("rfm_segment").count().orderBy(col("count").desc()))
+# Show segment distribution
+df_rfm.groupBy("rfm_segment").count().orderBy(col("count").desc()).show()
 ```
 
-### Register Gold Tables
+## Working with Semantic Models
 
-After writing Gold datasets, register them as Lakehouse tables:
+### Creating a Semantic Model
 
 ```python
-# Register as managed tables for Semantic Model access
-spark.sql("CREATE TABLE IF NOT EXISTS gold_revenue_trends USING DELTA LOCATION 'Files/gold/revenue_trends/'")
-spark.sql("CREATE TABLE IF NOT EXISTS gold_product_performance USING DELTA LOCATION 'Files/gold/product_performance/'")
-spark.sql("CREATE TABLE IF NOT EXISTS gold_customer_analytics USING DELTA LOCATION 'Files/gold/customer_analytics/'")
-spark.sql("CREATE TABLE IF NOT EXISTS gold_rfm_segmentation USING DELTA LOCATION 'Files/gold/rfm_segmentation/'")
-
-print("Gold tables registered successfully")
+# In Fabric UI:
+# 1. Navigate to your Lakehouse
+# 2. Select Gold layer tables
+# 3. Click "New semantic model"
+# 4. Name: "RetailAnalytics_SemanticModel"
+# 5. Select tables:
+#    - gold_revenue_trends
+#    - gold_product_performance
+#    - gold_customer_segments
 ```
 
-## Semantic Model Configuration
-
-### Create Semantic Model
-
-1. In Fabric Lakehouse, navigate to **Reporting** tab
-2. Select **New Semantic Model**
-3. Choose Gold tables to include
-4. Define relationships between tables (if applicable)
-
-### Define Measures (DAX)
-
-Create calculated measures in the Semantic Model:
+### Define DAX Measures
 
 ```dax
+-- Total Revenue
 Total Revenue = SUM(gold_revenue_trends[total_revenue])
 
-Average Order Value = AVERAGE(gold_revenue_trends[avg_order_value])
+-- Average Order Value
+Avg Order Value = AVERAGE(gold_revenue_trends[avg_order_value])
 
+-- Customer Lifetime Value
+Customer LTV = 
+SUMX(
+    gold_customer_segments,
+    gold_customer_segments[monetary]
+)
+
+-- Revenue Growth Rate
 Revenue Growth % = 
 VAR CurrentRevenue = [Total Revenue]
-VAR PreviousRevenue = CALCULATE([Total Revenue], DATEADD(gold_revenue_trends[month], -1, MONTH))
-RETURN DIVIDE(CurrentRevenue - PreviousRevenue, PreviousRevenue, 0)
+VAR PreviousRevenue = CALCULATE([Total Revenue], PREVIOUSMONTH(gold_revenue_trends[Date]))
+RETURN
+    DIVIDE(CurrentRevenue - PreviousRevenue, PreviousRevenue, 0) * 100
 
-Top Product Revenue = CALCULATE(SUM(gold_product_performance[total_revenue]), TOPN(10, gold_product_performance, gold_product_performance[total_revenue], DESC))
-
-Customer Lifetime Value = SUMX(gold_customer_analytics, gold_customer_analytics[total_spent])
+-- Active Customers
+Active Customers = DISTINCTCOUNT(gold_revenue_trends[unique_customers])
 ```
 
 ## Power BI Integration
 
-Power BI automatically connects to the Semantic Model:
+### Connecting to Semantic Model
 
-1. Create **New Report** from Semantic Model
-2. Build visualizations using Gold tables and measures
-3. Publish report to Fabric workspace
+```python
+# Power BI automatically connects to Fabric Semantic Models
+# In Power BI Service or Desktop:
+# 1. Create new report
+# 2. Get Data → Power BI semantic models
+# 3. Select "RetailAnalytics_SemanticModel"
+# 4. Build visuals using pre-defined measures
+```
 
-### Key Visuals
+### Example Report Layout
 
-- **Revenue Trend**: Line chart showing revenue over time
-- **Product Performance**: Bar chart of top products by revenue
-- **Customer Segments**: Pie chart showing RFM distribution
-- **KPI Cards**: Total revenue, customer count, avg order value
+```
+Dashboard Components:
+├── KPI Cards
+│   ├── Total Revenue
+│   ├── Total Orders
+│   ├── Avg Order Value
+│   └── Active Customers
+├── Time Series
+│   └── Revenue Trend (Line chart)
+├── Product Analysis
+│   ├── Top 10 Products (Bar chart)
+│   └── Category Performance (Treemap)
+└── Customer Segments
+    ├── RFM Distribution (Donut chart)
+    └── Segment Metrics (Table)
+```
 
 ## Common Patterns
 
-### Incremental Data Loading
+### Pattern 1: Incremental Load Pattern
 
 ```python
-from delta.tables import DeltaTable
+# Load only new data since last run
+from pyspark.sql.functions import to_date
 
-# Read existing Gold table
-existing_table = DeltaTable.forPath(spark, "Files/gold/revenue_trends/")
+# Read checkpoint
+checkpoint_path = "Files/checkpoints/last_load_date.txt"
+try:
+    last_load_date = spark.read.text(checkpoint_path).first()[0]
+except:
+    last_load_date = "1900-01-01"
 
-# Merge new data (upsert pattern)
-(
-    existing_table.alias("existing")
-    .merge(
-        new_revenue_trends.alias("new"),
-        "existing.year = new.year AND existing.month = new.month"
-    )
-    .whenMatchedUpdateAll()
-    .whenNotMatchedInsertAll()
-    .execute()
-)
+# Incremental load
+df_incremental = df_bronze \
+    .filter(col("InvoiceDate") > last_load_date)
+
+# Process and merge with existing Silver data
+df_silver_existing = spark.read.format("delta").load("Tables/silver_online_retail")
+df_silver_combined = df_silver_existing.union(df_incremental).dropDuplicates()
+
+# Write back
+df_silver_combined.write.format("delta") \
+    .mode("overwrite") \
+    .save("Tables/silver_online_retail")
+
+# Update checkpoint
+from datetime import datetime
+new_checkpoint = datetime.now().strftime("%Y-%m-%d")
+spark.createDataFrame([(new_checkpoint,)], ["date"]) \
+    .write.mode("overwrite").text(checkpoint_path)
 ```
 
-### Data Quality Validation
+### Pattern 2: Data Quality Checks
 
 ```python
-def validate_data_quality(df, table_name):
-    """Validate data quality before writing to Gold"""
-    null_counts = df.select([count(when(col(c).isNull(), c)).alias(c) for c in df.columns])
+def run_data_quality_checks(df, layer_name):
+    """Run automated DQ checks"""
     
-    print(f"Data Quality Report for {table_name}")
-    print(f"Total rows: {df.count()}")
-    print("Null counts:")
-    null_counts.show()
+    checks = {
+        "total_records": df.count(),
+        "null_customer_ids": df.filter(col("CustomerID").isNull()).count(),
+        "negative_quantities": df.filter(col("Quantity") < 0).count(),
+        "zero_prices": df.filter(col("UnitPrice") <= 0).count(),
+        "duplicate_invoices": df.count() - df.dropDuplicates(["InvoiceNo", "StockCode"]).count()
+    }
     
-    # Check for critical nulls
-    critical_columns = ["CustomerID", "InvoiceDate", "line_total"]
-    for col_name in critical_columns:
-        null_count = df.filter(col(col_name).isNull()).count()
-        if null_count > 0:
-            print(f"WARNING: {null_count} null values in critical column {col_name}")
-
-# Use before writing to Gold
-validate_data_quality(revenue_trends, "revenue_trends")
-```
-
-### Environment-Specific Configuration
-
-```python
-# Use Fabric workspace context
-import os
-
-# Get workspace and lakehouse from environment
-WORKSPACE_ID = os.getenv("FABRIC_WORKSPACE_ID")
-LAKEHOUSE_ID = os.getenv("FABRIC_LAKEHOUSE_ID")
-
-# Dynamic path construction
-def get_layer_path(layer, dataset):
-    """Generate lakehouse path based on layer"""
-    return f"Files/{layer}/{dataset}/"
+    # Log results
+    print(f"=== Data Quality Report: {layer_name} ===")
+    for check, value in checks.items():
+        print(f"{check}: {value}")
+    
+    # Alert if thresholds exceeded
+    if checks["null_customer_ids"] > 100:
+        print(f"⚠️ WARNING: High null CustomerIDs: {checks['null_customer_ids']}")
+    
+    return checks
 
 # Usage
-silver_path = get_layer_path("silver", "online_retail")
-gold_path = get_layer_path("gold", "revenue_trends")
+dq_results = run_data_quality_checks(df_silver, "Silver Layer")
+```
+
+### Pattern 3: Parameterized Notebooks
+
+```python
+# Fabric Notebook with parameters
+# Define parameters (can be overridden in pipelines)
+dbutils.widgets.text("layer", "silver", "Data Layer")
+dbutils.widgets.text("table_name", "online_retail", "Table Name")
+dbutils.widgets.text("mode", "overwrite", "Write Mode")
+
+# Get parameter values
+layer = dbutils.widgets.get("layer")
+table_name = dbutils.widgets.get("table_name")
+mode = dbutils.widgets.get("mode")
+
+# Dynamic processing
+input_path = f"Tables/{layer}_{table_name}"
+output_path = f"Tables/{layer}_processed_{table_name}"
+
+df = spark.read.format("delta").load(input_path)
+# ... apply transformations ...
+df_processed.write.format("delta").mode(mode).save(output_path)
+```
+
+## Configuration
+
+### Notebook Environment Variables
+
+```python
+# Reference workspace and lakehouse
+WORKSPACE_ID = "00000000-0000-0000-0000-000000000000"  # Get from Fabric UI
+LAKEHOUSE_ID = "00000000-0000-0000-0000-000000000000"  # Get from Fabric UI
+
+# Storage paths
+BRONZE_PATH = "Files/bronze"
+SILVER_PATH = "Files/silver"
+GOLD_PATH = "Files/gold"
+DELTA_TABLES_PATH = "Tables"
+
+# Processing configurations
+SPARK_CONFIGS = {
+    "spark.sql.adaptive.enabled": "true",
+    "spark.sql.adaptive.coalescePartitions.enabled": "true",
+    "spark.databricks.delta.optimizeWrite.enabled": "true"
+}
+
+# Apply configs
+for key, value in SPARK_CONFIGS.items():
+    spark.conf.set(key, value)
 ```
 
 ## Troubleshooting
 
-### Dataflow Gen2 Not Refreshing
+### Issue: Dataflow Gen2 fails to write to Lakehouse
 
-**Issue**: Dataflow fails to load data from Bronze layer
+**Solution**: Check workspace permissions and lakehouse destination settings.
 
-**Solution**: 
-- Verify Lakehouse connection credentials
-- Check file path and format in Bronze layer
-- Ensure Fabric capacity has sufficient resources
-- Review refresh history for specific error messages
-
-### PySpark Notebook Timeout
-
-**Issue**: Notebook times out during large data processing
-
-**Solution**:
 ```python
-# Optimize with partition pruning
-df = spark.read.format("delta").load("Files/silver/online_retail/") \
-    .filter(col("year") == 2023)  # Partition filter
-
-# Cache frequently accessed data
-df.cache()
-
-# Repartition for better parallelism
-df = df.repartition(8, "CustomerID")
+# Verify lakehouse connection in Dataflow:
+# 1. Ensure workspace contributor role
+# 2. Confirm lakehouse exists in same workspace
+# 3. Check destination folder path (use Files/silver, not /Files/silver)
 ```
 
-### Delta Table Schema Conflicts
+### Issue: PySpark notebook can't find Delta tables
 
-**Issue**: Schema mismatch when writing to existing Delta table
+**Solution**: Use correct path format and verify table exists.
 
-**Solution**:
 ```python
-# Option 1: Overwrite with schema merge
-df.write.format("delta") \
-    .mode("overwrite") \
-    .option("mergeSchema", "true") \
-    .save("Files/gold/revenue_trends/")
+# Correct path formats:
+df = spark.read.format("delta").load("Tables/silver_online_retail")  # ✓ Correct
+df = spark.read.format("delta").load("Files/silver/online_retail")   # ✗ Wrong
 
-# Option 2: Explicit schema evolution
-df.write.format("delta") \
-    .mode("overwrite") \
-    .option("overwriteSchema", "true") \
-    .save("Files/gold/revenue_trends/")
+# List available tables
+display(spark.sql("SHOW TABLES"))
+
+# Describe table location
+spark.sql("DESCRIBE EXTENDED silver_online_retail").show(truncate=False)
 ```
 
-### Semantic Model Not Showing Tables
+### Issue: Out of memory errors in PySpark
 
-**Issue**: Gold tables not appearing in Semantic Model
+**Solution**: Optimize partitioning and use incremental processing.
 
-**Solution**:
-- Ensure tables are registered in Lakehouse SQL endpoint
-- Refresh Semantic Model metadata
-- Check table permissions in workspace
-- Verify tables are properly formatted as Delta tables
+```python
+# Repartition large datasets
+df_large = df.repartition(200, "CustomerID")
 
-### Power BI Report Performance
+# Use broadcast for small dimension tables
+from pyspark.sql.functions import broadcast
+df_result = df_large.join(broadcast(df_small), "key")
 
-**Issue**: Slow report rendering with large datasets
+# Process in batches
+for year in [2020, 2021, 2022]:
+    df_batch = df.filter(col("year") == year)
+    # Process batch...
+```
 
-**Solution**:
-- Use DirectLake mode for optimal performance
-- Create aggregated tables in Gold layer for summary views
-- Define proper relationships in Semantic Model
-- Use Import mode for smaller, frequently accessed data
+### Issue: Semantic model refresh fails
+
+**Solution**: Check data source credentials and table schemas.
+
+```python
+# Ensure:
+# 1. Semantic model has proper lakehouse connection
+# 2. Gold tables use consistent schema
+# 3. No breaking schema changes between refreshes
+# 4. Refresh schedule aligns with data pipeline completion
+```
 
 ## Best Practices
 
-1. **Medallion Layers**: Always preserve raw data in Bronze, clean in Silver, and aggregate in Gold
-2. **Delta Format**: Use Delta Lake for ACID transactions and time travel
-3. **Incremental Processing**: Implement merge patterns for efficient updates
-4. **Data Quality**: Validate data at each layer transition
-5. **Partitioning**: Partition large tables by date for query performance
-6. **Documentation**: Document transformations and business logic in notebooks
-7. **Version Control**: Export notebooks and track changes externally
-8. **Workspace Organization**: Use separate workspaces for dev/test/prod environments
+1. **Always use Delta format** for tables (ACID transactions, time travel)
+2. **Partition large tables** by date or high-cardinality columns
+3. **Implement data quality checks** at each medallion layer
+4. **Use semantic models** for consistent business logic
+5. **Version control notebooks** using Fabric Git integration
+6. **Monitor OneLake storage** and clean up unused data
+7. **Use incremental loads** for large datasets
+8. **Document data lineage** through comments and metadata
 
 ## Additional Resources
 
 - [Microsoft Fabric Documentation](https://learn.microsoft.com/en-us/fabric/)
-- [Dataflow Gen2 Guide](https://learn.microsoft.com/en-us/fabric/data-factory/dataflows-gen2-overview)
-- [Delta Lake on Fabric](https://learn.microsoft.com/en-us/fabric/data-engineering/delta-optimization-and-v-order)
+- [OneLake Overview](https://learn.microsoft.com/en-us/fabric/onelake/)
 - [PySpark API Reference](https://spark.apache.org/docs/latest/api/python/)
+- [Power BI Service](https://powerbi.microsoft.com/)
+
+---
+
+This skill enables AI coding agents to assist with building production-ready unified analytics platforms using Microsoft Fabric's complete suite of data engineering and business intelligence capabilities.
