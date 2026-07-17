@@ -1,15 +1,15 @@
 ---
 name: enterprise-user-management-ai-analytics
-description: Full-stack user management system with AI-powered analytics, task tracking, and intelligent ticket routing using React, Node.js, and FastAPI ML services
+description: Full-stack user management system with AI-powered analytics for task management, ticket classification, and risk detection
 triggers:
   - how do I set up the enterprise user management system
   - integrate AI analytics into user management
-  - implement JWT authentication for user roles
-  - create AI-powered ticket classification
-  - build a kanban task board with user tracking
-  - set up burnout detection and risk prediction
-  - configure MongoDB for user management system
-  - deploy enterprise user management with ML service
+  - create a user management dashboard with AI
+  - implement ticket classification and risk detection
+  - build an admin dashboard with anomaly detection
+  - set up JWT authentication for user management
+  - use AI for burnout detection and task analytics
+  - deploy enterprise user management with FastAPI ML service
 ---
 
 # Enterprise User Management System with AI Analytics
@@ -18,48 +18,54 @@ triggers:
 
 ## Overview
 
-The Enterprise User Management System with AI Analytics is a full-stack application that combines traditional user/task management with AI-powered insights. It provides role-based access control (Admin/User), task tracking with Kanban boards, support ticket management, and ML-driven analytics including risk detection, anomaly detection, burnout analysis, and predictive project insights.
+Enterprise User Management System with AI Analytics is a full-stack JavaScript application that combines user/task management with AI-driven insights. The system provides role-based access control, Kanban task tracking, support ticket management, and ML-powered features including risk prediction, anomaly detection, burnout analysis, and ticket classification.
 
-**Core Components:**
-- **Frontend**: React.js application for user/admin dashboards
-- **Backend**: Node.js REST API with JWT authentication
-- **ML Service**: FastAPI-based AI analytics engine using scikit-learn and River
-- **Database**: MongoDB for data persistence
+**Architecture:**
+- **Frontend:** React.js (port 3000)
+- **Backend:** Node.js with Express (port 5000)
+- **ML Service:** FastAPI with scikit-learn and River (port 8000)
+- **Database:** MongoDB
+- **Auth:** JWT tokens
 
 ## Installation
 
 ### Prerequisites
-- Node.js 14+ and npm
-- Python 3.8+
-- MongoDB instance (local or cloud)
-
-### Clone and Setup
 
 ```bash
-# Clone the repository
+# Required software
+node --version  # v14+
+npm --version   # v6+
+python --version  # v3.8+
+mongod --version  # v4.4+
+```
+
+### Full Stack Setup
+
+```bash
+# Clone repository
 git clone https://github.com/Nareshkumar2583/Enterprise-User-Management-System-with-AI-Analytics.git
 cd Enterprise-User-Management-System-with-AI-Analytics
 
 # Backend setup
 cd backend
 npm install
-cp .env.example .env  # Configure environment variables
+npm start  # Runs on http://localhost:5000
 
-# ML Service setup
-cd ../ml-service
+# ML Service setup (new terminal)
+cd ml-service
 pip install -r requirements.txt
-cp .env.example .env  # Configure ML service
+uvicorn main:app --reload  # Runs on http://localhost:8000
 
-# Frontend setup
-cd ../frontend
+# Frontend setup (new terminal)
+cd frontend
 npm install
-cp .env.example .env  # Configure API endpoints
+npm start  # Runs on http://localhost:3000
 ```
 
 ### Environment Configuration
 
-**Backend (.env)**:
-```env
+**Backend (.env):**
+```bash
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/enterprise_user_mgmt
 JWT_SECRET=your_jwt_secret_key_here
@@ -68,61 +74,41 @@ ML_SERVICE_URL=http://localhost:8000
 NODE_ENV=development
 ```
 
-**ML Service (.env)**:
-```env
-PORT=8000
+**ML Service (.env):**
+```bash
 MODEL_PATH=./models
 LOG_LEVEL=INFO
+BACKEND_URL=http://localhost:5000
 ```
 
-**Frontend (.env)**:
-```env
+**Frontend (.env):**
+```bash
 REACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_ML_API_URL=http://localhost:8000
 ```
 
-## Running the Application
-
-```bash
-# Terminal 1 - Backend
-cd backend
-npm start  # Runs on http://localhost:5000
-
-# Terminal 2 - ML Service
-cd ml-service
-uvicorn main:app --reload  # Runs on http://localhost:8000
-
-# Terminal 3 - Frontend
-cd frontend
-npm start  # Runs on http://localhost:3000
-```
-
-## Backend API Reference
+## Backend API Usage
 
 ### Authentication
 
-**User Registration**:
 ```javascript
-// POST /api/auth/register
-const registerUser = async (userData) => {
+// Register new user
+const register = async (userData) => {
   const response = await fetch('http://localhost:5000/api/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      name: userData.name,
+      username: userData.username,
       email: userData.email,
       password: userData.password,
-      role: userData.role || 'user'  // 'admin' or 'user'
+      role: userData.role || 'user' // 'user' or 'admin'
     })
   });
   return response.json();
 };
-```
 
-**User Login**:
-```javascript
-// POST /api/auth/login
-const loginUser = async (credentials) => {
+// Login
+const login = async (credentials) => {
   const response = await fetch('http://localhost:5000/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -132,55 +118,61 @@ const loginUser = async (credentials) => {
     })
   });
   const data = await response.json();
-  // Store JWT token
+  // Store token
   localStorage.setItem('token', data.token);
   return data;
+};
+
+// Authenticated request helper
+const authFetch = async (url, options = {}) => {
+  const token = localStorage.getItem('token');
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
 };
 ```
 
 ### User Management (Admin)
 
-**Get All Users**:
 ```javascript
-// GET /api/users
+// Get all users
 const getAllUsers = async () => {
-  const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:5000/api/users', {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+  const response = await authFetch('http://localhost:5000/api/users');
+  return response.json();
+};
+
+// Create user
+const createUser = async (userData) => {
+  const response = await authFetch('http://localhost:5000/api/users', {
+    method: 'POST',
+    body: JSON.stringify({
+      username: userData.username,
+      email: userData.email,
+      role: userData.role,
+      department: userData.department
+    })
   });
   return response.json();
 };
-```
 
-**Update User**:
-```javascript
-// PUT /api/users/:id
+// Update user
 const updateUser = async (userId, updates) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+  const response = await authFetch(`http://localhost:5000/api/users/${userId}`, {
     method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(updates)
   });
   return response.json();
 };
-```
 
-**Delete User**:
-```javascript
-// DELETE /api/users/:id
+// Delete user
 const deleteUser = async (userId) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+  const response = await authFetch(`http://localhost:5000/api/users/${userId}`, {
+    method: 'DELETE'
   });
   return response.json();
 };
@@ -188,56 +180,46 @@ const deleteUser = async (userId) => {
 
 ### Task Management
 
-**Create Task**:
 ```javascript
-// POST /api/tasks
+// Get user tasks
+const getUserTasks = async (userId) => {
+  const response = await authFetch(`http://localhost:5000/api/tasks/user/${userId}`);
+  return response.json();
+};
+
+// Create task
 const createTask = async (taskData) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:5000/api/tasks', {
+  const response = await authFetch('http://localhost:5000/api/tasks', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       title: taskData.title,
       description: taskData.description,
-      assignedTo: taskData.userId,
-      priority: taskData.priority,  // 'low', 'medium', 'high'
-      status: 'todo',  // 'todo', 'in-progress', 'done'
+      assignedTo: taskData.assignedTo,
+      priority: taskData.priority, // 'low', 'medium', 'high'
+      status: taskData.status || 'todo', // 'todo', 'in-progress', 'done'
       dueDate: taskData.dueDate
     })
   });
   return response.json();
 };
-```
 
-**Update Task Status**:
-```javascript
-// PATCH /api/tasks/:id/status
-const updateTaskStatus = async (taskId, newStatus) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/status`, {
+// Update task status (Kanban)
+const updateTaskStatus = async (taskId, status) => {
+  const response = await authFetch(`http://localhost:5000/api/tasks/${taskId}/status`, {
     method: 'PATCH',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ status: newStatus })
+    body: JSON.stringify({ status })
   });
   return response.json();
 };
-```
 
-**Get User Tasks**:
-```javascript
-// GET /api/tasks/user/:userId
-const getUserTasks = async (userId) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`http://localhost:5000/api/tasks/user/${userId}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+// Track time on task
+const trackTime = async (taskId, timeData) => {
+  const response = await authFetch(`http://localhost:5000/api/tasks/${taskId}/time`, {
+    method: 'POST',
+    body: JSON.stringify({
+      duration: timeData.duration, // in seconds
+      date: new Date().toISOString()
+    })
   });
   return response.json();
 };
@@ -245,60 +227,54 @@ const getUserTasks = async (userId) => {
 
 ### Support Tickets
 
-**Create Ticket**:
 ```javascript
-// POST /api/tickets
+// Create support ticket
 const createTicket = async (ticketData) => {
-  const token = localStorage.getItem('token');
-  const response = await fetch('http://localhost:5000/api/tickets', {
+  const response = await authFetch('http://localhost:5000/api/tickets', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       title: ticketData.title,
       description: ticketData.description,
       priority: ticketData.priority,
-      category: ticketData.category  // AI will classify if not provided
+      category: ticketData.category
     })
   });
   return response.json();
 };
-```
 
-**Get All Tickets (Admin)**:
-```javascript
-// GET /api/tickets
-const getAllTickets = async (filters = {}) => {
-  const token = localStorage.getItem('token');
-  const queryParams = new URLSearchParams(filters);
-  const response = await fetch(`http://localhost:5000/api/tickets?${queryParams}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+// Get user tickets
+const getUserTickets = async () => {
+  const response = await authFetch('http://localhost:5000/api/tickets/my-tickets');
+  return response.json();
+};
+
+// Update ticket status
+const updateTicketStatus = async (ticketId, status) => {
+  const response = await authFetch(`http://localhost:5000/api/tickets/${ticketId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status })
   });
   return response.json();
 };
 ```
 
-## ML Service API Reference
+## ML Service API Usage
 
 ### Ticket Classification
 
 ```javascript
-// POST /api/ml/classify-ticket
+// Classify ticket using AI
 const classifyTicket = async (ticketText) => {
   const response = await fetch('http://localhost:8000/api/ml/classify-ticket', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      text: ticketText,
-      title: "Issue with login"
+      title: ticketText.title,
+      description: ticketText.description
     })
   });
   const result = await response.json();
-  // Returns: { category: 'technical', confidence: 0.87, priority: 'high' }
+  // Returns: { category: 'technical', priority: 'high', confidence: 0.85 }
   return result;
 };
 ```
@@ -306,17 +282,19 @@ const classifyTicket = async (ticketText) => {
 ### Risk Prediction
 
 ```javascript
-// POST /api/ml/predict-risk
+// Predict user risk based on behavior
 const predictUserRisk = async (userId) => {
-  const response = await fetch('http://localhost:8000/api/ml/predict-risk', {
+  const response = await fetch('http://localhost:8000/api/ml/risk-prediction', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       user_id: userId,
-      login_frequency: 45,
-      failed_logins: 3,
-      task_completion_rate: 0.65,
-      avg_task_time: 120
+      features: {
+        failed_login_attempts: 3,
+        unusual_activity: true,
+        data_access_frequency: 45,
+        after_hours_access: 12
+      }
     })
   });
   const result = await response.json();
@@ -325,647 +303,554 @@ const predictUserRisk = async (userId) => {
 };
 ```
 
-### Burnout Detection
-
-```javascript
-// POST /api/ml/detect-burnout
-const detectBurnout = async (userMetrics) => {
-  const response = await fetch('http://localhost:8000/api/ml/detect-burnout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user_id: userMetrics.userId,
-      avg_daily_hours: userMetrics.avgDailyHours,
-      task_overload_ratio: userMetrics.taskOverloadRatio,
-      missed_deadlines: userMetrics.missedDeadlines,
-      weekend_work_frequency: userMetrics.weekendWork
-    })
-  });
-  const result = await response.json();
-  // Returns: { burnout_risk: 'high', score: 0.81, recommendations: [...] }
-  return result;
-};
-```
-
 ### Anomaly Detection
 
 ```javascript
-// POST /api/ml/detect-anomaly
-const detectAnomaly = async (activityData) => {
-  const response = await fetch('http://localhost:8000/api/ml/detect-anomaly', {
+// Detect anomalies in user behavior
+const detectAnomalies = async (behaviorData) => {
+  const response = await fetch('http://localhost:8000/api/ml/anomaly-detection', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_id: activityData.userId,
-      login_time: activityData.loginTime,
-      ip_address: activityData.ipAddress,
-      location: activityData.location,
-      actions_per_minute: activityData.actionsPerMinute
+      user_id: behaviorData.userId,
+      metrics: {
+        login_time: behaviorData.loginTime,
+        location: behaviorData.location,
+        device_type: behaviorData.deviceType,
+        activity_pattern: behaviorData.activityPattern
+      }
     })
   });
   const result = await response.json();
-  // Returns: { is_anomaly: true, anomaly_score: 0.92, type: 'suspicious_location' }
+  // Returns: { is_anomaly: true, anomaly_score: 0.89, explanation: '...' }
   return result;
 };
 ```
 
-### Project Delay Prediction
+### Burnout Detection
 
 ```javascript
-// POST /api/ml/predict-delay
+// Analyze user workload for burnout risk
+const detectBurnout = async (userId) => {
+  const response = await fetch('http://localhost:8000/api/ml/burnout-detection', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id: userId,
+      workload_data: {
+        hours_worked_weekly: 65,
+        tasks_completed: 45,
+        tasks_pending: 23,
+        overtime_hours: 25,
+        days_since_break: 14
+      }
+    })
+  });
+  const result = await response.json();
+  // Returns: { burnout_risk: 'high', score: 0.78, recommendations: [...] }
+  return result;
+};
+```
+
+### Predictive Project Insights
+
+```javascript
+// Predict project delays
 const predictProjectDelay = async (projectData) => {
-  const response = await fetch('http://localhost:8000/api/ml/predict-delay', {
+  const response = await fetch('http://localhost:8000/api/ml/project-insights', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       project_id: projectData.projectId,
-      total_tasks: projectData.totalTasks,
-      completed_tasks: projectData.completedTasks,
-      days_remaining: projectData.daysRemaining,
-      team_size: projectData.teamSize,
-      avg_completion_rate: projectData.avgCompletionRate
+      features: {
+        tasks_total: 50,
+        tasks_completed: 12,
+        days_elapsed: 15,
+        days_remaining: 30,
+        team_size: 5,
+        avg_task_completion_time: 2.5
+      }
     })
   });
   const result = await response.json();
-  // Returns: { delay_probability: 0.68, estimated_delay_days: 5, factors: [...] }
+  // Returns: { delay_probability: 0.65, estimated_delay_days: 7, suggestions: [...] }
   return result;
 };
 ```
 
-## Frontend Patterns
+## React Frontend Integration
 
-### React Component for Kanban Board
+### User Dashboard Component
 
 ```javascript
 import React, { useState, useEffect } from 'react';
 
-const KanbanBoard = ({ userId }) => {
+const UserDashboard = () => {
   const [tasks, setTasks] = useState({ todo: [], inProgress: [], done: [] });
+  const [burnoutRisk, setBurnoutRisk] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUserTasks();
-  }, [userId]);
+    loadDashboardData();
+  }, []);
 
-  const fetchUserTasks = async () => {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:5000/api/tasks/user/${userId}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await response.json();
-    
-    // Group tasks by status
-    const grouped = {
-      todo: data.filter(t => t.status === 'todo'),
-      inProgress: data.filter(t => t.status === 'in-progress'),
-      done: data.filter(t => t.status === 'done')
-    };
-    setTasks(grouped);
+  const loadDashboardData = async () => {
+    try {
+      const userId = JSON.parse(localStorage.getItem('user')).id;
+      
+      // Fetch tasks
+      const tasksRes = await authFetch(`${process.env.REACT_APP_API_URL}/tasks/user/${userId}`);
+      const tasksData = await tasksRes.json();
+      
+      // Organize by status
+      setTasks({
+        todo: tasksData.filter(t => t.status === 'todo'),
+        inProgress: tasksData.filter(t => t.status === 'in-progress'),
+        done: tasksData.filter(t => t.status === 'done')
+      });
+
+      // Check burnout risk
+      const burnoutRes = await fetch(`${process.env.REACT_APP_ML_API_URL}/api/ml/burnout-detection`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+      });
+      const burnoutData = await burnoutRes.json();
+      setBurnoutRisk(burnoutData);
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Dashboard load error:', error);
+    }
   };
 
   const moveTask = async (taskId, newStatus) => {
-    const token = localStorage.getItem('token');
-    await fetch(`http://localhost:5000/api/tasks/${taskId}/status`, {
+    await authFetch(`${process.env.REACT_APP_API_URL}/tasks/${taskId}/status`, {
       method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({ status: newStatus })
     });
-    fetchUserTasks();
+    loadDashboardData();
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="kanban-board">
-      <Column title="To Do" tasks={tasks.todo} onMove={moveTask} />
-      <Column title="In Progress" tasks={tasks.inProgress} onMove={moveTask} />
-      <Column title="Done" tasks={tasks.done} onMove={moveTask} />
-    </div>
-  );
-};
-
-export default KanbanBoard;
-```
-
-### AI-Powered Ticket Creation
-
-```javascript
-import React, { useState } from 'react';
-
-const CreateTicketWithAI = () => {
-  const [ticketData, setTicketData] = useState({
-    title: '',
-    description: ''
-  });
-  const [aiSuggestions, setAiSuggestions] = useState(null);
-
-  const handleAIClassify = async () => {
-    // Get AI classification
-    const mlResponse = await fetch('http://localhost:8000/api/ml/classify-ticket', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: ticketData.description,
-        title: ticketData.title
-      })
-    });
-    const suggestions = await mlResponse.json();
-    setAiSuggestions(suggestions);
-  };
-
-  const submitTicket = async () => {
-    const token = localStorage.getItem('token');
-    await fetch('http://localhost:5000/api/tickets', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ...ticketData,
-        category: aiSuggestions?.category,
-        priority: aiSuggestions?.priority
-      })
-    });
-  };
-
-  return (
-    <div className="ticket-form">
-      <input
-        value={ticketData.title}
-        onChange={(e) => setTicketData({ ...ticketData, title: e.target.value })}
-        placeholder="Ticket Title"
-      />
-      <textarea
-        value={ticketData.description}
-        onChange={(e) => setTicketData({ ...ticketData, description: e.target.value })}
-        placeholder="Description"
-      />
-      <button onClick={handleAIClassify}>Get AI Suggestions</button>
-      {aiSuggestions && (
-        <div className="ai-suggestions">
-          <p>Category: {aiSuggestions.category}</p>
-          <p>Priority: {aiSuggestions.priority}</p>
-          <p>Confidence: {(aiSuggestions.confidence * 100).toFixed(0)}%</p>
+    <div className="dashboard">
+      {burnoutRisk && burnoutRisk.burnout_risk === 'high' && (
+        <div className="alert alert-warning">
+          ⚠️ High burnout risk detected. Consider taking a break.
         </div>
       )}
-      <button onClick={submitTicket}>Submit Ticket</button>
+      
+      <div className="kanban-board">
+        <div className="column">
+          <h3>To Do ({tasks.todo.length})</h3>
+          {tasks.todo.map(task => (
+            <TaskCard 
+              key={task.id} 
+              task={task} 
+              onMove={() => moveTask(task.id, 'in-progress')}
+            />
+          ))}
+        </div>
+        
+        <div className="column">
+          <h3>In Progress ({tasks.inProgress.length})</h3>
+          {tasks.inProgress.map(task => (
+            <TaskCard 
+              key={task.id} 
+              task={task} 
+              onMove={() => moveTask(task.id, 'done')}
+            />
+          ))}
+        </div>
+        
+        <div className="column">
+          <h3>Done ({tasks.done.length})</h3>
+          {tasks.done.map(task => (
+            <TaskCard key={task.id} task={task} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
-
-export default CreateTicketWithAI;
 ```
 
-### Admin Dashboard with AI Analytics
+### Admin Analytics Dashboard
 
 ```javascript
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AdminDashboard = () => {
-  const [analytics, setAnalytics] = useState({
-    users: [],
-    riskUsers: [],
-    burnoutAlerts: [],
-    anomalies: []
-  });
+  const [analytics, setAnalytics] = useState(null);
+  const [riskUsers, setRiskUsers] = useState([]);
 
   useEffect(() => {
-    fetchAnalytics();
+    loadAnalytics();
   }, []);
 
-  const fetchAnalytics = async () => {
-    const token = localStorage.getItem('token');
-    
+  const loadAnalytics = async () => {
     // Get all users
-    const usersRes = await fetch('http://localhost:5000/api/users', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    const usersRes = await authFetch(`${process.env.REACT_APP_API_URL}/users`);
     const users = await usersRes.json();
 
-    // Get AI analytics for each user
-    const aiPromises = users.map(async (user) => {
-      const riskRes = await fetch('http://localhost:8000/api/ml/predict-risk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: user._id, ...user.metrics })
-      });
-      return { user, risk: await riskRes.json() };
-    });
+    // Check risk for each user
+    const riskChecks = await Promise.all(
+      users.map(async (user) => {
+        const res = await fetch(`${process.env.REACT_APP_ML_API_URL}/api/ml/risk-prediction`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: user.id })
+        });
+        const risk = await res.json();
+        return { ...user, risk };
+      })
+    );
 
-    const aiResults = await Promise.all(aiPromises);
-    const highRisk = aiResults.filter(r => r.risk.risk_level === 'high');
+    const highRisk = riskChecks.filter(u => u.risk.risk_level === 'high');
+    setRiskUsers(highRisk);
 
-    setAnalytics({
-      users,
-      riskUsers: highRisk,
-      burnoutAlerts: [],  // Fetch burnout data similarly
-      anomalies: []  // Fetch anomaly data similarly
-    });
+    // Get system analytics
+    const analyticsRes = await authFetch(`${process.env.REACT_APP_API_URL}/analytics/overview`);
+    setAnalytics(await analyticsRes.json());
   };
 
   return (
     <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
-      <div className="stats">
-        <div>Total Users: {analytics.users.length}</div>
-        <div>High Risk Users: {analytics.riskUsers.length}</div>
-        <div>Burnout Alerts: {analytics.burnoutAlerts.length}</div>
-      </div>
-      <div className="risk-users">
-        <h2>High Risk Users</h2>
-        {analytics.riskUsers.map(({ user, risk }) => (
-          <div key={user._id} className="risk-card">
-            <h3>{user.name}</h3>
-            <p>Risk Score: {(risk.risk_score * 100).toFixed(0)}%</p>
-            <p>Factors: {risk.factors.join(', ')}</p>
+      <h1>Admin Analytics</h1>
+      
+      {analytics && (
+        <div className="stats-grid">
+          <div className="stat-card">
+            <h3>Total Users</h3>
+            <p>{analytics.totalUsers}</p>
           </div>
-        ))}
-      </div>
+          <div className="stat-card">
+            <h3>Active Tasks</h3>
+            <p>{analytics.activeTasks}</p>
+          </div>
+          <div className="stat-card">
+            <h3>Open Tickets</h3>
+            <p>{analytics.openTickets}</p>
+          </div>
+        </div>
+      )}
+
+      {riskUsers.length > 0 && (
+        <div className="risk-alerts">
+          <h2>⚠️ High Risk Users</h2>
+          {riskUsers.map(user => (
+            <div key={user.id} className="risk-card">
+              <h4>{user.username}</h4>
+              <p>Risk Score: {user.risk.risk_score.toFixed(2)}</p>
+              <p>Factors: {user.risk.factors.join(', ')}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
-
-export default AdminDashboard;
 ```
 
-## MongoDB Schema Examples
-
-### User Schema
+### Smart Ticket Creation with AI
 
 ```javascript
-// backend/models/User.js
-const mongoose = require('mongoose');
+import React, { useState } from 'react';
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'user'], default: 'user' },
-  metrics: {
-    loginFrequency: { type: Number, default: 0 },
-    failedLogins: { type: Number, default: 0 },
-    taskCompletionRate: { type: Number, default: 0 },
-    avgTaskTime: { type: Number, default: 0 },
-    avgDailyHours: { type: Number, default: 0 }
-  },
-  createdAt: { type: Date, default: Date.now },
-  lastLogin: { type: Date }
-});
+const CreateTicket = () => {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: ''
+  });
+  const [aiSuggestion, setAiSuggestion] = useState(null);
 
-module.exports = mongoose.model('User', userSchema);
-```
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-### Task Schema
+  const classifyWithAI = async () => {
+    if (!formData.title || !formData.description) return;
 
-```javascript
-// backend/models/Task.js
-const mongoose = require('mongoose');
-
-const taskSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String },
-  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  status: { 
-    type: String, 
-    enum: ['todo', 'in-progress', 'done'], 
-    default: 'todo' 
-  },
-  priority: { 
-    type: String, 
-    enum: ['low', 'medium', 'high'], 
-    default: 'medium' 
-  },
-  dueDate: { type: Date },
-  timeSpent: { type: Number, default: 0 },  // in minutes
-  createdAt: { type: Date, default: Date.now },
-  completedAt: { type: Date }
-});
-
-module.exports = mongoose.model('Task', taskSchema);
-```
-
-### Ticket Schema
-
-```javascript
-// backend/models/Ticket.js
-const mongoose = require('mongoose');
-
-const ticketSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  status: { 
-    type: String, 
-    enum: ['open', 'in-progress', 'resolved', 'closed'], 
-    default: 'open' 
-  },
-  priority: { 
-    type: String, 
-    enum: ['low', 'medium', 'high', 'urgent'], 
-    default: 'medium' 
-  },
-  category: { 
-    type: String, 
-    enum: ['technical', 'billing', 'general', 'feature-request'] 
-  },
-  aiClassification: {
-    category: String,
-    confidence: Number,
-    suggestedPriority: String
-  },
-  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
-
-module.exports = mongoose.model('Ticket', ticketSchema);
-```
-
-## JWT Middleware Implementation
-
-```javascript
-// backend/middleware/auth.js
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-
-const authMiddleware = async (req, res, next) => {
-  try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const response = await fetch(`${process.env.REACT_APP_ML_API_URL}/api/ml/classify-ticket`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: formData.title,
+        description: formData.description
+      })
+    });
     
-    if (!token) {
-      return res.status(401).json({ error: 'Authentication required' });
-    }
+    const classification = await response.json();
+    setAiSuggestion(classification);
+  };
 
+  const submitTicket = async () => {
+    const ticketData = {
+      ...formData,
+      category: aiSuggestion?.category || 'general',
+      priority: aiSuggestion?.priority || 'medium'
+    };
+
+    await authFetch(`${process.env.REACT_APP_API_URL}/tickets`, {
+      method: 'POST',
+      body: JSON.stringify(ticketData)
+    });
+
+    alert('Ticket created successfully!');
+    setFormData({ title: '', description: '' });
+    setAiSuggestion(null);
+  };
+
+  return (
+    <div className="create-ticket">
+      <h2>Create Support Ticket</h2>
+      
+      <input
+        type="text"
+        name="title"
+        placeholder="Title"
+        value={formData.title}
+        onChange={handleChange}
+      />
+      
+      <textarea
+        name="description"
+        placeholder="Description"
+        value={formData.description}
+        onChange={handleChange}
+        rows="5"
+      />
+
+      <button onClick={classifyWithAI}>
+        🤖 Classify with AI
+      </button>
+
+      {aiSuggestion && (
+        <div className="ai-suggestion">
+          <h4>AI Suggestions</h4>
+          <p><strong>Category:</strong> {aiSuggestion.category}</p>
+          <p><strong>Priority:</strong> {aiSuggestion.priority}</p>
+          <p><strong>Confidence:</strong> {(aiSuggestion.confidence * 100).toFixed(1)}%</p>
+        </div>
+      )}
+
+      <button onClick={submitTicket} disabled={!aiSuggestion}>
+        Submit Ticket
+      </button>
+    </div>
+  );
+};
+```
+
+## Common Patterns
+
+### Role-Based Access Control
+
+```javascript
+// Middleware for protected routes
+const requireAuth = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId);
-
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' });
-    }
-
-    req.user = user;
-    req.token = token;
+    req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Invalid token' });
+    return res.status(401).json({ error: 'Invalid token' });
   }
 };
 
-const adminOnly = (req, res, next) => {
+const requireAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required' });
   }
   next();
 };
 
-module.exports = { authMiddleware, adminOnly };
+// Usage in routes
+app.get('/api/users', requireAuth, requireAdmin, getAllUsers);
+app.get('/api/tasks/my-tasks', requireAuth, getMyTasks);
 ```
 
-## Python ML Service Implementation
-
-### FastAPI Main Application
-
-```python
-# ml-service/main.py
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import joblib
-import numpy as np
-from typing import List, Optional
-
-app = FastAPI(title="Enterprise User Management ML Service")
-
-# Enable CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Load models (train these separately)
-try:
-    ticket_classifier = joblib.load('./models/ticket_classifier.pkl')
-    risk_predictor = joblib.load('./models/risk_predictor.pkl')
-except:
-    ticket_classifier = None
-    risk_predictor = None
-
-class TicketData(BaseModel):
-    text: str
-    title: str
-
-class RiskData(BaseModel):
-    user_id: str
-    login_frequency: int
-    failed_logins: int
-    task_completion_rate: float
-    avg_task_time: float
-
-class BurnoutData(BaseModel):
-    user_id: str
-    avg_daily_hours: float
-    task_overload_ratio: float
-    missed_deadlines: int
-    weekend_work_frequency: float
-
-@app.post("/api/ml/classify-ticket")
-async def classify_ticket(data: TicketData):
-    """Classify ticket category and priority using NLP"""
-    if not ticket_classifier:
-        # Fallback to rule-based classification
-        text_lower = (data.text + " " + data.title).lower()
-        
-        if any(word in text_lower for word in ['login', 'password', 'access', 'error']):
-            category = 'technical'
-            priority = 'high'
-        elif any(word in text_lower for word in ['payment', 'invoice', 'billing']):
-            category = 'billing'
-            priority = 'medium'
-        elif any(word in text_lower for word in ['feature', 'enhancement', 'suggestion']):
-            category = 'feature-request'
-            priority = 'low'
-        else:
-            category = 'general'
-            priority = 'medium'
-        
-        return {
-            "category": category,
-            "priority": priority,
-            "confidence": 0.75
-        }
-    
-    # Use trained model
-    prediction = ticket_classifier.predict([data.text + " " + data.title])
-    confidence = ticket_classifier.predict_proba([data.text + " " + data.title]).max()
-    
-    return {
-        "category": prediction[0],
-        "priority": "high" if confidence > 0.8 else "medium",
-        "confidence": float(confidence)
-    }
-
-@app.post("/api/ml/predict-risk")
-async def predict_risk(data: RiskData):
-    """Predict user risk based on behavior metrics"""
-    # Calculate risk score
-    features = np.array([[
-        data.login_frequency,
-        data.failed_logins,
-        data.task_completion_rate,
-        data.avg_task_time
-    ]])
-    
-    # Simple scoring algorithm
-    risk_score = 0.0
-    factors = []
-    
-    if data.failed_logins > 5:
-        risk_score += 0.3
-        factors.append("high_failed_logins")
-    
-    if data.task_completion_rate < 0.5:
-        risk_score += 0.3
-        factors.append("low_completion_rate")
-    
-    if data.login_frequency < 10:
-        risk_score += 0.2
-        factors.append("low_activity")
-    
-    if data.avg_task_time > 180:
-        risk_score += 0.2
-        factors.append("slow_task_completion")
-    
-    risk_level = "high" if risk_score > 0.6 else "medium" if risk_score > 0.3 else "low"
-    
-    return {
-        "risk_score": risk_score,
-        "risk_level": risk_level,
-        "factors": factors,
-        "user_id": data.user_id
-    }
-
-@app.post("/api/ml/detect-burnout")
-async def detect_burnout(data: BurnoutData):
-    """Detect employee burnout risk"""
-    burnout_score = 0.0
-    recommendations = []
-    
-    if data.avg_daily_hours > 9:
-        burnout_score += 0.3
-        recommendations.append("Reduce daily working hours")
-    
-    if data.task_overload_ratio > 1.2:
-        burnout_score += 0.3
-        recommendations.append("Reassign some tasks")
-    
-    if data.missed_deadlines > 3:
-        burnout_score += 0.2
-        recommendations.append("Review deadline feasibility")
-    
-    if data.weekend_work_frequency > 0.5:
-        burnout_score += 0.2
-        recommendations.append("Encourage work-life balance")
-    
-    risk_level = "high" if burnout_score > 0.6 else "medium" if burnout_score > 0.3 else "low"
-    
-    return {
-        "burnout_risk": risk_level,
-        "score": burnout_score,
-        "recommendations": recommendations,
-        "user_id": data.user_id
-    }
-
-@app.post("/api/ml/detect-anomaly")
-async def detect_anomaly(data: dict):
-    """Detect anomalous user behavior"""
-    is_anomaly = False
-    anomaly_score = 0.0
-    anomaly_type = None
-    
-    # Check for suspicious patterns
-    if data.get('actions_per_minute', 0) > 50:
-        is_anomaly = True
-        anomaly_score = 0.9
-        anomaly_type = 'bot_like_activity'
-    
-    # Add more anomaly detection logic
-    
-    return {
-        "is_anomaly": is_anomaly,
-        "anomaly_score": anomaly_score,
-        "type": anomaly_type,
-        "user_id": data.get('user_id')
-    }
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "ML Analytics"}
-```
-
-## Common Troubleshooting
-
-### Issue: JWT Token Expired
+### Real-time Notifications
 
 ```javascript
-// Implement token refresh logic
-const refreshToken = async () => {
-  try {
-    const refreshToken = localStorage.getItem('refreshToken');
-    const response = await fetch('http://localhost:5000/api/auth/refresh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken })
+// Socket.io integration for live updates
+const setupNotifications = (io) => {
+  io.on('connection', (socket) => {
+    socket.on('join-user-room', (userId) => {
+      socket.join(`user-${userId}`);
     });
-    const data = await response.json();
-    localStorage.setItem('token', data.token);
-    return data.token;
-  } catch (error) {
-    // Redirect to login
-    window.location.href = '/login';
-  }
+
+    // Emit notification when task is assigned
+    socket.on('task-assigned', (data) => {
+      io.to(`user-${data.userId}`).emit('notification', {
+        type: 'task_assigned',
+        message: `New task assigned: ${data.taskTitle}`,
+        timestamp: new Date()
+      });
+    });
+
+    // Emit when risk detected
+    socket.on('risk-detected', (data) => {
+      io.to(`user-${data.userId}`).emit('alert', {
+        type: 'security',
+        level: 'high',
+        message: 'Unusual activity detected on your account'
+      });
+    });
+  });
 };
 ```
 
-### Issue: MongoDB Connection Failed
+### Audit Logging
 
 ```javascript
-// backend/config/database.js
-const mongoose = require('mongoose');
-
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000
-    });
-    console.log('MongoDB connected successfully');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1);
-  }
+// Log all critical actions
+const logAction = async (userId, action, details) => {
+  await authFetch(`${process.env.REACT_APP_API_URL}/audit-logs`, {
+    method: 'POST',
+    body: JSON.stringify({
+      user_id: userId,
+      action: action,
+      details: details,
+      timestamp: new Date().toISOString(),
+      ip_address: window.location.hostname
+    })
+  });
 };
 
-module.exports = connectDB;
+// Usage
+await logAction(user.id, 'USER_DELETED', { deletedUserId: targetUser.id });
+await logAction(user.id, 'TASK_CREATED', { taskId: newTask.id, assignedTo: newTask.assignedTo });
 ```
 
-### Issue: ML Service Not Responding
+## Troubleshooting
 
-Check if the ML service is running and accessible:
+### MongoDB Connection Issues
 
 ```bash
-# Test ML service health
-curl http://localhost:8000/health
+# Check if MongoDB is running
+sudo systemctl status mongod
 
-# Check logs
-cd ml-service
-uvicorn main:app --reload --log-level debug
+# Start MongoDB
+sudo systemctl start mongod
+
+# Check connection in backend
+# Ensure MONGODB_URI in .env matches your setup
+MONGODB_URI=mongodb://localhost:27017/enterprise_user_mgmt
 ```
 
-### Issue: CORS Errors
+### JWT Token Expiration
 
 ```javascript
+// Implement token refresh
+const refreshToken = async () => {
+  const refreshToken = localStorage.getItem('refreshToken');
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken })
+  });
+  const data = await response.json();
+  localStorage.setItem('token', data.token);
+  return data.token;
+};
+
+// Add interceptor to handle 401 errors
+const authFetch = async (url, options = {}) => {
+  let response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+
+  if (response.status === 401) {
+    await refreshToken();
+    response = await fetch(url, options); // Retry with new token
+  }
+
+  return response;
+};
+```
+
+### ML Service Performance
+
+```python
+# If predictions are slow, cache common requests
+from functools import lru_cache
+
+@lru_cache(maxsize=100)
+def get_user_risk_cached(user_id: str):
+    # Cache risk scores for 5 minutes
+    return calculate_risk(user_id)
+
+# Use batch predictions for multiple users
+async def batch_risk_prediction(user_ids: list):
+    results = []
+    for batch in chunks(user_ids, 10):
+        batch_results = await asyncio.gather(*[
+            predict_risk(uid) for uid in batch
+        ])
+        results.extend(batch_results)
+    return results
+```
+
+### CORS Errors
+
+```javascript
+// Backend CORS configuration
+const cors = require('cors');
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+```
+
+### Task Status Not Updating
+
+```javascript
+// Ensure proper state management
+const updateTaskStatus = async (taskId, newStatus) => {
+  try {
+    const response = await authFetch(
+      `${process.env.REACT_APP_API_URL}/tasks/${taskId}/status`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const updated = await response.json();
+    
+    // Update local state
+    setTasks(prevTasks => ({
+      ...prevTasks,
+      [newStatus]: [...prevTasks[newStatus], updated],
+      [oldStatus]: prevTasks[oldStatus].filter(t => t.id !== taskId)
+    }));
+
+    return updated;
+  } catch (error) {
+    console.error('Failed to update task:', error);
+    throw error;
+  }
+};
+```
+
+This skill provides comprehensive coverage for integrating and using the Enterprise User Management System with AI Analytics in full-stack applications.
