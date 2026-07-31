@@ -2,31 +2,31 @@
 name: ai-data-engineering-rag-pipeline
 description: Production-grade local RAG pipeline with BM25 search, hierarchical chunking, and retrieval evaluation frameworks
 triggers:
-  - build a rag pipeline with evaluation
-  - implement bm25 search with recall metrics
-  - create hierarchical chunking for document retrieval
-  - set up local rag system with chunking strategies
-  - evaluate retrieval performance with golden datasets
-  - design production rag architecture
-  - implement inverted index search engine
-  - build document chunking with parent-child metadata
+  - build a RAG pipeline with BM25 search
+  - implement hierarchical chunking for documents
+  - evaluate retrieval performance with recall metrics
+  - create a local RAG system with chunk evaluation
+  - set up document retrieval with inverted index
+  - build a production RAG architecture
+  - implement retrieval contracts and golden datasets
+  - evaluate chunking strategies for RAG
 ---
 
-# AI & Data Engineering RAG Pipeline Skill
+# AI Data Engineering RAG Pipeline Skill
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection
 
-This skill provides expertise in building production-grade local RAG (Retrieval-Augmented Generation) pipelines using the ai-data-engineering-roadmap project. It covers BM25 baseline search engines, hierarchical chunking architectures, retrieval contracts, and evaluation frameworks with golden datasets.
+## Overview
 
-## What This Project Does
-
-The ai-data-engineering-roadmap project implements a complete RAG pipeline from scratch with:
+The `ai-data-engineering-roadmap` project provides production-grade implementations for building local Retrieval-Augmented Generation (RAG) pipelines from scratch. It includes:
 
 - **BM25 Baseline Search Engine**: Okapi BM25 ranking with inverted index
-- **Hierarchical Chunking**: Document, section, and paragraph-level chunking with parent-child metadata
-- **Retrieval Contracts**: Governed corpus with deterministic chunk IDs
-- **Evaluation Framework**: Recall@K metrics with golden datasets (questions.jsonl)
-- **Production Patterns**: Failure mode analysis and interactive retrieval simulation
+- **Hierarchical Chunking**: Multi-level document segmentation (document, section, paragraph)
+- **Retrieval Evaluation**: Recall@K metrics with golden datasets
+- **Retrieval Contracts**: Schema validation for queries and results
+- **Parent-Child Metadata Linkage**: Deterministic chunk ID generation
+
+This project is ideal for learning production RAG architectures, chunk granularity evaluation, and retrieval system benchmarking.
 
 ## Installation
 
@@ -35,537 +35,686 @@ The ai-data-engineering-roadmap project implements a complete RAG pipeline from 
 git clone https://github.com/Nahid-mahmud555/ai-data-engineering-roadmap.git
 cd ai-data-engineering-roadmap
 
-# Install dependencies (Python 3.8+)
-pip install numpy nltk
+# Install dependencies (if requirements.txt exists)
+pip install -r requirements.txt
 
-# Download NLTK data for tokenization
-python -c "import nltk; nltk.download('punkt')"
+# Or install common dependencies manually
+pip install numpy scikit-learn nltk
 ```
 
-## Key Components
+## Project Structure
 
-### Day 01: RAG Pipeline & Retrieval Contracts
+```
+ai-data-engineering-roadmap/
+├── Day_01/          # Local RAG Pipeline & Retrieval Contracts
+│   ├── corpus/      # Governed corpus documents
+│   ├── questions.jsonl  # Golden dataset
+│   └── evaluate.py  # Evaluation script
+├── Day_02/          # BM25 Baseline Search Engine
+│   ├── corpus/      # Synthetic corpus
+│   └── baseline_bm25.py  # BM25 implementation
+├── Day_03/          # Hierarchical Chunking Architecture
+│   ├── corpus/      # Multi-domain corpus
+│   └── pipeline.py  # Chunking & retrieval pipeline
+```
 
-Located in `Day_01/`, this module establishes the foundation:
+## Day 01: Retrieval Contracts & Golden Dataset
+
+### Golden Dataset Format (questions.jsonl)
 
 ```python
-# questions.jsonl format - Golden dataset structure
-{
-  "question": "What is RAG?",
-  "expected_chunks": ["chunk_001", "chunk_002"],
-  "context": "retrieval-augmented generation"
+import json
+
+# Read golden dataset
+def load_golden_dataset(path="Day_01/questions.jsonl"):
+    """Load questions with expected document IDs"""
+    questions = []
+    with open(path, 'r') as f:
+        for line in f:
+            questions.append(json.loads(line))
+    return questions
+
+# Example question format
+example_question = {
+    "question_id": "q001",
+    "query": "What are the benefits of cloud computing?",
+    "expected_docs": ["doc_cloud_101", "doc_aws_intro"]
 }
+
+# Create golden dataset
+def create_golden_dataset(questions, output_path="questions.jsonl"):
+    """Write questions to JSONL format"""
+    with open(output_path, 'w') as f:
+        for q in questions:
+            f.write(json.dumps(q) + '\n')
 ```
 
-**Key Files:**
-- `questions.jsonl`: Golden dataset with expected retrieval results
-- `corpus/`: Governed document collection
-- `evaluate.py`: Retrieval evaluation script
-
-### Day 02: BM25 Baseline Search Engine
-
-Located in `Day_02/`, implements Okapi BM25 ranking:
+### Retrieval Evaluation Script
 
 ```python
-# baseline_bm25.py - Core BM25 implementation
-import math
-from collections import defaultdict
-from typing import List, Dict, Set
+# Day_01/evaluate.py
+import json
 
-class BM25Retriever:
-    def __init__(self, k1=1.5, b=0.75):
-        """
-        Initialize BM25 retriever
+def evaluate_retrieval(results, golden_dataset, k=10):
+    """
+    Evaluate retrieval using Recall@K metric
+    
+    Args:
+        results: Dict mapping question_id to list of retrieved doc_ids
+        golden_dataset: List of dicts with question_id and expected_docs
+        k: Number of top results to consider
+    
+    Returns:
+        recall_at_k: Average recall across all queries
+    """
+    recalls = []
+    
+    for question in golden_dataset:
+        qid = question['question_id']
+        expected = set(question['expected_docs'])
+        retrieved = set(results.get(qid, [])[:k])
         
-        Args:
-            k1: Term frequency saturation parameter (default 1.5)
-            b: Length normalization parameter (default 0.75)
-        """
+        if len(expected) == 0:
+            continue
+            
+        recall = len(expected & retrieved) / len(expected)
+        recalls.append(recall)
+    
+    return sum(recalls) / len(recalls) if recalls else 0.0
+
+# Usage example
+golden_data = load_golden_dataset("questions.jsonl")
+retrieval_results = {
+    "q001": ["doc_cloud_101", "doc_aws_intro", "doc_azure"],
+    "q002": ["doc_security_01", "doc_encryption"]
+}
+
+recall = evaluate_retrieval(retrieval_results, golden_data, k=10)
+print(f"Recall@10: {recall:.3f}")
+```
+
+## Day 02: BM25 Search Engine
+
+### BM25 Implementation
+
+```python
+# Day_02/baseline_bm25.py
+import math
+from collections import defaultdict, Counter
+
+class BM25SearchEngine:
+    """
+    Okapi BM25 ranking algorithm implementation
+    
+    Parameters:
+        k1: Term frequency saturation parameter (default: 1.5)
+        b: Length normalization parameter (default: 0.75)
+    """
+    
+    def __init__(self, k1=1.5, b=0.75):
         self.k1 = k1
         self.b = b
+        self.corpus = []
+        self.doc_ids = []
         self.inverted_index = defaultdict(list)
         self.doc_lengths = {}
         self.avg_doc_length = 0
-        self.num_docs = 0
-        self.idf_scores = {}
+        self.N = 0  # Total number of documents
         
-    def build_index(self, documents: List[Dict]):
-        """Build inverted index from documents"""
-        self.num_docs = len(documents)
+    def tokenize(self, text):
+        """Simple whitespace tokenization with lowercasing"""
+        return text.lower().split()
+    
+    def index_corpus(self, documents):
+        """
+        Build inverted index from corpus
+        
+        Args:
+            documents: List of dicts with 'doc_id' and 'text' keys
+        """
+        self.corpus = documents
+        self.N = len(documents)
+        
         total_length = 0
         
-        # Build inverted index
         for doc in documents:
-            doc_id = doc['id']
-            tokens = self._tokenize(doc['text'])
+            doc_id = doc['doc_id']
+            text = doc['text']
+            tokens = self.tokenize(text)
+            
+            self.doc_ids.append(doc_id)
             self.doc_lengths[doc_id] = len(tokens)
             total_length += len(tokens)
             
-            # Add to inverted index
-            unique_tokens = set(tokens)
-            for token in unique_tokens:
-                self.inverted_index[token].append(doc_id)
+            # Build inverted index: term -> [(doc_id, term_freq), ...]
+            term_freq = Counter(tokens)
+            for term, freq in term_freq.items():
+                self.inverted_index[term].append((doc_id, freq))
         
-        # Calculate average document length
-        self.avg_doc_length = total_length / self.num_docs if self.num_docs > 0 else 0
-        
-        # Calculate IDF scores
-        for term, doc_list in self.inverted_index.items():
-            df = len(doc_list)
-            self.idf_scores[term] = math.log((self.num_docs - df + 0.5) / (df + 0.5) + 1)
+        self.avg_doc_length = total_length / self.N if self.N > 0 else 0
     
-    def _tokenize(self, text: str) -> List[str]:
-        """Simple tokenization - lowercase and split"""
-        return text.lower().split()
+    def idf(self, term):
+        """Calculate inverse document frequency"""
+        df = len(self.inverted_index.get(term, []))
+        return math.log((self.N - df + 0.5) / (df + 0.5) + 1.0)
     
-    def search(self, query: str, k: int = 10) -> List[str]:
-        """
-        Search using BM25 ranking
-        
-        Args:
-            query: Search query string
-            k: Number of results to return
-            
-        Returns:
-            List of document IDs ranked by BM25 score
-        """
-        query_tokens = self._tokenize(query)
-        scores = defaultdict(float)
+    def bm25_score(self, query_tokens, doc_id):
+        """Calculate BM25 score for a document given query tokens"""
+        score = 0.0
+        doc_len = self.doc_lengths.get(doc_id, 0)
         
         for term in query_tokens:
             if term not in self.inverted_index:
                 continue
-                
-            idf = self.idf_scores[term]
             
-            for doc_id in self.inverted_index[term]:
-                # Calculate term frequency in document
-                doc_tokens = self._tokenize(self.documents[doc_id]['text'])
-                tf = doc_tokens.count(term)
-                
-                # BM25 formula
-                doc_length = self.doc_lengths[doc_id]
-                norm_factor = 1 - self.b + self.b * (doc_length / self.avg_doc_length)
-                score = idf * (tf * (self.k1 + 1)) / (tf + self.k1 * norm_factor)
-                scores[doc_id] += score
+            # Get term frequency in this document
+            tf = 0
+            for did, freq in self.inverted_index[term]:
+                if did == doc_id:
+                    tf = freq
+                    break
+            
+            if tf == 0:
+                continue
+            
+            idf_score = self.idf(term)
+            
+            # BM25 formula
+            numerator = tf * (self.k1 + 1)
+            denominator = tf + self.k1 * (1 - self.b + self.b * (doc_len / self.avg_doc_length))
+            
+            score += idf_score * (numerator / denominator)
         
-        # Sort by score and return top k
-        ranked_docs = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-        return [doc_id for doc_id, score in ranked_docs[:k]]
+        return score
+    
+    def search(self, query, top_k=10):
+        """
+        Search corpus and return top-k documents
+        
+        Args:
+            query: Search query string
+            top_k: Number of results to return
+        
+        Returns:
+            List of (doc_id, score) tuples, sorted by score descending
+        """
+        query_tokens = self.tokenize(query)
+        
+        # Get candidate documents (documents containing at least one query term)
+        candidates = set()
+        for term in query_tokens:
+            for doc_id, _ in self.inverted_index.get(term, []):
+                candidates.add(doc_id)
+        
+        # Score all candidates
+        scores = []
+        for doc_id in candidates:
+            score = self.bm25_score(query_tokens, doc_id)
+            scores.append((doc_id, score))
+        
+        # Sort by score descending
+        scores.sort(key=lambda x: x[1], reverse=True)
+        
+        return scores[:top_k]
 
-# Usage example
-retriever = BM25Retriever(k1=1.5, b=0.75)
-
-# Load corpus
-documents = [
-    {"id": "doc1", "text": "RAG combines retrieval and generation"},
-    {"id": "doc2", "text": "BM25 is a ranking function for search"},
-    {"id": "doc3", "text": "Chunking strategies improve retrieval accuracy"}
-]
-
-retriever.build_index(documents)
-retriever.documents = {doc['id']: doc for doc in documents}
-
-# Search
-results = retriever.search("what is RAG", k=10)
-print(f"Top results: {results}")
+# Usage Example
+if __name__ == "__main__":
+    # Sample corpus
+    corpus = [
+        {"doc_id": "doc1", "text": "Cloud computing provides scalable resources"},
+        {"doc_id": "doc2", "text": "AWS offers cloud infrastructure services"},
+        {"doc_id": "doc3", "text": "Data engineering involves building pipelines"},
+        {"doc_id": "doc4", "text": "Machine learning models require training data"},
+    ]
+    
+    # Initialize and index
+    engine = BM25SearchEngine(k1=1.5, b=0.75)
+    engine.index_corpus(corpus)
+    
+    # Search
+    query = "cloud computing services"
+    results = engine.search(query, top_k=3)
+    
+    print(f"Query: {query}\n")
+    for doc_id, score in results:
+        print(f"{doc_id}: {score:.4f}")
 ```
 
-**Evaluation with Recall@10:**
+### BM25 with Recall Evaluation
 
 ```python
-import json
-
-def evaluate_recall_at_k(retriever, questions_file, k=10):
+# Combine BM25 with evaluation
+def evaluate_bm25_retrieval(corpus, queries_file, k=10):
     """
-    Evaluate Recall@K on golden dataset
+    End-to-end BM25 evaluation pipeline
     
     Args:
-        retriever: BM25Retriever instance
-        questions_file: Path to questions.jsonl
-        k: Number of results to consider
-        
-    Returns:
-        Average Recall@K score
+        corpus: List of document dicts
+        queries_file: Path to questions.jsonl
+        k: Recall@K parameter
     """
-    total_recall = 0
-    num_questions = 0
+    # Index corpus
+    engine = BM25SearchEngine()
+    engine.index_corpus(corpus)
     
-    with open(questions_file, 'r') as f:
-        for line in f:
-            question = json.loads(line)
-            query = question['question']
-            expected = set(question['expected_chunks'])
-            
-            # Retrieve top-k results
-            results = retriever.search(query, k=k)
-            retrieved = set(results)
-            
-            # Calculate recall
-            if len(expected) > 0:
-                recall = len(expected & retrieved) / len(expected)
-                total_recall += recall
-                num_questions += 1
+    # Load queries
+    with open(queries_file, 'r') as f:
+        queries = [json.loads(line) for line in f]
     
-    return total_recall / num_questions if num_questions > 0 else 0
-
-# Run evaluation
-recall_score = evaluate_recall_at_k(retriever, "Day_01/questions.jsonl", k=10)
-print(f"Recall@10: {recall_score:.4f}")
+    # Retrieve for each query
+    results = {}
+    for q in queries:
+        qid = q['question_id']
+        query_text = q['query']
+        retrieved = engine.search(query_text, top_k=k)
+        results[qid] = [doc_id for doc_id, _ in retrieved]
+    
+    # Evaluate
+    recall = evaluate_retrieval(results, queries, k=k)
+    
+    print(f"BM25 Recall@{k}: {recall:.3f}")
+    return recall, results
 ```
 
-### Day 03: Hierarchical Chunking Architecture
+## Day 03: Hierarchical Chunking
 
-Located in `Day_03/`, implements multi-level document chunking:
+### Chunk ID Contract
 
 ```python
-# pipeline.py - Hierarchical chunking with parent-child metadata
+# Day_03/pipeline.py
 import hashlib
+
+def generate_chunk_id(doc_id, level, index):
+    """
+    Generate deterministic chunk ID
+    
+    Args:
+        doc_id: Parent document identifier
+        level: Chunk granularity (doc, section, paragraph)
+        index: Sequential index within level
+    
+    Returns:
+        Deterministic chunk ID string
+    """
+    id_string = f"{doc_id}#{level}#{index}"
+    hash_suffix = hashlib.md5(id_string.encode()).hexdigest()[:8]
+    return f"{doc_id}_{level}_{index}_{hash_suffix}"
+
+# Example usage
+chunk_id = generate_chunk_id("doc_001", "paragraph", 5)
+# Output: doc_001_paragraph_5_a3f2b1c4
+```
+
+### Hierarchical Chunking Implementation
+
+```python
+# Day_03/pipeline.py
 import re
-from typing import List, Dict, Optional
 
 class HierarchicalChunker:
+    """
+    Multi-level document chunking (document -> section -> paragraph)
+    with parent-child metadata linkage
+    """
+    
     def __init__(self):
         self.chunks = []
         
-    def generate_chunk_id(self, doc_id: str, level: str, index: int) -> str:
+    def chunk_document(self, doc_id, text):
         """
-        Generate deterministic chunk ID
-        
-        Args:
-            doc_id: Document identifier
-            level: Chunk level (document/section/paragraph)
-            index: Position index
-            
-        Returns:
-            Deterministic chunk ID
-        """
-        raw_id = f"{doc_id}_{level}_{index}"
-        return hashlib.md5(raw_id.encode()).hexdigest()[:16]
-    
-    def chunk_document(self, doc_id: str, text: str) -> List[Dict]:
-        """
-        Apply hierarchical chunking strategy
-        
-        Levels:
-        1. Document: Entire document as single chunk
-        2. Section: Split on headers (## or ###)
-        3. Paragraph: Split on double newlines
+        Chunk document at multiple granularities
         
         Args:
             doc_id: Document identifier
             text: Full document text
-            
+        
         Returns:
-            List of chunk dictionaries with metadata
+            List of chunk dicts with metadata
         """
         chunks = []
         
-        # Level 1: Document-level chunk
+        # Level 1: Whole document
         doc_chunk = {
-            "chunk_id": self.generate_chunk_id(doc_id, "document", 0),
-            "doc_id": doc_id,
-            "level": "document",
-            "text": text,
-            "parent_id": None,
-            "children": []
+            'chunk_id': generate_chunk_id(doc_id, 'doc', 0),
+            'doc_id': doc_id,
+            'level': 'doc',
+            'text': text,
+            'parent_id': None,
+            'index': 0
         }
         chunks.append(doc_chunk)
         
-        # Level 2: Section-level chunks (split on headers)
-        sections = re.split(r'\n#{2,3}\s+', text)
-        section_chunks = []
+        # Level 2: Sections (split by double newline or headers)
+        sections = re.split(r'\n\n+|(?=^#{1,3}\s)', text, flags=re.MULTILINE)
+        sections = [s.strip() for s in sections if s.strip()]
         
-        for i, section in enumerate(sections):
-            if not section.strip():
-                continue
-                
+        for sec_idx, section_text in enumerate(sections):
             section_chunk = {
-                "chunk_id": self.generate_chunk_id(doc_id, "section", i),
-                "doc_id": doc_id,
-                "level": "section",
-                "text": section.strip(),
-                "parent_id": doc_chunk["chunk_id"],
-                "children": []
+                'chunk_id': generate_chunk_id(doc_id, 'section', sec_idx),
+                'doc_id': doc_id,
+                'level': 'section',
+                'text': section_text,
+                'parent_id': doc_chunk['chunk_id'],
+                'index': sec_idx
             }
-            section_chunks.append(section_chunk)
-            doc_chunk["children"].append(section_chunk["chunk_id"])
             chunks.append(section_chunk)
             
-            # Level 3: Paragraph-level chunks
-            paragraphs = section.split('\n\n')
+            # Level 3: Paragraphs (split by single newline)
+            paragraphs = section_text.split('\n')
+            paragraphs = [p.strip() for p in paragraphs if p.strip()]
             
-            for j, para in enumerate(paragraphs):
-                if not para.strip() or len(para.strip()) < 50:
-                    continue
-                    
+            for para_idx, para_text in enumerate(paragraphs):
                 para_chunk = {
-                    "chunk_id": self.generate_chunk_id(doc_id, "paragraph", i * 100 + j),
-                    "doc_id": doc_id,
-                    "level": "paragraph",
-                    "text": para.strip(),
-                    "parent_id": section_chunk["chunk_id"],
-                    "children": []
+                    'chunk_id': generate_chunk_id(doc_id, 'paragraph', 
+                                                  sec_idx * 100 + para_idx),
+                    'doc_id': doc_id,
+                    'level': 'paragraph',
+                    'text': para_text,
+                    'parent_id': section_chunk['chunk_id'],
+                    'index': para_idx
                 }
-                section_chunk["children"].append(para_chunk["chunk_id"])
                 chunks.append(para_chunk)
         
         return chunks
     
-    def get_context_window(self, chunk_id: str, window_size: int = 1) -> List[Dict]:
+    def chunk_corpus(self, documents):
         """
-        Retrieve chunk with surrounding context (parent/children/siblings)
+        Chunk entire corpus at all granularity levels
         
         Args:
-            chunk_id: Target chunk ID
-            window_size: Number of sibling chunks to include
-            
+            documents: List of dicts with 'doc_id' and 'text'
+        
         Returns:
-            List of chunks with context
+            List of all chunks with metadata
         """
-        # Find target chunk
-        target = None
-        for chunk in self.chunks:
-            if chunk["chunk_id"] == chunk_id:
-                target = chunk
-                break
+        all_chunks = []
         
-        if not target:
-            return []
+        for doc in documents:
+            doc_chunks = self.chunk_document(doc['doc_id'], doc['text'])
+            all_chunks.extend(doc_chunks)
         
-        context_chunks = [target]
-        
-        # Add parent
-        if target["parent_id"]:
-            parent = next((c for c in self.chunks if c["chunk_id"] == target["parent_id"]), None)
-            if parent:
-                context_chunks.append(parent)
-        
-        # Add children
-        for child_id in target["children"]:
-            child = next((c for c in self.chunks if c["chunk_id"] == child_id), None)
-            if child:
-                context_chunks.append(child)
-        
-        return context_chunks
+        return all_chunks
 
-# Usage example
-chunker = HierarchicalChunker()
+# Usage Example
+if __name__ == "__main__":
+    # Sample document
+    documents = [{
+        "doc_id": "doc_cloud_001",
+        "text": """# Cloud Computing Overview
+Cloud computing provides on-demand access to computing resources.
 
-sample_doc = """
-# Introduction to RAG
+## Benefits
+Scalability and cost efficiency are key advantages.
+Pay only for what you use.
 
-## What is RAG?
-
-Retrieval-Augmented Generation combines retrieval systems with language models.
-
-It improves accuracy by grounding responses in retrieved documents.
-
-## Chunking Strategies
-
-Document chunking is critical for effective retrieval.
-
-Hierarchical chunking preserves semantic structure.
-"""
-
-chunks = chunker.chunk_document("doc_001", sample_doc)
-chunker.chunks = chunks
-
-# Display chunk hierarchy
-for chunk in chunks:
-    indent = "  " * (0 if chunk["level"] == "document" else 1 if chunk["level"] == "section" else 2)
-    print(f"{indent}[{chunk['level']}] {chunk['chunk_id']}: {chunk['text'][:50]}...")
+## Deployment Models
+Public, private, and hybrid clouds serve different needs."""
+    }]
     
-# Get context window for a paragraph chunk
-para_chunk_id = chunks[-1]["chunk_id"]
-context = chunker.get_context_window(para_chunk_id)
-print(f"\nContext for {para_chunk_id}:")
-for c in context:
-    print(f"  - [{c['level']}] {c['text'][:50]}...")
-```
-
-## Configuration Patterns
-
-### BM25 Tuning
-
-```python
-# Conservative tuning (prefer exact matches)
-retriever = BM25Retriever(k1=1.2, b=0.75)
-
-# Aggressive tuning (more forgiving on document length)
-retriever = BM25Retriever(k1=2.0, b=0.5)
-
-# Default Okapi BM25
-retriever = BM25Retriever(k1=1.5, b=0.75)
-```
-
-### Chunking Strategy Selection
-
-```python
-# Small documents: Use paragraph-level chunks
-if avg_doc_length < 1000:
-    target_level = "paragraph"
+    # Chunk at multiple levels
+    chunker = HierarchicalChunker()
+    chunks = chunker.chunk_corpus(documents)
     
-# Medium documents: Use section-level chunks
-elif avg_doc_length < 5000:
-    target_level = "section"
+    # Display chunks
+    for chunk in chunks:
+        print(f"ID: {chunk['chunk_id']}")
+        print(f"Level: {chunk['level']}, Parent: {chunk['parent_id']}")
+        print(f"Text: {chunk['text'][:80]}...\n")
+```
+
+### Chunk Granularity Evaluation
+
+```python
+# Day_03/pipeline.py
+def evaluate_chunk_granularity(corpus, queries_file, levels=['doc', 'section', 'paragraph']):
+    """
+    Compare retrieval performance across chunk granularities
     
-# Large documents: Use mixed strategy
-else:
-    target_level = "mixed"  # Retrieve sections, expand to paragraphs
-```
-
-## Common Workflows
-
-### Building a Complete RAG Pipeline
-
-```python
-import json
-from pathlib import Path
-
-# 1. Load corpus
-corpus_dir = Path("Day_01/corpus")
-documents = []
-
-for doc_file in corpus_dir.glob("*.txt"):
-    with open(doc_file, 'r') as f:
-        documents.append({
-            "id": doc_file.stem,
-            "text": f.read()
-        })
-
-# 2. Apply hierarchical chunking
-chunker = HierarchicalChunker()
-all_chunks = []
-
-for doc in documents:
-    chunks = chunker.chunk_document(doc["id"], doc["text"])
-    all_chunks.extend(chunks)
-
-chunker.chunks = all_chunks
-
-# 3. Build BM25 index on paragraph-level chunks
-para_chunks = [c for c in all_chunks if c["level"] == "paragraph"]
-retriever = BM25Retriever(k1=1.5, b=0.75)
-retriever.build_index(para_chunks)
-retriever.documents = {c["chunk_id"]: c for c in para_chunks}
-
-# 4. Evaluate on golden dataset
-recall_score = evaluate_recall_at_k(retriever, "Day_01/questions.jsonl", k=10)
-print(f"Paragraph-level Recall@10: {recall_score:.4f}")
-
-# 5. Interactive retrieval with context expansion
-query = "explain hierarchical chunking"
-results = retriever.search(query, k=3)
-
-print("\nRetrieved chunks with context:")
-for chunk_id in results:
-    context = chunker.get_context_window(chunk_id)
-    print(f"\n--- {chunk_id} ---")
-    for ctx in context:
-        print(f"[{ctx['level']}] {ctx['text'][:100]}...")
-```
-
-### Batch Evaluation
-
-```python
-def batch_evaluate_strategies(corpus, questions_file):
-    """Compare chunking strategies"""
-    strategies = {
-        "document": lambda c: c["level"] == "document",
-        "section": lambda c: c["level"] == "section",
-        "paragraph": lambda c: c["level"] == "paragraph"
-    }
+    Args:
+        corpus: List of documents
+        queries_file: Path to golden dataset
+        levels: Chunk levels to evaluate
+    
+    Returns:
+        Dict mapping level to recall score
+    """
+    # Generate chunks
+    chunker = HierarchicalChunker()
+    all_chunks = chunker.chunk_corpus(corpus)
+    
+    # Load queries
+    with open(queries_file, 'r') as f:
+        queries = [json.loads(line) for line in f]
     
     results = {}
     
-    for strategy_name, filter_fn in strategies.items():
-        # Apply strategy
-        filtered_chunks = [c for c in all_chunks if filter_fn(c)]
+    for level in levels:
+        # Filter chunks by level
+        level_chunks = [c for c in all_chunks if c['level'] == level]
         
-        # Build index
-        retriever = BM25Retriever()
-        retriever.build_index(filtered_chunks)
-        retriever.documents = {c["chunk_id"]: c for c in filtered_chunks}
+        # Index chunks as documents
+        chunk_docs = [
+            {'doc_id': c['chunk_id'], 'text': c['text']} 
+            for c in level_chunks
+        ]
+        
+        engine = BM25SearchEngine()
+        engine.index_corpus(chunk_docs)
+        
+        # Retrieve
+        retrieval_results = {}
+        for q in queries:
+            qid = q['question_id']
+            retrieved = engine.search(q['query'], top_k=10)
+            
+            # Map chunk IDs back to doc IDs for evaluation
+            doc_ids = [c['doc_id'] for c in level_chunks 
+                      if c['chunk_id'] in [r[0] for r in retrieved]]
+            retrieval_results[qid] = doc_ids
         
         # Evaluate
-        recall = evaluate_recall_at_k(retriever, questions_file, k=10)
-        results[strategy_name] = recall
+        recall = evaluate_retrieval(retrieval_results, queries, k=10)
+        results[level] = recall
         
+        print(f"Level: {level:12s} | Recall@10: {recall:.3f}")
+    
     return results
+```
 
-# Run comparison
-scores = batch_evaluate_strategies(all_chunks, "Day_01/questions.jsonl")
-for strategy, score in scores.items():
-    print(f"{strategy}: Recall@10 = {score:.4f}")
+## Common Patterns
+
+### Pattern 1: Building a Complete RAG Pipeline
+
+```python
+import os
+
+def build_rag_pipeline(corpus_dir, queries_file, chunk_level='paragraph'):
+    """Complete RAG pipeline from corpus to evaluation"""
+    
+    # 1. Load corpus
+    documents = []
+    for filename in os.listdir(corpus_dir):
+        if filename.endswith('.txt'):
+            with open(os.path.join(corpus_dir, filename), 'r') as f:
+                doc_id = filename.replace('.txt', '')
+                documents.append({'doc_id': doc_id, 'text': f.read()})
+    
+    # 2. Hierarchical chunking
+    chunker = HierarchicalChunker()
+    chunks = chunker.chunk_corpus(documents)
+    
+    # 3. Filter to desired granularity
+    level_chunks = [c for c in chunks if c['level'] == chunk_level]
+    chunk_docs = [
+        {'doc_id': c['chunk_id'], 'text': c['text']} 
+        for c in level_chunks
+    ]
+    
+    # 4. Index with BM25
+    engine = BM25SearchEngine(k1=1.5, b=0.75)
+    engine.index_corpus(chunk_docs)
+    
+    # 5. Load and evaluate
+    with open(queries_file, 'r') as f:
+        queries = [json.loads(line) for line in f]
+    
+    results = {}
+    for q in queries:
+        retrieved = engine.search(q['query'], top_k=10)
+        results[q['question_id']] = [r[0] for r in retrieved]
+    
+    recall = evaluate_retrieval(results, queries, k=10)
+    
+    return engine, recall, results
+
+# Usage
+engine, recall, results = build_rag_pipeline(
+    corpus_dir="Day_03/corpus",
+    queries_file="Day_01/questions.jsonl",
+    chunk_level='paragraph'
+)
+```
+
+### Pattern 2: Interactive Retrieval Simulation
+
+```python
+def interactive_search(corpus_dir, chunk_level='paragraph'):
+    """Interactive RAG search interface"""
+    
+    # Build pipeline
+    documents = []
+    for filename in os.listdir(corpus_dir):
+        if filename.endswith('.txt'):
+            with open(os.path.join(corpus_dir, filename), 'r') as f:
+                doc_id = filename.replace('.txt', '')
+                documents.append({'doc_id': doc_id, 'text': f.read()})
+    
+    chunker = HierarchicalChunker()
+    chunks = chunker.chunk_corpus(documents)
+    level_chunks = [c for c in chunks if c['level'] == chunk_level]
+    
+    chunk_docs = [
+        {'doc_id': c['chunk_id'], 'text': c['text']} 
+        for c in level_chunks
+    ]
+    
+    engine = BM25SearchEngine()
+    engine.index_corpus(chunk_docs)
+    
+    # Interactive loop
+    print(f"RAG Search Engine (chunk level: {chunk_level})")
+    print("Enter query (or 'quit' to exit):\n")
+    
+    while True:
+        query = input("> ").strip()
+        if query.lower() in ['quit', 'exit']:
+            break
+        
+        results = engine.search(query, top_k=5)
+        
+        print(f"\nTop 5 results for: '{query}'\n")
+        for i, (chunk_id, score) in enumerate(results, 1):
+            # Find chunk text
+            chunk_text = next(
+                (c['text'] for c in level_chunks if c['chunk_id'] == chunk_id),
+                "N/A"
+            )
+            print(f"{i}. [{score:.4f}] {chunk_id}")
+            print(f"   {chunk_text[:150]}...\n")
+
+# Run interactive mode
+# interactive_search("Day_03/corpus", chunk_level='paragraph')
 ```
 
 ## Troubleshooting
 
-### Low Recall Scores
+### Issue: Low Recall Scores
 
-**Issue**: Recall@10 below 0.5
+**Solution**: Try different chunk granularities or BM25 parameters
 
-**Solutions**:
 ```python
-# 1. Check tokenization consistency
-query_tokens = retriever._tokenize("test query")
-doc_tokens = retriever._tokenize("test document")
-print(f"Query tokens: {query_tokens}")
-print(f"Doc tokens: {doc_tokens}")
-
-# 2. Verify golden dataset alignment
-with open("questions.jsonl") as f:
-    for line in f:
-        q = json.loads(line)
-        print(f"Expected chunks exist: {all(chunk in retriever.documents for chunk in q['expected_chunks'])}")
-
-# 3. Lower BM25 b parameter for shorter chunks
-retriever = BM25Retriever(k1=1.5, b=0.3)  # Less length normalization
+# Tune BM25 parameters
+for k1 in [1.2, 1.5, 2.0]:
+    for b in [0.5, 0.75, 1.0]:
+        engine = BM25SearchEngine(k1=k1, b=b)
+        engine.index_corpus(chunk_docs)
+        # Evaluate and compare
 ```
 
-### Memory Issues with Large Corpora
+### Issue: Memory Issues with Large Corpus
 
-**Issue**: Out of memory during index building
+**Solution**: Implement batch processing
 
-**Solutions**:
 ```python
-# Use generator for document loading
-def document_generator(corpus_dir):
-    for doc_file in Path(corpus_dir).glob("*.txt"):
-        with open(doc_file) as f:
-            yield {"id": doc_file.stem, "text": f.read()}
-
-# Build index in batches
-batch_size = 1000
-for i, batch in enumerate(chunked(document_generator("corpus"), batch_size)):
-    print(f"Processing batch {i}...")
-    retriever.build_index(list(batch))
+def index_corpus_batched(engine, documents, batch_size=1000):
+    """Index corpus in batches to reduce memory usage"""
+    for i in range(0, len(documents), batch_size):
+        batch = documents[i:i+batch_size]
+        engine.index_corpus(batch)
 ```
 
-### Chunk ID Collisions
+### Issue: Chunk ID Collisions
 
-**Issue**: Duplicate chunk IDs
+**Solution**: Use full hash or add timestamp
 
-**Solutions**:
 ```python
-# Verify deterministic IDs
-chunk_ids = [c["chunk_id"] for c in all_chunks]
-assert len(chunk_ids) == len(set(chunk_ids)), "Duplicate chunk IDs detected"
+import time
 
-# Add content hash for uniqueness
-def generate_chunk_id(doc_id, level, index, content):
-    content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
-    raw_id = f"{doc_id}_{level}_{index}_{content_hash}"
-    return hashlib.md5(raw_id.encode()).hexdigest()[:16]
+def generate_chunk_id_safe(doc_id, level, index):
+    """Generate chunk ID with timestamp to prevent collisions"""
+    timestamp = int(time.time() * 1000)
+    id_string = f"{doc_id}#{level}#{index}#{timestamp}"
+    hash_full = hashlib.md5(id_string.encode()).hexdigest()
+    return f"{doc_id}_{level}_{index}_{hash_full}"
 ```
 
-## Best Practices
+### Issue: Non-English Text Tokenization
 
-1. **Always evaluate on golden datasets**: Use `questions.jsonl` format for reproducible metrics
-2. **Chunk granularity matters**: Start with paragraph-level, adjust based on domain
-3. **Preserve metadata**: Keep parent-child relationships for context expansion
-4. **Tune BM25 parameters**: Domain-specific tuning can improve recall by 10-20%
-5. **Version your indices**: Track chunk IDs deterministically for reproducibility
+**Solution**: Use advanced tokenizers
 
-This skill enables AI agents to build, evaluate, and optimize production RAG pipelines using proven architectures from the ai-data-engineering-roadmap project.
+```python
+from nltk.tokenize import word_tokenize
+
+class BM25SearchEngineAdvanced(BM25SearchEngine):
+    def tokenize(self, text):
+        """Advanced tokenization with NLTK"""
+        import nltk
+        # Download required data: nltk.download('punkt')
+        return [token.lower() for token in word_tokenize(text)]
+```
+
+## Configuration
+
+### Environment Setup
+
+```python
+# config.py
+import os
+
+# Corpus configuration
+CORPUS_DIR = os.getenv('RAG_CORPUS_DIR', 'Day_03/corpus')
+QUERIES_FILE = os.getenv('RAG_QUERIES_FILE', 'Day_01/questions.jsonl')
+
+# BM25 parameters
+BM25_K1 = float(os.getenv('BM25_K1', '1.5'))
+BM25_B = float(os.getenv('BM25_B', '0.75'))
+
+# Chunking configuration
+DEFAULT_CHUNK_LEVEL = os.getenv('CHUNK_LEVEL', 'paragraph')
+
+# Evaluation parameters
+RECALL_K = int(os.getenv('RECALL_K', '10'))
+```
+
+### Usage with Configuration
+
+```python
+from config import *
+
+engine = BM25SearchEngine(k1=BM25_K1, b=BM25_B)
+pipeline = build_rag_pipeline(
+    corpus_dir=CORPUS_DIR,
+    queries_file=QUERIES_FILE,
+    chunk_level=DEFAULT_CHUNK_LEVEL
+)
+```
