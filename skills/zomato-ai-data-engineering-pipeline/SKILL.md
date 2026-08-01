@@ -1,236 +1,133 @@
 ---
 name: zomato-ai-data-engineering-pipeline
-description: End-to-end Zomato food delivery data pipeline with S3, Snowflake, dbt, Airflow, and OpenAI for AI-powered analytics
+description: End-to-end batch data pipeline with Snowflake, dbt, Airflow, and OpenAI for food delivery analytics
 triggers:
-  - "build a zomato data pipeline"
-  - "set up snowflake with dbt and airflow"
-  - "create an AI-powered data warehouse"
-  - "implement LLM enrichment in a data pipeline"
-  - "build RAG for business analytics"
-  - "set up text-to-SQL with OpenAI"
-  - "orchestrate dbt with airflow"
-  - "create a medallion architecture pipeline"
+  - build a Zomato data pipeline with Snowflake and dbt
+  - set up medallion architecture with bronze silver gold layers
+  - create AI-powered analytics with OpenAI and RAG
+  - orchestrate dbt with Airflow for batch processing
+  - implement incremental models in dbt for large fact tables
+  - add LLM enrichment to data pipeline
+  - configure Snowflake storage integration with S3
+  - build text-to-SQL and RAG applications
 ---
 
 # Zomato AI Data Engineering Pipeline
 
 > Skill by [ara.so](https://ara.so) — Data Skills collection.
 
-A complete batch data pipeline for food delivery analytics using S3 → Snowflake → dbt → Airflow → OpenAI. Implements medallion architecture (Bronze/Silver/Gold), incremental fact tables, LLM enrichment, RAG chat, and text-to-SQL capabilities.
+This project demonstrates an end-to-end batch data pipeline that processes food delivery data (Zomato-style) through a medallion architecture: **S3 → Snowflake → dbt → Airflow → OpenAI**. It includes bronze/silver/gold layers, incremental fact tables, AI enrichment, RAG chat, and text-to-SQL capabilities.
 
-## What It Does
-
-- **Data Lake**: Uploads CSV data to S3 organized by table
-- **Bronze Layer**: Loads raw data into Snowflake via `COPY INTO` using keyless storage integration
-- **Silver Layer**: dbt staging views for data cleaning and typing
-- **Gold Layer**: Dimensional models, incremental fact tables (MERGE), business marts, SCD2 snapshots
-- **AI Layer**: LLM enrichment for sentiment/topic extraction, RAG for review chat, text-to-SQL
-- **Orchestration**: Airflow DAG running the full pipeline daily
-
-## Architecture
+## Architecture Overview
 
 ```
-CSVs → S3 → Snowflake RAW → dbt STAGING → dbt MARTS → AI enrichment → BI/Apps
-                ↑                              ↓
-              Airflow orchestrates everything
+CSV Data → S3 Lake → Snowflake RAW (Bronze) → dbt STAGING (Silver) → dbt MARTS (Gold) → AI Layer
+                                                                    ↑
+                                                              Airflow Orchestration
 ```
 
-## Installation
+**Key Components:**
+- **Bronze (RAW)**: Direct `COPY INTO` from S3 via storage integration
+- **Silver (STAGING)**: dbt views for cleaning and standardization
+- **Gold (MARTS)**: Dimensions, incremental facts, business aggregates
+- **AI Layer**: LLM enrichment, RAG, text-to-SQL powered by OpenAI
 
-### Prerequisites
+## Project Structure
+
+```
+airflow/
+├── dags/zomato_batch.py        # Main orchestration DAG
+├── docker-compose.yaml         # Airflow 3 setup
+└── example.env                 # Environment template
+
+zomato/                         # dbt project
+├── models/
+│   ├── staging/               # Silver layer (views)
+│   └── marts/                 # Gold layer (tables)
+├── dbt_project.yml
+└── profiles.yml
+
+ai/
+├── enrich_reviews.py          # LLM sentiment/topic extraction
+├── rag_chat.py                # Chat with reviews (Streamlit)
+└── text_to_sql.py             # Natural language querying
+
+aws/iam/                       # S3-Snowflake integration policies
+```
+
+## Installation & Setup
+
+### 1. Prerequisites
 
 ```bash
-# Required services
-- AWS account with S3 bucket
-- Snowflake account
-- OpenAI API key
-- Docker & Docker Compose (for Airflow)
+# Python 3.10+
+pip install dbt-snowflake apache-airflow openai streamlit pandas snowflake-connector-python
+
+# Docker for Airflow
+docker --version
+docker-compose --version
 ```
 
-### 1. Clone and Setup Data
-
-```bash
-git clone https://github.com/darshilparmar/zomato-ai-data-engineering-end-to-end-project.git
-cd zomato-ai-data-engineering-end-to-end-project
-
-# Download dataset from Google Drive (link in README) to data/ directory
-# Expected files: restaurants.csv, users.csv, food.csv, menu.csv, 
-#                 orders.csv, order_items.csv, reviews.csv
-```
-
-### 2. AWS S3 Setup
-
-```bash
-# Create S3 bucket
-aws s3 mb s3://your-zomato-bucket
-
-# Upload data to organized structure
-aws s3 cp data/restaurants.csv s3://your-zomato-bucket/raw/restaurants/
-aws s3 cp data/users.csv s3://your-zomato-bucket/raw/users/
-aws s3 cp data/food.csv s3://your-zomato-bucket/raw/food/
-aws s3 cp data/menu.csv s3://your-zomato-bucket/raw/menu/
-aws s3 cp data/orders.csv s3://your-zomato-bucket/raw/orders/
-aws s3 cp data/order_items.csv s3://your-zomato-bucket/raw/order_items/
-aws s3 cp data/reviews.csv s3://your-zomato-bucket/raw/reviews/
-```
-
-### 3. AWS IAM Configuration
-
-Create IAM policy for S3 read access (use `aws/iam/s3-read-policy.json`):
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "s3:GetObjectVersion",
-        "s3:ListBucket"
-      ],
-      "Resource": [
-        "arn:aws:s3:::your-zomato-bucket",
-        "arn:aws:s3:::your-zomato-bucket/*"
-      ]
-    }
-  ]
-}
-```
-
-Create IAM role `snowflake-s3-role` with initial trust policy:
-
-```bash
-# Attach the s3-read-policy to the role
-# Initial trust policy uses placeholder - will update after Snowflake integration
-```
-
-### 4. Snowflake Setup
+### 2. Snowflake Setup
 
 ```sql
 -- Create warehouse and database
-CREATE WAREHOUSE ZOMATO_WH WITH WAREHOUSE_SIZE = 'MEDIUM' AUTO_SUSPEND = 60;
+CREATE WAREHOUSE ZOMATO_WH WITH WAREHOUSE_SIZE = 'MEDIUM';
 CREATE DATABASE ZOMATO;
 
--- Create schemas for medallion architecture
-CREATE SCHEMA ZOMATO.RAW;
-CREATE SCHEMA ZOMATO.STAGING;
-CREATE SCHEMA ZOMATO.MARTS;
-CREATE SCHEMA ZOMATO.SNAPSHOTS;
-CREATE SCHEMA ZOMATO.AI;
+-- Create schemas
+USE DATABASE ZOMATO;
+CREATE SCHEMA RAW;
+CREATE SCHEMA STAGING;
+CREATE SCHEMA MARTS;
+CREATE SCHEMA SNAPSHOTS;
+CREATE SCHEMA AI;
 
--- Create role for dbt
+-- Create role
 CREATE ROLE DBT_ROLE;
 GRANT USAGE ON WAREHOUSE ZOMATO_WH TO ROLE DBT_ROLE;
 GRANT ALL ON DATABASE ZOMATO TO ROLE DBT_ROLE;
 GRANT ALL ON ALL SCHEMAS IN DATABASE ZOMATO TO ROLE DBT_ROLE;
-GRANT ROLE DBT_ROLE TO USER your_user;
-
--- Create storage integration (replace with your IAM role ARN)
-CREATE STORAGE INTEGRATION s3_zomato_integration
-  TYPE = EXTERNAL_STAGE
-  STORAGE_PROVIDER = 'S3'
-  ENABLED = TRUE
-  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::YOUR_ACCOUNT:role/snowflake-s3-role'
-  STORAGE_ALLOWED_LOCATIONS = ('s3://your-zomato-bucket/raw/');
-
--- Get Snowflake IAM user and external ID
-DESC STORAGE INTEGRATION s3_zomato_integration;
--- Copy STORAGE_AWS_IAM_USER_ARN and STORAGE_AWS_EXTERNAL_ID
+GRANT ROLE DBT_ROLE TO USER <your_user>;
 ```
 
-Update IAM role trust policy with values from `DESC INTEGRATION`:
+### 3. S3 Storage Integration
+
+Create IAM policy `zomato-s3-read` with read-only access to your bucket:
 
 ```json
 {
   "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "arn:aws:iam::123456789012:user/abc-snowflake"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "StringEquals": {
-          "sts:ExternalId": "ABC123_SFCRole=1_xYz="
-        }
-      }
-    }
-  ]
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": ["s3:GetObject", "s3:GetObjectVersion", "s3:ListBucket"],
+    "Resource": [
+      "arn:aws:s3:::your-bucket-name/*",
+      "arn:aws:s3:::your-bucket-name"
+    ]
+  }]
 }
 ```
 
-Create external stages:
+Create IAM role `snowflake-s3-role`, attach policy, then create Snowflake integration:
 
 ```sql
-USE SCHEMA ZOMATO.RAW;
+CREATE STORAGE INTEGRATION zomato_s3_integration
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = 'S3'
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::123456789012:role/snowflake-s3-role'
+  STORAGE_ALLOWED_LOCATIONS = ('s3://your-bucket-name/raw/');
 
-CREATE STAGE s3_restaurants_stage
-  URL = 's3://your-zomato-bucket/raw/restaurants/'
-  STORAGE_INTEGRATION = s3_zomato_integration
-  FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' SKIP_HEADER = 1);
-
-CREATE STAGE s3_users_stage
-  URL = 's3://your-zomato-bucket/raw/users/'
-  STORAGE_INTEGRATION = s3_zomato_integration
-  FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' SKIP_HEADER = 1);
-
--- Repeat for food, menu, orders, order_items, reviews
+-- Get the Snowflake IAM user and external ID
+DESC STORAGE INTEGRATION zomato_s3_integration;
 ```
 
-Create RAW tables:
+Update IAM role trust policy with `STORAGE_AWS_IAM_USER_ARN` and `STORAGE_AWS_EXTERNAL_ID` from above.
 
-```sql
--- Example for restaurants
-CREATE TABLE ZOMATO.RAW.restaurants (
-    restaurant_id INTEGER,
-    restaurant_name VARCHAR,
-    city VARCHAR,
-    address VARCHAR,
-    locality VARCHAR,
-    latitude FLOAT,
-    longitude FLOAT,
-    cuisines VARCHAR,
-    average_cost_for_two VARCHAR,
-    currency VARCHAR,
-    has_table_booking VARCHAR,
-    has_online_delivery VARCHAR,
-    is_delivering_now VARCHAR,
-    price_range INTEGER,
-    aggregate_rating FLOAT,
-    rating_text VARCHAR,
-    votes INTEGER
-);
+### 4. dbt Configuration
 
--- Similar CREATE TABLE for users, food, menu, orders, order_items, reviews
-```
-
-### 5. dbt Setup
-
-```bash
-cd zomato
-
-# Install dbt
-pip install dbt-snowflake
-
-# Configure profiles.yml (or use env vars)
-export SNOWFLAKE_ACCOUNT=your-account
-export SNOWFLAKE_USER=your-user
-export SNOWFLAKE_PASSWORD=your-password
-export SNOWFLAKE_ROLE=DBT_ROLE
-export SNOWFLAKE_WAREHOUSE=ZOMATO_WH
-export SNOWFLAKE_DATABASE=ZOMATO
-
-# Test connection
-dbt debug
-
-# Run models
-dbt build --exclude tag:ai
-```
-
-Example `profiles.yml` using env vars:
-
+**`zomato/profiles.yml`:**
 ```yaml
 zomato:
   target: dev
@@ -240,205 +137,53 @@ zomato:
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
       user: "{{ env_var('SNOWFLAKE_USER') }}"
       password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
-      role: "{{ env_var('SNOWFLAKE_ROLE') }}"
-      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
-      database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
-      schema: staging
+      role: DBT_ROLE
+      database: ZOMATO
+      warehouse: ZOMATO_WH
+      schema: MARTS
       threads: 4
 ```
 
-### 6. Airflow Setup
-
+**Set environment variables:**
 ```bash
-cd airflow
-
-# Copy and configure environment
-cp example.env .env
-
-# Edit .env with your credentials:
-# SNOWFLAKE_ACCOUNT=xyz12345
-# SNOWFLAKE_USER=your_user
-# SNOWFLAKE_PASSWORD=your_password
-# SNOWFLAKE_ROLE=DBT_ROLE
-# SNOWFLAKE_WAREHOUSE=ZOMATO_WH
-# SNOWFLAKE_DATABASE=ZOMATO
-# OPENAI_API_KEY=sk-...
-# SAMPLE_N=1000
-
-# Build and start Airflow
-docker compose build
-docker compose up -d
-
-# Access UI at http://localhost:8080
-# Default credentials: airflow/airflow
+export SNOWFLAKE_ACCOUNT=xy12345.us-east-1
+export SNOWFLAKE_USER=your_user
+export SNOWFLAKE_PASSWORD=your_password
 ```
 
-## Key Commands
-
-### dbt Commands
-
-```bash
-# Test connection
-dbt debug
-
-# Compile models without running
-dbt compile
-
-# Run all models
-dbt run
-
-# Run tests only
-dbt test
-
-# Run models and tests in dependency order
-dbt build
-
-# Run specific models
-dbt run --select staging
-dbt run --select marts
-dbt run --select fct_orders
-
-# Run incremental models with full-refresh
-dbt run --select fct_orders --full-refresh
-
-# Generate and serve documentation
-dbt docs generate
-dbt docs serve
-
-# Exclude AI models
-dbt build --exclude tag:ai
-```
-
-### Airflow DAG
-
-The main DAG `zomato_batch` has 4 tasks:
-
-1. **reload_raw**: `COPY INTO` from S3 stages
-2. **dbt_build_core**: Runs `dbt build --exclude tag:ai`
-3. **enrich_reviews**: OpenAI LLM enrichment
-4. **dbt_build_ai**: Builds AI marts
-
-Trigger manually or runs daily at scheduled time.
-
-### AI Scripts
-
-```bash
-# LLM enrichment (creates ZOMATO.AI.REVIEW_ENRICHED)
-export OPENAI_API_KEY=sk-...
-export SNOWFLAKE_ACCOUNT=...
-export SNOWFLAKE_USER=...
-export SNOWFLAKE_PASSWORD=...
-python ai/enrich_reviews.py
-
-# RAG chat with reviews
-streamlit run ai/rag_chat.py
-
-# Text-to-SQL warehouse chat
-streamlit run ai/text_to_sql.py
-```
-
-## dbt Model Structure
-
-### Sources (`models/staging/sources.yml`)
-
-```yaml
-version: 2
-
-sources:
-  - name: raw
-    database: ZOMATO
-    schema: RAW
-    tables:
-      - name: restaurants
-      - name: users
-      - name: food
-      - name: menu
-      - name: orders
-      - name: order_items
-      - name: reviews
-```
+## dbt Models
 
 ### Staging Models (Silver)
 
-Example: `models/staging/stg_restaurants.sql`
-
+**`models/staging/stg_orders.sql`:**
 ```sql
 WITH source AS (
-    SELECT * FROM {{ source('raw', 'restaurants') }}
+    SELECT * FROM {{ source('raw', 'orders') }}
 ),
 
 cleaned AS (
     SELECT
+        order_id,
+        customer_id,
         restaurant_id,
-        restaurant_name,
-        city,
-        address,
-        locality,
-        latitude,
-        longitude,
-        cuisines,
-        -- Clean average_cost_for_two: '₹ 200' -> 200, '--' -> null
+        TO_TIMESTAMP_NTZ(order_date) AS order_date,
+        delivery_time_minutes,
+        status,
+        total_amount::NUMBER(10,2) AS total_amount,
+        -- Derive business flags
         CASE 
-            WHEN average_cost_for_two = '--' THEN NULL
-            ELSE TRY_CAST(REGEXP_REPLACE(average_cost_for_two, '[^0-9]', '') AS INTEGER)
-        END AS average_cost_for_two,
-        currency,
-        -- Convert yes/no to boolean
-        CASE WHEN LOWER(has_table_booking) = 'yes' THEN TRUE ELSE FALSE END AS has_table_booking,
-        CASE WHEN LOWER(has_online_delivery) = 'yes' THEN TRUE ELSE FALSE END AS has_online_delivery,
-        CASE WHEN LOWER(is_delivering_now) = 'yes' THEN TRUE ELSE FALSE END AS is_delivering_now,
-        price_range,
-        aggregate_rating,
-        rating_text,
-        votes
+            WHEN status = 'Delivered' THEN TRUE
+            ELSE FALSE
+        END AS is_delivered
     FROM source
 )
 
 SELECT * FROM cleaned
 ```
 
-### Dimensional Models (Gold)
+### Incremental Fact Models (Gold)
 
-Example: `models/marts/dim_customer.sql`
-
-```sql
-WITH customers AS (
-    SELECT * FROM {{ ref('stg_users') }}
-),
-
-final AS (
-    SELECT
-        user_id AS customer_key,
-        user_name AS customer_name,
-        LOWER(email) AS email,
-        phone,
-        address,
-        city,
-        state,
-        country,
-        zipcode,
-        age,
-        gender,
-        -- Age segmentation
-        CASE
-            WHEN age < 18 THEN 'Under 18'
-            WHEN age BETWEEN 18 AND 24 THEN '18-24'
-            WHEN age BETWEEN 25 AND 34 THEN '25-34'
-            WHEN age BETWEEN 35 AND 44 THEN '35-44'
-            WHEN age BETWEEN 45 AND 54 THEN '45-54'
-            WHEN age >= 55 THEN '55+'
-        END AS age_segment,
-        registration_date
-    FROM customers
-)
-
-SELECT * FROM final
-```
-
-### Incremental Fact Models
-
-Example: `models/marts/fct_orders.sql`
-
+**`models/marts/fct_orders.sql`:**
 ```sql
 {{
     config(
@@ -450,39 +195,35 @@ Example: `models/marts/fct_orders.sql`
 
 WITH orders AS (
     SELECT * FROM {{ ref('stg_orders') }}
-    {% if is_incremental() %}
-    WHERE order_date >= (SELECT MAX(order_date) FROM {{ this }})
-    {% endif %}
 ),
 
-final AS (
+enriched AS (
     SELECT
         order_id,
-        user_id AS customer_key,
-        restaurant_id AS restaurant_key,
+        customer_id,
+        restaurant_id,
         order_date,
-        order_time,
-        delivery_date,
-        delivery_time,
-        order_status,
-        -- Derive is_delivered flag
-        CASE WHEN LOWER(order_status) = 'delivered' THEN TRUE ELSE FALSE END AS is_delivered,
+        DATE(order_date) AS order_date_key,
+        HOUR(order_date) AS order_hour,
+        delivery_time_minutes,
+        status,
         total_amount,
-        discount_amount,
-        final_amount,
-        payment_method,
-        rating,
-        delivery_rating
+        is_delivered,
+        CURRENT_TIMESTAMP() AS dbt_loaded_at
     FROM orders
+    {% if is_incremental() %}
+    WHERE order_date > (SELECT MAX(order_date) FROM {{ this }})
+    {% endif %}
 )
 
-SELECT * FROM final
+SELECT * FROM enriched
 ```
+
+**Key pattern**: `is_incremental()` macro ensures only new records are processed on subsequent runs.
 
 ### Business Marts
 
-Example: `models/marts/mart_daily_city_revenue.sql`
-
+**`models/marts/mart_city_revenue_daily.sql`:**
 ```sql
 WITH orders AS (
     SELECT * FROM {{ ref('fct_orders') }}
@@ -492,431 +233,528 @@ restaurants AS (
     SELECT * FROM {{ ref('dim_restaurants') }}
 ),
 
-daily_metrics AS (
+aggregated AS (
     SELECT
-        o.order_date,
         r.city,
+        DATE(o.order_date) AS order_date,
         COUNT(DISTINCT o.order_id) AS total_orders,
-        COUNT(DISTINCT CASE WHEN o.is_delivered THEN o.order_id END) AS delivered_orders,
-        COUNT(DISTINCT CASE WHEN NOT o.is_delivered THEN o.order_id END) AS cancelled_orders,
-        SUM(o.final_amount) AS gmv,
-        AVG(o.final_amount) AS aov,
-        -- Cancellation rate
-        ROUND(
-            COUNT(DISTINCT CASE WHEN NOT o.is_delivered THEN o.order_id END) * 100.0 / 
-            NULLIF(COUNT(DISTINCT o.order_id), 0), 
-            2
-        ) AS cancellation_rate_pct
+        SUM(o.total_amount) AS gmv,
+        AVG(o.total_amount) AS aov,
+        COUNT(DISTINCT CASE WHEN o.status = 'Cancelled' THEN o.order_id END) AS cancelled_orders,
+        ROUND(cancelled_orders::FLOAT / NULLIF(total_orders, 0) * 100, 2) AS cancel_rate_pct
     FROM orders o
-    JOIN restaurants r ON o.restaurant_key = r.restaurant_key
+    JOIN restaurants r ON o.restaurant_id = r.restaurant_id
     GROUP BY 1, 2
 )
 
-SELECT * FROM daily_metrics
+SELECT * FROM aggregated
 ```
 
-## AI Layer Implementation
+## Airflow Orchestration
 
-### LLM Enrichment
+### DAG Definition
 
-`ai/enrich_reviews.py` - Extracts sentiment and topics from reviews:
-
+**`airflow/dags/zomato_batch.py`:**
 ```python
-import os
-import snowflake.connector
-from openai import OpenAI
-import json
-
-# Configuration from env vars
-SAMPLE_N = int(os.getenv('SAMPLE_N', 1000))
-
-# Connect to Snowflake
-conn = snowflake.connector.connect(
-    account=os.getenv('SNOWFLAKE_ACCOUNT'),
-    user=os.getenv('SNOWFLAKE_USER'),
-    password=os.getenv('SNOWFLAKE_PASSWORD'),
-    warehouse='ZOMATO_WH',
-    database='ZOMATO',
-    schema='RAW'
-)
-
-# OpenAI client
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-
-# Fetch reviews not yet enriched
-query = f"""
-SELECT review_id, review_text
-FROM ZOMATO.RAW.reviews r
-WHERE NOT EXISTS (
-    SELECT 1 FROM ZOMATO.AI.review_enriched e
-    WHERE e.review_id = r.review_id
-)
-LIMIT {SAMPLE_N}
-"""
-
-cursor = conn.cursor()
-cursor.execute(query)
-reviews = cursor.fetchall()
-
-# Enrich each review
-enriched = []
-for review_id, review_text in reviews:
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "Extract sentiment (positive/negative/neutral) and main topic from food delivery review. Return JSON: {\"sentiment\": \"...\", \"topic\": \"...\"}"},
-                {"role": "user", "content": review_text}
-            ],
-            temperature=0
-        )
-        
-        result = json.loads(response.choices[0].message.content)
-        enriched.append({
-            'review_id': review_id,
-            'sentiment': result['sentiment'],
-            'topic': result['topic']
-        })
-        print(f"Enriched review {review_id}")
-    except Exception as e:
-        print(f"Error enriching {review_id}: {e}")
-
-# Write back to Snowflake
-if enriched:
-    cursor.execute("CREATE SCHEMA IF NOT EXISTS ZOMATO.AI")
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS ZOMATO.AI.review_enriched (
-            review_id INTEGER,
-            sentiment VARCHAR,
-            topic VARCHAR,
-            enriched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
-        )
-    """)
-    
-    for item in enriched:
-        cursor.execute("""
-            INSERT INTO ZOMATO.AI.review_enriched (review_id, sentiment, topic)
-            VALUES (%s, %s, %s)
-        """, (item['review_id'], item['sentiment'], item['topic']))
-    
-    conn.commit()
-    print(f"Inserted {len(enriched)} enriched reviews")
-
-cursor.close()
-conn.close()
-```
-
-### RAG Chat
-
-`ai/rag_chat.py` - Chat interface for reviews:
-
-```python
-import streamlit as st
-import snowflake.connector
-from openai import OpenAI
-import numpy as np
-import os
-
-# Initialize
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-conn = snowflake.connector.connect(
-    account=os.getenv('SNOWFLAKE_ACCOUNT'),
-    user=os.getenv('SNOWFLAKE_USER'),
-    password=os.getenv('SNOWFLAKE_PASSWORD'),
-    warehouse='ZOMATO_WH',
-    database='ZOMATO'
-)
-
-st.title("🍕 Chat with Zomato Reviews")
-
-# Embed and store reviews (one-time setup)
-if 'embeddings_loaded' not in st.session_state:
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT review_id, review_text, rating
-        FROM ZOMATO.RAW.reviews
-        LIMIT 5000
-    """)
-    reviews = cursor.fetchall()
-    
-    # Generate embeddings
-    texts = [r[1] for r in reviews]
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=texts
-    )
-    
-    st.session_state.reviews = reviews
-    st.session_state.embeddings = np.array([e.embedding for e in response.data])
-    st.session_state.embeddings_loaded = True
-    cursor.close()
-
-# Chat interface
-question = st.text_input("Ask about the reviews:")
-
-if question:
-    # Embed question
-    q_embedding = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=[question]
-    ).data[0].embedding
-    
-    # Find similar reviews (cosine similarity)
-    similarities = np.dot(st.session_state.embeddings, q_embedding)
-    top_5_idx = np.argsort(similarities)[-5:][::-1]
-    
-    context_reviews = [st.session_state.reviews[i] for i in top_5_idx]
-    context_text = "\n\n".join([f"Review (rating {r[2]}): {r[1]}" for r in context_reviews])
-    
-    # Generate answer
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "Answer questions based on the provided Zomato reviews. Cite specific reviews."},
-            {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {question}"}
-        ]
-    )
-    
-    st.write("### Answer")
-    st.write(response.choices[0].message.content)
-    
-    st.write("### Source Reviews")
-    for rev in context_reviews:
-        st.write(f"- Rating {rev[2]}: {rev[1][:200]}...")
-
-conn.close()
-```
-
-### Text-to-SQL
-
-`ai/text_to_sql.py` - Query warehouse in natural language:
-
-```python
-import streamlit as st
-import snowflake.connector
-from openai import OpenAI
-import os
-import re
-
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-conn = snowflake.connector.connect(
-    account=os.getenv('SNOWFLAKE_ACCOUNT'),
-    user=os.getenv('SNOWFLAKE_USER'),
-    password=os.getenv('SNOWFLAKE_PASSWORD'),
-    warehouse='ZOMATO_WH',
-    database='ZOMATO',
-    schema='MARTS',
-    role='DBT_ROLE'
-)
-
-# Get schema context
-cursor = conn.cursor()
-cursor.execute("""
-    SELECT table_name, column_name, data_type
-    FROM ZOMATO.information_schema.columns
-    WHERE table_schema = 'MARTS'
-    ORDER BY table_name, ordinal_position
-""")
-schema_info = cursor.fetchall()
-
-schema_context = "Available tables and columns:\n"
-current_table = None
-for table, column, dtype in schema_info:
-    if table != current_table:
-        schema_context += f"\n{table}:\n"
-        current_table = table
-    schema_context += f"  - {column} ({dtype})\n"
-
-st.title("💬 Chat with Zomato Data Warehouse")
-
-question = st.text_input("Ask a question about the data:")
-
-if question:
-    # Generate SQL
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": f"You are a Snowflake SQL expert. Generate SELECT-only queries for the ZOMATO.MARTS schema.\n\n{schema_context}"},
-            {"role": "user", "content": f"Write a SQL query to answer: {question}"}
-        ]
-    )
-    
-    sql = response.choices[0].message.content
-    # Extract SQL from markdown if present
-    sql_match = re.search(r'```sql\n(.*?)\n```', sql, re.DOTALL)
-    if sql_match:
-        sql = sql_match.group(1)
-    
-    st.code(sql, language='sql')
-    
-    # Validate: only SELECT allowed
-    if not sql.strip().upper().startswith('SELECT'):
-        st.error("Only SELECT queries allowed")
-    else:
-        try:
-            cursor.execute(sql)
-            results = cursor.fetchall()
-            columns = [desc[0] for desc in cursor.description]
-            
-            st.write(f"### Results ({len(results)} rows)")
-            st.dataframe(results, columns=columns)
-        except Exception as e:
-            st.error(f"Query error: {e}")
-
-cursor.close()
-conn.close()
-```
-
-## Airflow DAG Structure
-
-`airflow/dags/zomato_batch.py`:
-
-```python
-from airflow.decorators import dag, task
+from datetime import datetime, timedelta
+from airflow import DAG
 from airflow.providers.snowflake.operators.snowflake import SnowflakeOperator
 from airflow.operators.bash import BashOperator
-from datetime import datetime
-import os
+from airflow.operators.python import PythonOperator
 
-@dag(
-    dag_id='zomato_batch',
+default_args = {
+    'owner': 'data-eng',
+    'depends_on_past': False,
+    'email_on_failure': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+with DAG(
+    'zomato_batch',
+    default_args=default_args,
+    description='Zomato end-to-end batch pipeline',
+    schedule_interval='@daily',
     start_date=datetime(2024, 1, 1),
-    schedule='@daily',
     catchup=False,
-    default_args={'owner': 'data-eng'}
-)
-def zomato_pipeline():
-    
+    tags=['data-engineering', 'batch'],
+) as dag:
+
     # Task 1: Reload raw tables from S3
     reload_raw = SnowflakeOperator(
         task_id='reload_raw',
         snowflake_conn_id='snowflake_default',
         sql="""
-            USE SCHEMA ZOMATO.RAW;
-            
-            COPY INTO restaurants FROM @s3_restaurants_stage 
-            FILE_FORMAT = (TYPE='CSV' SKIP_HEADER=1) 
-            FORCE = TRUE;
-            
-            COPY INTO users FROM @s3_users_stage 
-            FILE_FORMAT = (TYPE='CSV' SKIP_HEADER=1) 
-            FORCE = TRUE;
-            
-            COPY INTO food FROM @s3_food_stage 
-            FILE_FORMAT = (TYPE='CSV' SKIP_HEADER=1) 
-            FORCE = TRUE;
-            
-            COPY INTO menu FROM @s3_menu_stage 
-            FILE_FORMAT = (TYPE='CSV' SKIP_HEADER=1) 
-            FORCE = TRUE;
-            
-            COPY INTO orders FROM @s3_orders_stage 
-            FILE_FORMAT = (TYPE='CSV' SKIP_HEADER=1) 
-            FORCE = TRUE;
-            
-            COPY INTO order_items FROM @s3_order_items_stage 
-            FILE_FORMAT = (TYPE='CSV' SKIP_HEADER=1) 
-            FORCE = TRUE;
-            
-            COPY INTO reviews FROM @s3_reviews_stage 
-            FILE_FORMAT = (TYPE='CSV' SKIP_HEADER=1) 
-            FORCE = TRUE;
+        USE DATABASE ZOMATO;
+        USE SCHEMA RAW;
+        
+        COPY INTO orders FROM @zomato_stage/orders/
+        FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1)
+        ON_ERROR = 'CONTINUE';
+        
+        COPY INTO order_items FROM @zomato_stage/order_items/
+        FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1)
+        ON_ERROR = 'CONTINUE';
+        
+        COPY INTO reviews FROM @zomato_stage/reviews/
+        FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1)
+        ON_ERROR = 'CONTINUE';
         """
     )
-    
-    # Task 2: dbt build (core models, exclude AI)
+
+    # Task 2: dbt build (staging + marts)
     dbt_build_core = BashOperator(
         task_id='dbt_build_core',
-        bash_command='cd /opt/airflow/zomato && dbt build --exclude tag:ai'
-    )
-    
-    # Task 3: Enrich reviews with OpenAI
-    enrich_reviews = BashOperator(
-        task_id='enrich_reviews',
-        bash_command='python /opt/airflow/ai/enrich_reviews.py',
+        bash_command='cd /opt/airflow/zomato && dbt build --exclude tag:ai',
         env={
-            'OPENAI_API_KEY': os.getenv('OPENAI_API_KEY'),
-            'SNOWFLAKE_ACCOUNT': os.getenv('SNOWFLAKE_ACCOUNT'),
-            'SNOWFLAKE_USER': os.getenv('SNOWFLAKE_USER'),
-            'SNOWFLAKE_PASSWORD': os.getenv('SNOWFLAKE_PASSWORD'),
-            'SAMPLE_N': os.getenv('SAMPLE_N', '1000')
+            'SNOWFLAKE_ACCOUNT': '{{ var.value.SNOWFLAKE_ACCOUNT }}',
+            'SNOWFLAKE_USER': '{{ var.value.SNOWFLAKE_USER }}',
+            'SNOWFLAKE_PASSWORD': '{{ var.value.SNOWFLAKE_PASSWORD }}',
         }
     )
-    
-    # Task 4: dbt build AI marts
+
+    # Task 3: AI enrichment
+    def run_enrich_reviews():
+        import sys
+        sys.path.insert(0, '/opt/airflow/ai')
+        from enrich_reviews import enrich_reviews
+        enrich_reviews()
+
+    enrich_reviews_task = PythonOperator(
+        task_id='enrich_reviews',
+        python_callable=run_enrich_reviews
+    )
+
+    # Task 4: Build AI marts
     dbt_build_ai = BashOperator(
         task_id='dbt_build_ai',
-        bash_command='cd /opt/airflow/zomato && dbt build --select tag:ai'
+        bash_command='cd /opt/airflow/zomato && dbt build --select tag:ai',
+        env={
+            'SNOWFLAKE_ACCOUNT': '{{ var.value.SNOWFLAKE_ACCOUNT }}',
+            'SNOWFLAKE_USER': '{{ var.value.SNOWFLAKE_USER }}',
+            'SNOWFLAKE_PASSWORD': '{{ var.value.SNOWFLAKE_PASSWORD }}',
+        }
     )
-    
-    # Dependencies
-    reload_raw >> dbt_build_core >> enrich_reviews >> dbt_build_ai
 
-zomato_pipeline()
+    reload_raw >> dbt_build_core >> enrich_reviews_task >> dbt_build_ai
 ```
 
-## Configuration
+### Airflow Setup with Docker
 
-### Environment Variables
+**`airflow/docker-compose.yaml`:**
+```yaml
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
 
-All credentials via environment variables:
+  airflow-init:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    command: >
+      bash -c "airflow db migrate && 
+               airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
 
+  airflow-webserver:
+    build: .
+    depends_on:
+      - postgres
+      - airflow-init
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    command: airflow webserver
+
+  airflow-scheduler:
+    build: .
+    depends_on:
+      - postgres
+      - airflow-init
+    env_file:
+      - .env
+    command: airflow scheduler
+```
+
+**`airflow/.env`:**
 ```bash
-# Snowflake
-SNOWFLAKE_ACCOUNT=abc12345.us-east-1
+AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+AIRFLOW__CORE__EXECUTOR=LocalExecutor
+SNOWFLAKE_ACCOUNT=xy12345.us-east-1
 SNOWFLAKE_USER=your_user
 SNOWFLAKE_PASSWORD=your_password
-SNOWFLAKE_ROLE=DBT_ROLE
-SNOWFLAKE_WAREHOUSE=ZOMATO_WH
-SNOWFLAKE_DATABASE=ZOMATO
-
-# OpenAI
-OPENAI_API_KEY=sk-proj-...
-
-# AI processing
-SAMPLE_N=1000  # Number of reviews to enrich per run
+OPENAI_API_KEY=sk-...
+SAMPLE_N=1000
 ```
 
-### dbt Configuration
-
-`zomato/dbt_project.yml`:
-
-```yaml
-name: 'zomato'
-version: '1.0.0'
-config-version: 2
-
-profile: 'zomato'
-
-model-paths: ["models"]
-analysis-paths: ["analyses"]
-test-paths: ["tests"]
-seed-paths: ["seeds"]
-macro-paths: ["macros"]
-snapshot-paths: ["snapshots"]
-
-clean-targets:
-  - "target"
-  - "dbt_packages"
-  - "logs"
-
-models:
-  zomato:
-    staging:
-      +materialized: view
-      +schema: staging
-    marts:
-      +materialized: table
-      +schema: marts
-      +tags: ['marts']
-    ai:
-      +materialized: table
-      +schema: ai
-      +tags: ['ai']
+**Start Airflow:**
+```bash
+cd airflow
+docker compose build
+docker compose up -d
+# Access at http://localhost:8080 (admin/admin)
 ```
 
-Custom schema macro (`macros/generate_schema_name.sql`):
+## AI Layer
 
+### 1. LLM Enrichment
+
+**`ai/enrich_reviews.py`:**
+```python
+import os
+import json
+from openai import OpenAI
+import snowflake.connector
+
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+def enrich_reviews():
+    conn = snowflake.connector.connect(
+        account=os.getenv('SNOWFLAKE_ACCOUNT'),
+        user=os.getenv('SNOWFLAKE_USER'),
+        password=os.getenv('SNOWFLAKE_PASSWORD'),
+        warehouse='ZOMATO_WH',
+        database='ZOMATO',
+        schema='RAW'
+    )
+    
+    cur = conn.cursor()
+    
+    # Get unenriched reviews
+    sample_n = int(os.getenv('SAMPLE_N', 1000))
+    cur.execute(f"""
+        SELECT review_id, review_text 
+        FROM ZOMATO.RAW.REVIEWS 
+        WHERE review_id NOT IN (SELECT review_id FROM ZOMATO.AI.REVIEW_ENRICHED)
+        LIMIT {sample_n}
+    """)
+    
+    reviews = cur.fetchall()
+    enriched_data = []
+    
+    for review_id, review_text in reviews:
+        prompt = f"""Analyze this restaurant review and return JSON with:
+        - sentiment: "positive", "negative", or "neutral"
+        - topic: main topic (e.g., "food quality", "delivery time", "pricing")
+        
+        Review: {review_text}
+        
+        Return only valid JSON."""
+        
+        response = client.chat.completions.create(
+            model='gpt-4o-mini',
+            messages=[{'role': 'user', 'content': prompt}],
+            temperature=0
+        )
+        
+        result = json.loads(response.choices[0].message.content)
+        enriched_data.append((
+            review_id,
+            result.get('sentiment'),
+            result.get('topic')
+        ))
+    
+    # Insert enriched data
+    cur.execute("USE SCHEMA ZOMATO.AI")
+    cur.executemany("""
+        INSERT INTO REVIEW_ENRICHED (review_id, sentiment, topic)
+        VALUES (%s, %s, %s)
+    """, enriched_data)
+    
+    conn.commit()
+    cur.close()
+    conn.close()
+    print(f"Enriched {len(enriched_data)} reviews")
+
+if __name__ == '__main__':
+    enrich_reviews()
+```
+
+### 2. RAG Chat with Reviews
+
+**`ai/rag_chat.py`:**
+```python
+import os
+import streamlit as st
+from openai import OpenAI
+import snowflake.connector
+import numpy as np
+
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+def get_embedding(text):
+    response = client.embeddings.create(
+        model='text-embedding-3-small',
+        input=text
+    )
+    return response.data[0].embedding
+
+def cosine_similarity(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+def retrieve_reviews(question, top_k=5):
+    conn = snowflake.connector.connect(
+        account=os.getenv('SNOWFLAKE_ACCOUNT'),
+        user=os.getenv('SNOWFLAKE_USER'),
+        password=os.getenv('SNOWFLAKE_PASSWORD'),
+        warehouse='ZOMATO_WH',
+        database='ZOMATO'
+    )
+    
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT review_id, review_text 
+        FROM ZOMATO.RAW.REVIEWS 
+        LIMIT 1000
+    """)
+    reviews = cur.fetchall()
+    cur.close()
+    conn.close()
+    
+    # Embed question
+    question_emb = get_embedding(question)
+    
+    # Compute similarity
+    scored = []
+    for review_id, review_text in reviews:
+        review_emb = get_embedding(review_text)
+        score = cosine_similarity(question_emb, review_emb)
+        scored.append((score, review_id, review_text))
+    
+    scored.sort(reverse=True)
+    return scored[:top_k]
+
+def generate_answer(question, context_reviews):
+    context = "\n\n".join([f"Review {i+1}: {rev[2]}" for i, rev in enumerate(context_reviews)])
+    
+    prompt = f"""Based on these restaurant reviews, answer the question.
+    
+Context:
+{context}
+
+Question: {question}
+
+Provide a helpful answer grounded in the reviews above."""
+    
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[{'role': 'user', 'content': prompt}]
+    )
+    
+    return response.choices[0].message.content
+
+# Streamlit UI
+st.title("🍔 Chat with Zomato Reviews")
+question = st.text_input("Ask a question about customer reviews:")
+
+if st.button("Search") and question:
+    with st.spinner("Retrieving relevant reviews..."):
+        top_reviews = retrieve_reviews(question)
+    
+    with st.spinner("Generating answer..."):
+        answer = generate_answer(question, top_reviews)
+    
+    st.write("### Answer")
+    st.write(answer)
+    
+    st.write("### Source Reviews")
+    for i, (score, review_id, review_text) in enumerate(top_reviews):
+        st.write(f"**Review {i+1}** (similarity: {score:.3f})")
+        st.write(review_text[:200] + "...")
+```
+
+**Run:**
+```bash
+export SNOWFLAKE_ACCOUNT=... SNOWFLAKE_USER=... SNOWFLAKE_PASSWORD=... OPENAI_API_KEY=...
+streamlit run ai/rag_chat.py
+```
+
+### 3. Text-to-SQL
+
+**`ai/text_to_sql.py`:**
+```python
+import os
+import streamlit as st
+from openai import OpenAI
+import snowflake.connector
+import re
+
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+SCHEMA_CONTEXT = """
+Available tables in ZOMATO.MARTS:
+
+1. fct_orders: order_id, customer_id, restaurant_id, order_date, total_amount, status, is_delivered
+2. dim_restaurants: restaurant_id, restaurant_name, city, cuisine_type, rating
+3. dim_customer: customer_id, customer_name, email, age, age_segment
+4. mart_city_revenue_daily: city, order_date, total_orders, gmv, aov, cancel_rate_pct
+5. mart_restaurant_performance: restaurant_id, restaurant_name, total_orders, total_revenue, avg_rating
+"""
+
+def generate_sql(question):
+    prompt = f"""You are a Snowflake SQL expert. Given this schema:
+
+{SCHEMA_CONTEXT}
+
+Generate a SELECT query for: {question}
+
+Rules:
+- Use only the tables/columns listed above
+- Always qualify columns with table aliases
+- Return only the SQL query, no explanation
+- Use standard Snowflake SQL syntax"""
+
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[{'role': 'user', 'content': prompt}],
+        temperature=0
+    )
+    
+    return response.choices[0].message.content.strip()
+
+def validate_sql(sql):
+    """Basic safety check - only allow SELECT"""
+    sql_upper = sql.upper()
+    forbidden = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'CREATE', 'ALTER', 'TRUNCATE']
+    
+    for keyword in forbidden:
+        if keyword in sql_upper:
+            return False, f"Forbidden keyword: {keyword}"
+    
+    if not sql_upper.strip().startswith('SELECT'):
+        return False, "Only SELECT queries allowed"
+    
+    return True, "OK"
+
+def execute_query(sql):
+    conn = snowflake.connector.connect(
+        account=os.getenv('SNOWFLAKE_ACCOUNT'),
+        user=os.getenv('SNOWFLAKE_USER'),
+        password=os.getenv('SNOWFLAKE_PASSWORD'),
+        warehouse='ZOMATO_WH',
+        database='ZOMATO',
+        schema='MARTS',
+        role='DBT_ROLE'
+    )
+    
+    cur = conn.cursor()
+    cur.execute(sql)
+    results = cur.fetchall()
+    columns = [desc[0] for desc in cur.description]
+    
+    cur.close()
+    conn.close()
+    
+    return columns, results
+
+# Streamlit UI
+st.title("🗣️ Chat with Zomato Warehouse")
+st.write("Ask questions in plain English, get SQL + results")
+
+question = st.text_area("Your question:", height=100)
+
+if st.button("Generate & Execute") and question:
+    with st.spinner("Generating SQL..."):
+        sql = generate_sql(question)
+    
+    st.write("### Generated SQL")
+    st.code(sql, language='sql')
+    
+    # Validate
+    is_safe, msg = validate_sql(sql)
+    if not is_safe:
+        st.error(f"❌ Query rejected: {msg}")
+    else:
+        with st.spinner("Executing query..."):
+            try:
+                columns, results = execute_query(sql)
+                st.write("### Results")
+                st.dataframe(results, column_config={i: col for i, col in enumerate(columns)})
+            except Exception as e:
+                st.error(f"Query failed: {e}")
+```
+
+**Run:**
+```bash
+streamlit run ai/text_to_sql.py
+```
+
+## Key Commands
+
+### dbt
+```bash
+# Test connection
+dbt debug
+
+# Run specific models
+dbt run --select staging.*
+dbt run --select fct_orders
+dbt run --select tag:daily
+
+# Run with full-refresh (ignore incremental logic)
+dbt run --select fct_orders --full-refresh
+
+# Build models + run tests
+dbt build
+
+# Test only
+dbt test
+
+# Generate documentation
+dbt docs generate
+dbt docs serve
+```
+
+### Airflow
+```bash
+# Initialize database
+airflow db migrate
+
+# Create admin user
+airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+
+# Test DAG
+airflow dags test zomato_batch 2024-01-01
+
+# List DAGs
+airflow dags list
+
+# Trigger run
+airflow dags trigger zomato_batch
+```
+
+## Common Patterns
+
+### Incremental Models with MERGE
+
+For large fact tables, use incremental materialization to avoid full rebuilds:
+
+```sql
+{{
+    config(
+        materialized='incremental',
+        unique_key='order_id',
+        on_schema_change='append_new_columns',
+        merge_update_columns=['status', 'total_amount']  -- only update these
+    )
+}}
+
+SELECT * FROM {{ ref('stg_orders') }}
+{% if is_incremental() %}
+WHERE order_date > (SELECT MAX(order_date) FROM {{ this }})
+{% endif %}
+```
+
+### Custom Schema Naming
+
+**`macros/generate_schema_name.sql`:**
 ```sql
 {% macro generate_schema_name(custom_schema_name, node) -%}
     {%- set default_schema = target.schema -%}
@@ -928,42 +766,96 @@ Custom schema macro (`macros/generate_schema_name.sql`):
 {%- endmacro %}
 ```
 
-## Common Patterns
+This ensures `models/marts/core/fct_orders.sql` with `{{ config(schema='marts') }}` lands in `ZOMATO.MARTS.FCT_ORDERS`, not `ZOMATO.MARTS_MARTS.FCT_ORDERS`.
 
-### Incremental Loading Pattern
+### Idempotent AI Enrichment
 
-For large fact tables, use incremental materialization:
+To avoid re-enriching the same reviews:
 
-```sql
-{{
-    config(
-        materialized='incremental',
-        unique_key='order_id',
-        on_schema_change='append_new_columns'
-    )
-}}
-
-SELECT *
-FROM {{ ref('stg_orders') }}
-{% if is_incremental() %}
-WHERE order_date >= (SELECT MAX(order_date) FROM {{ this }})
-{% endif %}
+```python
+# Only process reviews not already in AI table
+cur.execute("""
+    SELECT review_id, review_text 
+    FROM ZOMATO.RAW.REVIEWS 
+    WHERE review_id NOT IN (SELECT review_id FROM ZOMATO.AI.REVIEW_ENRICHED)
+    LIMIT 1000
+""")
 ```
 
-Full refresh when needed:
+### Environment-Based Configuration
+
+**dbt profiles:**
+```yaml
+outputs:
+  dev:
+    schema: DEV_MARTS
+  prod:
+    schema: MARTS
+```
+
+**Airflow Variables:**
+Store credentials in Airflow UI under Admin → Variables or use environment variables.
+
+## Troubleshooting
+
+### `COPY INTO` fails with access denied
+- Verify IAM role trust policy includes Snowflake's `STORAGE_AWS_IAM_USER_ARN` (not `:root`)
+- Check `STORAGE_AWS_EXTERNAL_ID` matches current integration (`DESC STORAGE INTEGRATION`)
+- Never run `CREATE OR REPLACE STORAGE INTEGRATION` — it regenerates external ID
+
+### dbt incremental models rebuild fully every run
+- Ensure `unique_key` is specified
+- Check `target/run/zomato/models/.../model.sql` to see compiled SQL
+- Verify `is_incremental()` condition resolves correctly
+
+### OpenAI rate limits
+- Add exponential backoff in enrichment loop
+- Use `SAMPLE_N` env var to limit batch size
+- Consider batching with `client.embeddings.create(input=[list])`
+
+### Airflow tasks fail with connection error
+- Verify `AIRFLOW_CONN_SNOWFLAKE_DEFAULT` or create connection in UI
+- Check environment variables are passed to containers via `.env`
+- Test connection: `airflow connections test snowflake_default`
+
+### dbt tests fail on relationships
+- Ensure dimension tables load before fact tables
+- Add `ref()` dependencies in staging models
+- Use `dbt build` (not `dbt run`) to respect test dependencies
+
+### Text-to-SQL generates invalid queries
+- Improve schema context with example queries
+- Add few-shot examples to prompt
+- Implement query result validation before execution
+
+## Testing
 
 ```bash
-dbt run --select fct_orders --full-refresh
+# dbt generic tests (defined in schema.yml)
+dbt test --select fct_orders
+
+# dbt singular tests (custom SQL in tests/)
+dbt test --select test_order_revenue_reconciliation
+
+# Full build with tests
+dbt build --fail-fast
+
+# Test Airflow DAG
+airflow dags test zomato_batch 2024-01-01
 ```
 
-### Testing Pattern
+## Performance Tips
 
-Define tests in schema YAML:
+1. **Incremental models**: Always use for tables >1M rows
+2. **Clustering keys**: `ALTER TABLE fct_orders CLUSTER BY (order_date);`
+3. **Warehouse sizing**: Start with MEDIUM, scale up for heavy transformations
+4. **dbt threads**: Increase `threads: 8` in `profiles.yml` for parallel execution
+5. **COPY INTO parallelism**: Split large files into chunks in S3
+6. **OpenAI batch API**: For >1K reviews, use batch API (cheaper, async)
 
-```yaml
-version: 2
+## References
 
-models:
-  - name: fct_orders
-    columns:
-      - name:
+- dbt incremental models: https://docs.getdbt.com/docs/build/incremental-models
+- Snowflake storage integration: https://docs.snowflake.com/en/user-guide/data-load-s3-config-storage-integration
+- Airflow Snowflake provider: https://airflow.apache.org/docs/apache-airflow-providers-snowflake/
+- OpenAI embeddings: https://platform.openai.com/docs/guides/embeddings
