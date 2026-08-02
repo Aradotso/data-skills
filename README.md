@@ -103,6 +103,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [crypto-etl-analytics-core](skills/crypto-etl-analytics-core/) | [install](https://skills.sh/aradotso/data-skills/crypto-etl-analytics-core) | [Jad-srifi/crypto-etl-analytics-core](https://github.com/Jad-srifi/crypto-etl-analytics-core) | 2026-07-15 |
 | [ai-data-engineering-rag-pipeline](skills/ai-data-engineering-rag-pipeline/) | [install](https://skills.sh/aradotso/data-skills/ai-data-engineering-rag-pipeline) | [Nahid-mahmud555/ai-data-engineering-roadmap](https://github.com/Nahid-mahmud555/ai-data-engineering-roadmap) | 2026-07-31 |
 | [zomato-ai-data-engineering-pipeline](skills/zomato-ai-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/zomato-ai-data-engineering-pipeline) | [darshilparmar/zomato-ai-data-engineering-end-to-end-project](https://github.com/darshilparmar/zomato-ai-data-engineering-end-to-end-project) | 2026-08-01 |
+| [high-stakes-analytics-decision-lab](skills/high-stakes-analytics-decision-lab/) | [install](https://skills.sh/aradotso/data-skills/high-stakes-analytics-decision-lab) | [limingrui679-design/high-stakes-analytics-decision-lab](https://github.com/limingrui679-design/high-stakes-analytics-decision-lab) | 2026-08-02 |
 <!-- SKILL_INDEX -->
 
 ---
