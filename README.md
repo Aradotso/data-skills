@@ -104,6 +104,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [ai-data-engineering-rag-pipeline](skills/ai-data-engineering-rag-pipeline/) | [install](https://skills.sh/aradotso/data-skills/ai-data-engineering-rag-pipeline) | [Nahid-mahmud555/ai-data-engineering-roadmap](https://github.com/Nahid-mahmud555/ai-data-engineering-roadmap) | 2026-07-31 |
 | [zomato-ai-data-engineering-pipeline](skills/zomato-ai-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/zomato-ai-data-engineering-pipeline) | [darshilparmar/zomato-ai-data-engineering-end-to-end-project](https://github.com/darshilparmar/zomato-ai-data-engineering-end-to-end-project) | 2026-08-01 |
 | [high-stakes-analytics-decision-lab](skills/high-stakes-analytics-decision-lab/) | [install](https://skills.sh/aradotso/data-skills/high-stakes-analytics-decision-lab) | [limingrui679-design/high-stakes-analytics-decision-lab](https://github.com/limingrui679-design/high-stakes-analytics-decision-lab) | 2026-08-02 |
+| [hyperliquid-leaderboard-analytics](skills/hyperliquid-leaderboard-analytics/) | [install](https://skills.sh/aradotso/data-skills/hyperliquid-leaderboard-analytics) | [lassepaladin/Hyperliquid-Leaderboard-Analytics](https://github.com/lassepaladin/Hyperliquid-Leaderboard-Analytics) | 2026-08-03 |
 <!-- SKILL_INDEX -->
 
 ---
