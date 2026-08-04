@@ -105,6 +105,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [zomato-ai-data-engineering-pipeline](skills/zomato-ai-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/zomato-ai-data-engineering-pipeline) | [darshilparmar/zomato-ai-data-engineering-end-to-end-project](https://github.com/darshilparmar/zomato-ai-data-engineering-end-to-end-project) | 2026-08-01 |
 | [high-stakes-analytics-decision-lab](skills/high-stakes-analytics-decision-lab/) | [install](https://skills.sh/aradotso/data-skills/high-stakes-analytics-decision-lab) | [limingrui679-design/high-stakes-analytics-decision-lab](https://github.com/limingrui679-design/high-stakes-analytics-decision-lab) | 2026-08-02 |
 | [hyperliquid-leaderboard-analytics](skills/hyperliquid-leaderboard-analytics/) | [install](https://skills.sh/aradotso/data-skills/hyperliquid-leaderboard-analytics) | [lassepaladin/Hyperliquid-Leaderboard-Analytics](https://github.com/lassepaladin/Hyperliquid-Leaderboard-Analytics) | 2026-08-03 |
+| [apexbank-analytics-dashboard](skills/apexbank-analytics-dashboard/) | [install](https://skills.sh/aradotso/data-skills/apexbank-analytics-dashboard) | [fhuber82/apexbank-analytics-hub](https://github.com/fhuber82/apexbank-analytics-hub) | 2026-08-04 |
 <!-- SKILL_INDEX -->
 
 ---
