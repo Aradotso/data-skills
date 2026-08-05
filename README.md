@@ -106,6 +106,7 @@ npx skills add Aradotso/data-skills --skill <skill-name>
 | [high-stakes-analytics-decision-lab](skills/high-stakes-analytics-decision-lab/) | [install](https://skills.sh/aradotso/data-skills/high-stakes-analytics-decision-lab) | [limingrui679-design/high-stakes-analytics-decision-lab](https://github.com/limingrui679-design/high-stakes-analytics-decision-lab) | 2026-08-02 |
 | [hyperliquid-leaderboard-analytics](skills/hyperliquid-leaderboard-analytics/) | [install](https://skills.sh/aradotso/data-skills/hyperliquid-leaderboard-analytics) | [lassepaladin/Hyperliquid-Leaderboard-Analytics](https://github.com/lassepaladin/Hyperliquid-Leaderboard-Analytics) | 2026-08-03 |
 | [apexbank-analytics-dashboard](skills/apexbank-analytics-dashboard/) | [install](https://skills.sh/aradotso/data-skills/apexbank-analytics-dashboard) | [fhuber82/apexbank-analytics-hub](https://github.com/fhuber82/apexbank-analytics-hub) | 2026-08-04 |
+| [spark-data-engineering-pipeline](skills/spark-data-engineering-pipeline/) | [install](https://skills.sh/aradotso/data-skills/spark-data-engineering-pipeline) | [Giri-25/spark-data-engineering-pipeline](https://github.com/Giri-25/spark-data-engineering-pipeline) | 2026-08-05 |
 <!-- SKILL_INDEX -->
 
 ---
